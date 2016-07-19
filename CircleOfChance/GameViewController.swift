@@ -8,37 +8,111 @@
 
 import UIKit
 import SpriteKit
+import GoogleMobileAds
+import GameKit
 
-class GameViewController: UIViewController {
-
+class GameViewController: UIViewController, GKGameCenterControllerDelegate{
+    
+    var googleBannerView : GADBannerView!
+    var leaderboardIdentifier: String? = nil
+    var gameCenterEnabled: Bool = false
+    
     override func viewDidLoad() {
+        
         super.viewDidLoad()
-
-        if let scene = GameScene(fileNamed:"GameScene") {
+        
+        if !NSUserDefaults.standardUserDefaults().boolForKey("music") {
+             SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
+        }
+        else if NSUserDefaults.standardUserDefaults().boolForKey("music") == false {
+            SKTAudio.sharedInstance().pauseBackgroundMusic()
+        }
+        
+        else if NSUserDefaults.standardUserDefaults().boolForKey("music") == true {
+            SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
+        }
+        
+        
+        if !NSUserDefaults.standardUserDefaults().boolForKey("sound") {
+            GameScene.soundOn = true
+        }
+        else if NSUserDefaults.standardUserDefaults().boolForKey("sound") == false {
+            GameScene.soundOn = false
+        }
+        
+        else if NSUserDefaults.standardUserDefaults().boolForKey("sound") == true {
+            GameScene.soundOn = true
+        }
+        
+        if let scene = MainMenu(fileNamed:"GameScene") {
+            
             // Configure the view.
             let skView = self.view as! SKView
             skView.showsFPS = true
             skView.showsNodeCount = true
-            
             /* Sprite Kit applies additional optimizations to improve rendering performance */
             skView.ignoresSiblingOrder = true
-            
             /* Set the scale mode to scale to fit the window */
             scene.scaleMode = .AspectFill
+            let transition = SKTransition.fadeWithDuration(0.8)
+            skView.presentScene(scene, transition: transition)
+        }
+
+        
+        loadBanner()
+
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(true)
+        authenticateLocalPlayer()
+    }
+    
+    func loadBanner() {
+        googleBannerView = GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
+        googleBannerView.adUnitID = "ca-app-pub-7649281918688809/7940530179"
+        googleBannerView.rootViewController = self
+        
+        let request:GADRequest = GADRequest()
+        request.testDevices = [kGADSimulatorID, "ada15951f72c9f6e621f23e6dc7118d6"]
+        googleBannerView.loadRequest(request)
+        
+        googleBannerView.frame = CGRectMake(0, view.bounds.height - googleBannerView.frame.size.height, googleBannerView.frame.size.width, googleBannerView.frame.size.height)
+        
+        self.view.addSubview(googleBannerView!)
+        
+        bannerHeight = googleBannerView.frame.size.height
+    }
+    
+    func authenticateLocalPlayer() {
+        let localPlayer = GKLocalPlayer.localPlayer()
+        localPlayer.authenticateHandler = {(viewController : UIViewController?, error : NSError?) -> Void in
             
-            skView.presentScene(scene)
+            if viewController != nil {
+                
+                self.presentViewController(viewController!, animated: true, completion: nil)
+                
+            }
         }
     }
-
+    
+    func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController)
+    {
+        
+        gameCenterViewController.dismissViewControllerAnimated(true, completion: nil)
+        
+    }
+    
     override func shouldAutorotate() -> Bool {
         return true
     }
-
+    
     override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return .AllButUpsideDown
-        } else {
-            return .All
+            return .Portrait
+        }
+        else {
+            return .Portrait
         }
     }
 

@@ -211,7 +211,9 @@ class ShopScene: SKScene, ChartboostDelegate {
         self.addChild(backGround)
         
         getMoreCoinsOptions = SKSpriteNode(imageNamed: "getMoreCoinsOptions")
+        getMoreCoinsOptions.setScale(0)
         backGround.addChild(getMoreCoinsOptions)
+        getMoreCoinsOptions.runAction(SKAction.scaleTo(1.0, duration: 0.2))
         
         exitButton = SKSpriteNode(imageNamed: "exitButton")
         exitButton.position = CGPoint(x: getMoreCoinsOptions.position.x + 145 , y: getMoreCoinsOptions.position.y + 65)

@@ -81,6 +81,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var checkpoint = Bool()
     static var soundOn = Bool()
     var currency = CurrencyManager()
+    var starHit = SKSpriteNode()
     
     // sounds
     let dotHitSound = SKAction.playSoundFileNamed("dotHit.wav", waitForCompletion: false)
@@ -113,6 +114,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         loadView()
         barrierLeft.addRedBarrier()
+        
         // add physics world
         physicsWorld.contactDelegate = self
 
@@ -558,7 +560,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 let moveAction = SKAction.moveTo(CGPoint(x: score.position.x, y: score.position.y), duration: 0.4)
                 let fade = SKAction.fadeAlphaTo(0.0, duration: 0.1)
-                secondBody.node?.runAction(SKAction.sequence([moveAction,fade,SKAction.removeFromParent()]))
+                
+                if secondBody.node?.name != "Star" {
+                    secondBody.node?.runAction(SKAction.sequence([moveAction,fade,SKAction.removeFromParent()]))
+                }
+                else if secondBody.node?.name == "Star" {
+                    
+                    let moveAction = SKAction.moveTo(CGPoint(x: score.position.x, y: score.position.y), duration: 0.8)
+                    secondBody.node?.runAction(SKAction.sequence([moveAction,fade,SKAction.removeFromParent()]))
+                    
+                    starHit = SKSpriteNode(imageNamed: "Checkpoint")
+                    starHit.position = CGPoint(x: self.frame.width / 2, y: self.frame.height/2 - 210)
+                    starHit.setScale(0)
+                    self.addChild(starHit)
+                    
+                    let scale = SKAction.scaleTo(1.1, duration: 0.3)
+                    let disappear = SKAction.scaleTo(0.0, duration: 0.3)
+                    let wait = SKAction.waitForDuration(1.0)
+                    let cycle = SKAction.sequence([scale,wait,disappear])
+                    
+                    starHit.runAction(cycle) {
+                        self.starHit.removeFromParent()
+                    }
+                }
                 
                 if secondBody.node?.name != "Star" {
                     if GameScene.soundOn {

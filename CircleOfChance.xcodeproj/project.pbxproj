@@ -65,6 +65,7 @@
 		047A662F1D36E5DF005396D9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A662E1D36E5DF005396D9 /* CoreGraphics.framework */; };
 		047A66311D36E5F2005396D9 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A66301D36E5F2005396D9 /* MessageUI.framework */; };
 		04F278B41D3D2D5200281F9D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F278B31D3D2D5200281F9D /* QuartzCore.framework */; };
+		04FBB87D1D4114E9007D1A52 /* BarrierBreak.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB87B1D4114E9007D1A52 /* BarrierBreak.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -129,6 +130,7 @@
 		047A662E1D36E5DF005396D9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		047A66301D36E5F2005396D9 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		04F278B31D3D2D5200281F9D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		04FBB87B1D4114E9007D1A52 /* BarrierBreak.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BarrierBreak.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -256,8 +258,9 @@
 		047A65F41D36D322005396D9 /* Particles/Sounds */ = {
 			isa = PBXGroup;
 			children = (
-				047A65A61D36CEC9005396D9 /* GameOver.sks */,
+				04FBB87B1D4114E9007D1A52 /* BarrierBreak.sks */,
 				047A65A71D36CEC9005396D9 /* BallTrail.sks */,
+				047A65A61D36CEC9005396D9 /* GameOver.sks */,
 				047A65AA1D36CEDE005396D9 /* unlock.mp3 */,
 				047A65AB1D36CEDE005396D9 /* death.wav */,
 				047A65AC1D36CEDE005396D9 /* nextLevel.wav */,
@@ -347,6 +350,7 @@
 				047A65A91D36CEC9005396D9 /* BallTrail.sks in Resources */,
 				047A65BC1D36CEDE005396D9 /* buttonTouched.wav in Resources */,
 				047A65B51D36CEDE005396D9 /* unlock.mp3 in Resources */,
+				04FBB87D1D4114E9007D1A52 /* BarrierBreak.sks in Resources */,
 				047A65761D36CDF7005396D9 /* Main.storyboard in Resources */,
 				047A65BF1D36CEDE005396D9 /* newCard.wav in Resources */,
 				047A65B71D36CEDE005396D9 /* nextLevel.wav in Resources */,

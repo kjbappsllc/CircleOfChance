@@ -38,7 +38,7 @@ class barrier: SKSpriteNode {
     }
     
     func removeBarrier(){
-        let fadeOut = SKAction.fadeAlphaTo(0.0, duration: 0.3)
+        let fadeOut = SKAction.fadeAlphaTo(0.0, duration: 0.0)
         self.runAction(fadeOut)
         self.canPass()
         self.physicsBody = nil

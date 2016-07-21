@@ -438,11 +438,6 @@ class SkinsScene: SKScene {
         achievement.percentComplete = percentComplete
         achievement.showsCompletionBanner = true
         
-        if achievement.percentComplete == 100 {
-            currency.coins += 150
-            coins.text = "\(currency.coins)"
-        }
-        
         let achievementArray: [GKAchievement] = [achievement]
         
         GKAchievement.reportAchievements(achievementArray, withCompletionHandler: {

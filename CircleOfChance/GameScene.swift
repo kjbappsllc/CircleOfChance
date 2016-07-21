@@ -487,8 +487,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func gameOver(node: SKNode) {
         
-        incrementCurrentPercentageOfAchievement("achievement_50games", amount: 2.0)
         currency.games += 1
+        
+        if currency.games == 50 {
+            incrementCurrentPercentageOfAchievement("achievement_50games", amount: 100.0)
+        }
         
         if GameScene.highscoreInt == GameScene.scoreInt {
             saveHighscore(GameScene.highscoreInt)
@@ -615,56 +618,59 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         }
                         let randomNum = randomPercent()
                         switch randomNum {
-                        case 0..<40:
-                            var limit = 0
-                            for barriers in barrierArray {
-                                if limit != 1 {
-                                    if barriers.IsActive() {
-                                        barriers.removeBarrier()
-                                        limit += 1
-                                    }
-                                }
-                            }
                             
-                        case 41..<65:
+                        case 0..<70:
                             var limit = 0
                             for barriers in barrierArray {
                                 if limit != 2 {
                                     if barriers.IsActive() {
+                                        
+                                        let particles = SKEmitterNode(fileNamed: "BarrierBreak")!
+                                        particles.position = barriers.position
+                                        particles.zPosition = barriers.zPosition + 1
+                                        addChild(particles)
                                         barriers.removeBarrier()
+                                        
+                                        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()]))
+                                        
                                         limit += 1
                                     }
                                 }
                             }
                             
-                        case 66..<85:
+                        case 70..<95:
                             var limit = 0
                             for barriers in barrierArray {
                                 if limit != 3 {
                                     if barriers.IsActive() {
+                                        
+                                        let particles = SKEmitterNode(fileNamed: "BarrierBreak")!
+                                        particles.position = barriers.position
+                                        particles.zPosition = barriers.zPosition + 1
+                                        addChild(particles)
                                         barriers.removeBarrier()
+                                        
+                                        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()]))
+                                        
                                         limit += 1
                                     }
                                 }
                             }
-                            
-                            
-                        case 86..<95:
+
+                        default:
                             var limit = 0
                             for barriers in barrierArray {
                                 if limit != 4 {
                                     if barriers.IsActive() {
+                                        
+                                        let particles = SKEmitterNode(fileNamed: "BarrierBreak")!
+                                        particles.position = barriers.position
+                                        particles.zPosition = barriers.zPosition + 1
+                                        addChild(particles)
                                         barriers.removeBarrier()
-                                        limit += 1
-                                    }
-                                }
-                            }
-                        default:
-                            var limit = 0
-                            for barriers in barrierArray {
-                                if limit != 5 {
-                                    if barriers.IsActive() {
-                                        barriers.removeBarrier()
+                                        
+                                        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()]))
+                                        
                                         limit += 1
                                     }
                                 }
@@ -1077,7 +1083,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         achievement.showsCompletionBanner = true
         
         if achievement.percentComplete == 100 {
-            currency.coins += 150
+            currency.coins += 75
             coinNotifier.text = "\(currency.coins)"
         }
         

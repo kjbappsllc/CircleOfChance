@@ -91,6 +91,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let starPickup = SKAction.playSoundFileNamed("starPickup.wav", waitForCompletion: false)
     let highScore = SKAction.playSoundFileNamed("newHighScore.wav", waitForCompletion: false)
     let cardSound = SKAction.playSoundFileNamed("newCard.wav", waitForCompletion: false)
+    let barrier_break_one = SKAction.playSoundFileNamed("light_bulb_smash.mp3", waitForCompletion: false)
+    let barrier_break_two = SKAction.playSoundFileNamed("light_bulb_smash-2.mp3", waitForCompletion: false)
+    let barrier_break_three = SKAction.playSoundFileNamed("light_bulb_smash-3.mp3", waitForCompletion: false)
     
     //GameCenter
     var gameCenterAchievements = [String:GKAchievement]()
@@ -123,13 +126,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //loads view
     func loadView() {
         //Sets Up the Scene
-        
-        if NSUserDefaults.standardUserDefaults().boolForKey("sound") {
-            GameScene.soundOn = true
-        }
-        else{
-            GameScene.soundOn = NSUserDefaults.standardUserDefaults().boolForKey("sound")
-        }
         
         dotsArray.removeAll()
         checkpoint = false
@@ -311,7 +307,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     circle.physicsBody?.categoryBitMask = dotCategory
                     circle.physicsBody?.contactTestBitMask = ballCategory
                     circle.physicsBody?.affectedByGravity = false
-                    circle.physicsBody?.collisionBitMask = 0
+                    circle.physicsBody?.collisionBitMask = ballCategory
                     circle.strokeColor = SKColor.clearColor()
                     circle.glowWidth = 1.0
                     
@@ -643,7 +639,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         let randomNum = randomPercent()
                         switch randomNum {
                             
-                        case 0..<70:
+                        case 0..<75:
                             var limit = 0
                             for barriers in barrierArray {
                                 if limit != 2 {
@@ -662,7 +658,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                 }
                             }
                             
-                        case 70..<95:
+                            self.runAction(barrier_break_one)
+                            
+                        case 75..<95:
                             var limit = 0
                             for barriers in barrierArray {
                                 if limit != 3 {
@@ -680,6 +678,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                     }
                                 }
                             }
+                            self.runAction(barrier_break_two)
 
                         default:
                             var limit = 0
@@ -699,6 +698,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                     }
                                 }
                             }
+                            self.runAction(barrier_break_three)
                         }
                     }
                 }

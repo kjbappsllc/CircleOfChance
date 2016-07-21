@@ -66,6 +66,9 @@
 		047A66311D36E5F2005396D9 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A66301D36E5F2005396D9 /* MessageUI.framework */; };
 		04F278B41D3D2D5200281F9D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F278B31D3D2D5200281F9D /* QuartzCore.framework */; };
 		04FBB87D1D4114E9007D1A52 /* BarrierBreak.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB87B1D4114E9007D1A52 /* BarrierBreak.sks */; };
+		04FBB8821D414E87007D1A52 /* light_bulb_smash-2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB87F1D414E87007D1A52 /* light_bulb_smash-2.mp3 */; };
+		04FBB8831D414E87007D1A52 /* light_bulb_smash-3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB8801D414E87007D1A52 /* light_bulb_smash-3.mp3 */; };
+		04FBB8841D414E87007D1A52 /* light_bulb_smash.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB8811D414E87007D1A52 /* light_bulb_smash.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -131,6 +134,9 @@
 		047A66301D36E5F2005396D9 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		04F278B31D3D2D5200281F9D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		04FBB87B1D4114E9007D1A52 /* BarrierBreak.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BarrierBreak.sks; sourceTree = "<group>"; };
+		04FBB87F1D414E87007D1A52 /* light_bulb_smash-2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "light_bulb_smash-2.mp3"; sourceTree = "<group>"; };
+		04FBB8801D414E87007D1A52 /* light_bulb_smash-3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "light_bulb_smash-3.mp3"; sourceTree = "<group>"; };
+		04FBB8811D414E87007D1A52 /* light_bulb_smash.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = light_bulb_smash.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,6 +273,9 @@
 				047A65AD1D36CEDE005396D9 /* dotHit.wav */,
 				047A65AE1D36CEDE005396D9 /* wordsBlip.wav */,
 				047A65AF1D36CEDE005396D9 /* bgMusic.wav */,
+				04FBB87F1D414E87007D1A52 /* light_bulb_smash-2.mp3 */,
+				04FBB8801D414E87007D1A52 /* light_bulb_smash-3.mp3 */,
+				04FBB8811D414E87007D1A52 /* light_bulb_smash.mp3 */,
 				047A65B01D36CEDE005396D9 /* bgMusic2.mp3 */,
 				047A65B11D36CEDE005396D9 /* buttonTouched.wav */,
 				047A65B21D36CEDE005396D9 /* starPickup.wav */,
@@ -344,7 +353,9 @@
 				047A65BB1D36CEDE005396D9 /* bgMusic2.mp3 in Resources */,
 				047A65C71D36CF37005396D9 /* Assets.xcassets in Resources */,
 				047A65B81D36CEDE005396D9 /* dotHit.wav in Resources */,
+				04FBB8841D414E87007D1A52 /* light_bulb_smash.mp3 in Resources */,
 				047A65BD1D36CEDE005396D9 /* starPickup.wav in Resources */,
+				04FBB8821D414E87007D1A52 /* light_bulb_smash-2.mp3 in Resources */,
 				047A65BA1D36CEDE005396D9 /* bgMusic.wav in Resources */,
 				047A65B91D36CEDE005396D9 /* wordsBlip.wav in Resources */,
 				047A65A91D36CEC9005396D9 /* BallTrail.sks in Resources */,
@@ -353,6 +364,7 @@
 				04FBB87D1D4114E9007D1A52 /* BarrierBreak.sks in Resources */,
 				047A65761D36CDF7005396D9 /* Main.storyboard in Resources */,
 				047A65BF1D36CEDE005396D9 /* newCard.wav in Resources */,
+				04FBB8831D414E87007D1A52 /* light_bulb_smash-3.mp3 in Resources */,
 				047A65B71D36CEDE005396D9 /* nextLevel.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

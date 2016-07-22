@@ -94,6 +94,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let barrier_break_one = SKAction.playSoundFileNamed("light_bulb_smash.mp3", waitForCompletion: false)
     let barrier_break_two = SKAction.playSoundFileNamed("light_bulb_smash-2.mp3", waitForCompletion: false)
     let barrier_break_three = SKAction.playSoundFileNamed("light_bulb_smash-3.mp3", waitForCompletion: false)
+    let checkpointSound = SKAction.playSoundFileNamed("checkpoint.wav", waitForCompletion: false)
     
     //GameCenter
     var gameCenterAchievements = [String:GKAchievement]()
@@ -488,7 +489,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         currency.games += 1
         
         if currency.games == 50 {
+        
             incrementCurrentPercentageOfAchievement("achievement_50games", amount: 100.0)
+            currency.coins += 75
+        }
+        
+        if currency.games == 100 {
+            incrementCurrentPercentageOfAchievement("achievement_100games", amount: 100.0)
+            currency.coins += 75
+        }
+        
+        if currency.games == 200 {
+            incrementCurrentPercentageOfAchievement("achievement_200games", amount: 100.0)
+            currency.coins += 75
+        }
+        
+        if currency.games == 500 {
+            incrementCurrentPercentageOfAchievement("achievement_500games", amount: 100.0)
+            currency.coins += 75
         }
         
         if GameScene.highscoreInt == GameScene.scoreInt {
@@ -562,19 +580,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 else if secondBody.node?.name == "Star" {
                     
+                    //handing the Star and its effects
                     let moveAction = SKAction.moveTo(CGPoint(x: score.position.x, y: score.position.y), duration: 0.8)
                     secondBody.node?.runAction(SKAction.sequence([moveAction,fade,SKAction.removeFromParent()]))
                     
+                    // adding the checkpoint text
                     starHit = SKSpriteNode(imageNamed: "Checkpoint")
                     starHit.position = CGPoint(x: self.frame.width / 2, y: self.frame.height/2 - 210)
                     starHit.setScale(0)
                     self.addChild(starHit)
+                    
+                    // checkpoint sound effect
+                    self.runAction(checkpointSound)
                     
                     let scale = SKAction.scaleTo(1.1, duration: 0.3)
                     let disappear = SKAction.scaleTo(0.0, duration: 0.3)
                     let wait = SKAction.waitForDuration(1.0)
                     let cycle = SKAction.sequence([scale,wait,disappear])
                     
+                    
+                    // animating the Checkpoint Text
                     starHit.runAction(cycle) {
                         self.starHit.removeFromParent()
                     }
@@ -1105,11 +1130,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         achievement.percentComplete = percentComplete
         achievement.showsCompletionBanner = true
-        
-        if achievement.percentComplete == 100 {
-            currency.coins += 75
-            coinNotifier.text = "\(currency.coins)"
-        }
         
         let achievementArray: [GKAchievement] = [achievement]
         

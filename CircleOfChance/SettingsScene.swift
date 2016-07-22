@@ -1,9 +1,9 @@
 //
 //  SettingsScene.swift
-//  Misfortune
+//  Circle of Chance
 //
-//  Created by Mac on 6/7/16.
-//  Copyright © 2016 MasterKey. All rights reserved.
+//  Created by Mac on 6/6/16.
+//  Copyright (c) 2016 KJB Apps LLC. All rights reserved.
 //
 
 import SpriteKit

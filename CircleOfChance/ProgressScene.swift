@@ -134,8 +134,8 @@ class ProgressScene: SKScene, GKGameCenterControllerDelegate {
                         }
                         print("\(id) - \(achievement.percentComplete)")
                     }
-                    self.achievementProgress = ((9 - self.count) / 9)
-                    self.achievementTextProgress = self.count / 9
+                    self.achievementProgress = ((16 - self.count) / 16)
+                    self.achievementTextProgress = self.count / 16
                     self.rounded = self.achievementTextProgress.roundToPlaces(2)
                     
                     self.percentNotifier.text = "\((self.rounded * 100))%"
@@ -207,7 +207,7 @@ class ProgressScene: SKScene, GKGameCenterControllerDelegate {
         let gKGCViewController = GKGameCenterViewController()
         gKGCViewController.gameCenterDelegate = self
         
-        gKGCViewController.viewState = state
+        gKGCViewController.viewState = GKGameCenterViewControllerState.Achievements
         viewControllerVar?.presentViewController(gKGCViewController, animated: true, completion: nil)
     }
     

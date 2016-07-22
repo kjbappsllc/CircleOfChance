@@ -1,9 +1,9 @@
 //
 //  MainMenu.swift
-//  Wheel of Misfortune
+//  Circle of Chance
 //
-//  Created by Mac on 6/2/16.
-//  Copyright © 2016 KeyEnt. All rights reserved.
+//  Created by Mac on 6/6/16.
+//  Copyright (c) 2016 KJB Apps LLC. All rights reserved.
 //
 
 import SpriteKit

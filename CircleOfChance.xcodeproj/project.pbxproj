@@ -69,6 +69,7 @@
 		04FBB8821D414E87007D1A52 /* light_bulb_smash-2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB87F1D414E87007D1A52 /* light_bulb_smash-2.mp3 */; };
 		04FBB8831D414E87007D1A52 /* light_bulb_smash-3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB8801D414E87007D1A52 /* light_bulb_smash-3.mp3 */; };
 		04FBB8841D414E87007D1A52 /* light_bulb_smash.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB8811D414E87007D1A52 /* light_bulb_smash.mp3 */; };
+		04FBB8861D41C7F8007D1A52 /* checkpoint.wav in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB8851D41C7F8007D1A52 /* checkpoint.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -137,6 +138,7 @@
 		04FBB87F1D414E87007D1A52 /* light_bulb_smash-2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "light_bulb_smash-2.mp3"; sourceTree = "<group>"; };
 		04FBB8801D414E87007D1A52 /* light_bulb_smash-3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "light_bulb_smash-3.mp3"; sourceTree = "<group>"; };
 		04FBB8811D414E87007D1A52 /* light_bulb_smash.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = light_bulb_smash.mp3; sourceTree = "<group>"; };
+		04FBB8851D41C7F8007D1A52 /* checkpoint.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = checkpoint.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +266,7 @@
 		047A65F41D36D322005396D9 /* Particles/Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				04FBB8851D41C7F8007D1A52 /* checkpoint.wav */,
 				04FBB87B1D4114E9007D1A52 /* BarrierBreak.sks */,
 				047A65A71D36CEC9005396D9 /* BallTrail.sks */,
 				047A65A61D36CEC9005396D9 /* GameOver.sks */,
@@ -366,6 +369,7 @@
 				047A65BF1D36CEDE005396D9 /* newCard.wav in Resources */,
 				04FBB8831D414E87007D1A52 /* light_bulb_smash-3.mp3 in Resources */,
 				047A65B71D36CEDE005396D9 /* nextLevel.wav in Resources */,
+				04FBB8861D41C7F8007D1A52 /* checkpoint.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

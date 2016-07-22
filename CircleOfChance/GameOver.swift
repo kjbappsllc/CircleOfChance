@@ -1,12 +1,13 @@
 //
 //  GameOver.swift
-//  Wheel of Misfortune
+//  Circle of Chance
 //
-//  Created by Mac on 5/31/16.
-//  Copyright © 2016 KeyEnt. All rights reserved.
+//  Created by Mac on 6/6/16.
+//  Copyright (c) 2016 KJB Apps LLC. All rights reserved.
 //
 
 import SpriteKit
+import GameKit
 
 class GameOver: SKScene, ChartboostDelegate {
     
@@ -27,6 +28,9 @@ class GameOver: SKScene, ChartboostDelegate {
     var currency = CurrencyManager()
     
     var movieButton = SKSpriteNode()
+    
+    //GameCenter
+    var gameCenterAchievements = [String:GKAchievement]()
     
     override func didMoveToView(view: SKView) {
         
@@ -134,6 +138,23 @@ class GameOver: SKScene, ChartboostDelegate {
         
         currency.coins += coinsMade
         currency.totalCoins += coinsMade
+        
+        if currency.totalCoins >= 1000 {
+            incrementCurrentPercentageOfAchievement("achievement_1000coins", amount: 100.0)
+        }
+        
+        if currency.totalCoins >= 3000 {
+            incrementCurrentPercentageOfAchievement("achievement_3000coins", amount: 100.0)
+        }
+        
+        if currency.totalCoins >= 7000 {
+            incrementCurrentPercentageOfAchievement("achievement_7000coins", amount: 100.0)
+        }
+        
+        if currency.totalCoins >= 12000 {
+            incrementCurrentPercentageOfAchievement("achievement_12000coins", amount: 100.0)
+        }
+        
         coinLabel.text = "\(currency.coins)"
         coinsMadeNotifier.text = "+ \(coinsMade)"
         
@@ -173,7 +194,7 @@ class GameOver: SKScene, ChartboostDelegate {
                     if GameScene.soundOn == true {
                         self.scene?.runAction(buttonTouched)
                     }
-                    if NSUserDefaults.standardUserDefaults().boolForKey("music") != false {
+                    if NSUserDefaults.standardUserDefaults().boolForKey("music") != false || !NSUserDefaults.standardUserDefaults().boolForKey("music") {
                         SKTAudio.sharedInstance().resumeBackgroundMusic()
                     }
                     GameScene.scoreInt = 0
@@ -198,7 +219,7 @@ class GameOver: SKScene, ChartboostDelegate {
                 if GameScene.soundOn == true {
                     self.scene?.runAction(buttonTouched)
                 }
-                if NSUserDefaults.standardUserDefaults().boolForKey("music") != false {
+                if NSUserDefaults.standardUserDefaults().boolForKey("music") != false  || !NSUserDefaults.standardUserDefaults().boolForKey("music")  {
                     SKTAudio.sharedInstance().resumeBackgroundMusic()
                 }
                 if let scene = MainMenu(fileNamed:"GameScene") {
@@ -251,6 +272,94 @@ class GameOver: SKScene, ChartboostDelegate {
             
             movieButton.runAction(SKAction.sequence([SKAction.scaleTo(0.0, duration: 0.3),SKAction.removeFromParent()]))
         }
+    }
+    
+    func loadAchievementPercentages() {
+        
+        GKAchievement.loadAchievementsWithCompletionHandler { (allAchievements, error) -> Void in
+            
+            if error != nil {
+                print("GC could not load ach, error:\(error)")
+            }
+            else
+            {
+                //nil if no progress on any achiement
+                if(allAchievements != nil) {
+                    for theAchiement in allAchievements! {
+                        
+                        if let singleAchievement:GKAchievement = theAchiement {
+                            
+                            self.gameCenterAchievements[singleAchievement.identifier!] = singleAchievement
+                        }
+                    }
+                }
+                
+                for(id,achievement) in self.gameCenterAchievements {
+                    print("\(id) - \(achievement.percentComplete)")
+                }
+                
+            }
+        }
+    }
+    func incrementCurrentPercentageOfAchievement (identifier:String, amount:Double) {
+        
+        if GKLocalPlayer.localPlayer().authenticated {
+            
+            var currentPercentFound:Bool = false
+            
+            if ( gameCenterAchievements.count != 0) {
+                
+                for (id,achievement) in gameCenterAchievements {
+                    print(id)
+                    if (id == identifier) {
+                        //progress on the achievement found
+                        currentPercentFound = true
+                        
+                        var currentPercent:Double = achievement.percentComplete
+                        
+                        currentPercent = currentPercent + amount
+                        
+                        reportAchievement(identifier,percentComplete:currentPercent)
+                        
+                        break
+                    }
+                }
+            }
+            
+            if (currentPercentFound == false) {
+                //no progress on the achievement
+                print("no progress")
+                reportAchievement(identifier,percentComplete:amount)
+                
+            }
+        }
+    }
+    
+    func reportAchievement (identifier:String, percentComplete:Double) {
+        
+        let achievement = GKAchievement(identifier: identifier)
+        
+        achievement.percentComplete = percentComplete
+        achievement.showsCompletionBanner = true
+        
+        let achievementArray: [GKAchievement] = [achievement]
+        
+        GKAchievement.reportAchievements(achievementArray, withCompletionHandler: {
+            
+            error -> Void in
+            
+            if ( error != nil) {
+                print(error)
+            }
+                
+            else {
+                
+                print ("reported achievement with % complete of \(percentComplete)")
+                
+                self.loadAchievementPercentages()
+            }
+            
+        })
     }
     
     func changeFontAction(label: SKLabelNode, color: UIColor) -> SKAction {

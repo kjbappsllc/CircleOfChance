@@ -358,6 +358,9 @@ class ShopScene: SKScene, ChartboostDelegate {
                 }
                 
                 if getMoreCoins.containsPoint(touchLocation) && getMoreCoins.alpha != 1{
+                    if GameScene.soundOn == true {
+                        self.scene?.runAction(buttonTouched)
+                    }
                     addOptions()
                     shopActive = true
                     getMoreCoins.alpha = 1.0
@@ -367,6 +370,9 @@ class ShopScene: SKScene, ChartboostDelegate {
                 }
                 
                 if coinBox.containsPoint(backtoMenuTouch) {
+                    if GameScene.soundOn == true {
+                        self.scene?.runAction(buttonTouched)
+                    }
                     addShopButtons()
                     shopActive = true
                 }
@@ -383,12 +389,18 @@ class ShopScene: SKScene, ChartboostDelegate {
             let node = self.nodeAtPoint(pos)
             
             if node == exitButton {
+                if GameScene.soundOn == true {
+                    self.scene?.runAction(buttonTouched)
+                }
                 backGround.removeAllChildren()
                 backGround.removeFromParent()
                 shopActive = false
             }
             
             if node == getMoreCoinsOptions {
+                if GameScene.soundOn == true {
+                    self.scene?.runAction(buttonTouched)
+                }
                 if pos.x < self.frame.size.width/2 {
                     backGround.removeAllChildren()
                     backGround.removeFromParent()

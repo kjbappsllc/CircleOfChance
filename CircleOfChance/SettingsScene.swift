@@ -255,14 +255,14 @@ class SettingsScene: SKScene {
                 if currentMusic == "bgMusic" {
                     SKTAudio.sharedInstance().playBackgroundMusic("bgMusic2.mp3")
                     currentMusic = "bgMusic2"
-                    if NSUserDefaults.standardUserDefaults().boolForKey("music") == false {
+                    if NSUserDefaults.standardUserDefaults().boolForKey("music") == false && NSUserDefaults.standardUserDefaults().boolForKey("music") {
                         SKTAudio.sharedInstance().pauseBackgroundMusic()
                     }
                 }
                 else {
                     SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
                     currentMusic = "bgMusic"
-                    if NSUserDefaults.standardUserDefaults().boolForKey("music") == false {
+                    if NSUserDefaults.standardUserDefaults().boolForKey("music") == false && NSUserDefaults.standardUserDefaults().boolForKey("music") {
                         SKTAudio.sharedInstance().pauseBackgroundMusic()
                     }
                 }

@@ -961,6 +961,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let node = self.nodeAtPoint(pos)
             
             if node == settingsIcon && IsPaused == false{
+                if GameScene.soundOn == true {
+                    self.scene?.runAction(buttonTouched)
+                }
                 pauseView = UIView(frame: CGRectMake(0, 0, self.view!.bounds.width, self.view!.bounds.height))
                 
                 let image = UIImage(named: "PlayButton")

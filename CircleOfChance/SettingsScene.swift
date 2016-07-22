@@ -42,19 +42,19 @@ class SettingsScene: SKScene {
             soundContainer.alpha = 0.5
         }
         
-        if !NSUserDefaults.standardUserDefaults().boolForKey("music") {
+        if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil {
             musicText.text = "Music Off"
             musicIcon.alpha = 1.0
             musicContainer.alpha = 1.0
         }
             
-        else if NSUserDefaults.standardUserDefaults().boolForKey("music") == false {
+        else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
             musicText.text = "Music On"
             musicIcon.alpha = 0.5
             musicContainer.alpha = 0.5
         }
         
-        else if NSUserDefaults.standardUserDefaults().boolForKey("music") == true {
+        else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
             musicText.text = "Music Off"
             musicIcon.alpha = 1.0
             musicContainer.alpha = 1.0
@@ -217,52 +217,77 @@ class SettingsScene: SKScene {
             }
             
             if soundContainer.containsPoint(touchLocation) {
-                if NSUserDefaults.standardUserDefaults().boolForKey("sound") == true {
-                    NSUserDefaults.standardUserDefaults().setBool(false, forKey: "sound")
+                if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") == nil {
+                    NSUserDefaults.standardUserDefaults().setObject(false, forKey: "soundOn")
                     GameScene.soundOn = false
                     soundText.text = "Sound On"
                     volumeIcon.texture = SKTexture(imageNamed: "NoSoundIcon")
                     soundContainer.alpha = 0.5
                     volumeIcon.alpha = 0.5
                 }
-                else if NSUserDefaults.standardUserDefaults().boolForKey("sound") == false{
-                    NSUserDefaults.standardUserDefaults().setBool(true, forKey: "sound")
+                else if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") as! Bool == false{
+                    NSUserDefaults.standardUserDefaults().setObject(true, forKey: "soundOn")
                     GameScene.soundOn = true
                     soundText.text = "Sound Off"
                     volumeIcon.texture = SKTexture(imageNamed: "soundIcon")
                     volumeIcon.alpha = 1.0
                     soundContainer.alpha = 1.0
                 }
+                
+                else if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") as! Bool == true {
+                    NSUserDefaults.standardUserDefaults().setObject(false, forKey: "soundOn")
+                    GameScene.soundOn = false
+                    soundText.text = "Sound On"
+                    volumeIcon.texture = SKTexture(imageNamed: "NoSoundIcon")
+                    soundContainer.alpha = 0.5
+                    volumeIcon.alpha = 0.5
+                }
             }
             
             if musicContainer.containsPoint(touchLocation){
-                if NSUserDefaults.standardUserDefaults().boolForKey("music") == true {
-                    NSUserDefaults.standardUserDefaults().setBool(false, forKey: "music")
+                if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil{
+                    NSUserDefaults.standardUserDefaults().setObject(false, forKey: "musicOn")
                     SKTAudio.sharedInstance().pauseBackgroundMusic()
                     musicText.text = "Music On"
                     musicIcon.alpha = 0.5
                     musicContainer.alpha = 0.5
                 }
-                else if NSUserDefaults.standardUserDefaults().boolForKey("music") == false {
-                    NSUserDefaults.standardUserDefaults().setBool(true, forKey: "music")
-                    SKTAudio.sharedInstance().resumeBackgroundMusic()
+                else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
+                    NSUserDefaults.standardUserDefaults().setObject(true, forKey: "musicOn")
+                    SKTAudio.sharedInstance().playBackgroundMusic(currentMusic)
                     musicText.text = "Music Off"
                     musicIcon.alpha = 1.0
                     musicContainer.alpha = 1.0
                 }
+                
+                else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
+                    NSUserDefaults.standardUserDefaults().setObject(false, forKey: "musicOn")
+                    SKTAudio.sharedInstance().pauseBackgroundMusic()
+                    musicText.text = "Music On"
+                    musicIcon.alpha = 0.5
+                    musicContainer.alpha = 0.5
+                }
             }
             if changeMusic.containsPoint(touchLocation) && changeMusic.alpha != 1 {
-                if currentMusic == "bgMusic" {
-                    SKTAudio.sharedInstance().playBackgroundMusic("bgMusic2.mp3")
-                    currentMusic = "bgMusic2"
-                    if NSUserDefaults.standardUserDefaults().boolForKey("music") == false && NSUserDefaults.standardUserDefaults().boolForKey("music") {
+                if currentMusic == "bgMusic.wav" {
+                    if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil  || NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
+                        SKTAudio.sharedInstance().playBackgroundMusic("bgMusic2.mp3")
+                        currentMusic = "bgMusic2.mp3"
+                    }
+                    else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
+                        SKTAudio.sharedInstance().playBackgroundMusic("bgMusic2.mp3")
+                        currentMusic = "bgMusic2.mp3"
                         SKTAudio.sharedInstance().pauseBackgroundMusic()
                     }
                 }
                 else {
-                    SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
-                    currentMusic = "bgMusic"
-                    if NSUserDefaults.standardUserDefaults().boolForKey("music") == false && NSUserDefaults.standardUserDefaults().boolForKey("music") {
+                    if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil || NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
+                        SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
+                        currentMusic = "bgMusic.wav"
+                    }
+                    else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
+                        SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
+                        currentMusic = "bgMusic.wav"
                         SKTAudio.sharedInstance().pauseBackgroundMusic()
                     }
                 }

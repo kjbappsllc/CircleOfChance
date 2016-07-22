@@ -86,4 +86,4 @@ public class SKTAudio {
 
 private let SKTAudioInstance = SKTAudio()
 let buttonTouched = SKAction.playSoundFileNamed("buttonTouched.wav", waitForCompletion: false)
-var currentMusic = "bgMusic"
+var currentMusic = "bgMusic.wav"

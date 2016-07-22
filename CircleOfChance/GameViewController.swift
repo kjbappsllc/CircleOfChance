@@ -21,26 +21,26 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
         
         super.viewDidLoad()
         
-        if !NSUserDefaults.standardUserDefaults().boolForKey("music") {
+        if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil {
              SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
         }
-        else if NSUserDefaults.standardUserDefaults().boolForKey("music") == false {
+        else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
             SKTAudio.sharedInstance().pauseBackgroundMusic()
         }
         
-        else if NSUserDefaults.standardUserDefaults().boolForKey("music") == true {
+        else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
             SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
         }
         
         
-        if !NSUserDefaults.standardUserDefaults().boolForKey("sound") {
+        if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") == nil {
             GameScene.soundOn = true
         }
-        else if NSUserDefaults.standardUserDefaults().boolForKey("sound") == false {
+        else if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") as! Bool == false {
             GameScene.soundOn = false
         }
         
-        else if NSUserDefaults.standardUserDefaults().boolForKey("sound") == true {
+        else if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") as! Bool == true {
             GameScene.soundOn = true
         }
         

@@ -30,6 +30,10 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
     var cardDescriptionsButton = UIButton()
     var helpViewActive = false
     
+    var notNewPlayer = false
+    var newPlayerTip = SKSpriteNode()
+    var backGround = SKShapeNode()
+    
     override func didMoveToView(view: SKView) {
         self.addChild(playButtonNode)
         self.addChild(bottomNode)
@@ -37,6 +41,8 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
     }
     
     func loadview() {
+        notNewPlayer = NSUserDefaults.standardUserDefaults().boolForKey("notNewPlayer")
+        
         scene?.backgroundColor = UIColor(red: 31/255, green: 30/255, blue: 30/255, alpha: 1.0)
         
         title = SKSpriteNode(imageNamed: "title")
@@ -55,6 +61,30 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
         
         addPlayButton()
         addBottomButtons()
+        
+        if notNewPlayer == false {
+            backGround = SKShapeNode(rect: CGRect(x: -self.frame.width/2, y: -self.frame.height/2, width: self.frame.width, height: self.frame.height))
+            backGround.fillColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.65)
+            backGround.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+            backGround.strokeColor = UIColor.clearColor()
+            backGround.zPosition = 10
+            helpButton.zPosition = 15
+            self.addChild(backGround)
+            
+            newPlayerTip = SKSpriteNode(imageNamed: "newPlayerTip")
+            newPlayerTip.zPosition = 20
+            newPlayerTip.anchorPoint = CGPoint(x: 0, y: 0.5)
+            newPlayerTip.position = CGPoint(x: helpButton.position.x + 60, y: helpButton.position.y - helpButton.frame.height/2)
+            self.addChild(newPlayerTip)
+            
+            let move = SKAction.moveTo(CGPoint(x: newPlayerTip.position.x + 15, y: newPlayerTip.position.y), duration: 0.75)
+            let moveBack = SKAction.moveTo(CGPoint(x: newPlayerTip.position.x, y: newPlayerTip.position.y), duration: 0.75)
+            let backnForth = SKAction.repeatActionForever(SKAction.sequence([move,moveBack]))
+            newPlayerTip.runAction(backnForth)
+            
+            NSUserDefaults.standardUserDefaults().setBool(true, forKey: "notNewPlayer")
+            
+        }
 
     }
     

@@ -27,6 +27,14 @@ class GameOver: SKScene, ChartboostDelegate {
     var replay = SKSpriteNode()
     var currency = CurrencyManager()
     
+    var backGround = SKShapeNode()
+    var adNotification = SKSpriteNode()
+    var watchAdLeft = SKSpriteNode()
+    var noAdRight = SKSpriteNode()
+    var adNotificationActive = false
+    
+    
+    
     var movieButton = SKSpriteNode()
     
     //GameCenter
@@ -39,6 +47,31 @@ class GameOver: SKScene, ChartboostDelegate {
         loadView()
         
         if Chartboost.hasRewardedVideo(CBLocationGameOver) {
+            adNotificationActive = true
+            backGround = SKShapeNode(rect: CGRect(x: -self.frame.width/2, y: -self.frame.height/2, width: self.frame.width, height: self.frame.height))
+            backGround.fillColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.65)
+            backGround.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
+            backGround.strokeColor = UIColor.clearColor()
+            backGround.zPosition = 10
+            self.addChild(backGround)
+            
+            adNotification = SKSpriteNode(imageNamed: "adNotification")
+            adNotification.setScale(0)
+            adNotification.zPosition = 15
+            backGround.addChild(adNotification)
+            
+            adNotification.runAction(SKAction.scaleTo(1.0, duration: 0.125))
+            
+            noAdRight = SKSpriteNode(imageNamed: "touchBox")
+            noAdRight.position = CGPoint(x: self.frame.width/2 + 83, y: self.frame.height/2 - 30)
+            noAdRight.zPosition = 20
+            backGround.addChild(noAdRight)
+            
+            watchAdLeft = SKSpriteNode(imageNamed: "touchBox")
+            watchAdLeft.position = CGPoint(x: self.frame.width/2 - 83, y: self.frame.height/2 - 30)
+            watchAdLeft.zPosition = 20
+            backGround.addChild(watchAdLeft)
+            
             let scale = SKAction.scaleTo(1.1, duration: 0.5)
             let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
             let pulsing = SKAction.sequence([scale,scaleback])
@@ -166,97 +199,133 @@ class GameOver: SKScene, ChartboostDelegate {
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first{
-            let touchLocation = touch.locationInNode(self)
-            if replay.containsPoint(touchLocation) {
-               replay.alpha = 0.5
+        if adNotificationActive == false {
+            if let touch = touches.first{
+                let touchLocation = touch.locationInNode(self)
+                if replay.containsPoint(touchLocation) {
+                   replay.alpha = 0.5
 
+                }
+                else if homeButton.containsPoint(touchLocation) {
+                    homeButton.alpha = 0.5
+                }
+                
+                else if movieButton.containsPoint(touchLocation) {
+                    movieButton.alpha = 0.5
+                }
+                
             }
-            else if homeButton.containsPoint(touchLocation) {
-                homeButton.alpha = 0.5
-            }
-            
-            else if movieButton.containsPoint(touchLocation) {
-                movieButton.alpha = 0.5
-            }
-            
         }
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first{
-            let touchLocation = touch.locationInNode(self)
-            if replay.containsPoint(touchLocation) && replay.alpha != 1 {
-                if Chartboost.hasRewardedVideo(CBLocationGameOver) == false {
-                    Chartboost.cacheRewardedVideo(CBLocationGameOver)
+        if adNotificationActive == false {
+            if let touch = touches.first{
+                let touchLocation = touch.locationInNode(self)
+                if replay.containsPoint(touchLocation) && replay.alpha != 1 {
+                    if Chartboost.hasRewardedVideo(CBLocationGameOver) == false {
+                        Chartboost.cacheRewardedVideo(CBLocationGameOver)
+                    }
+                    if let scene = GameScene(fileNamed:"GameScene") {
+                        if GameScene.soundOn == true {
+                            self.scene?.runAction(buttonTouched)
+                        }
+                        if NSUserDefaults.standardUserDefaults().boolForKey("music") != false || !NSUserDefaults.standardUserDefaults().boolForKey("music") {
+                            SKTAudio.sharedInstance().resumeBackgroundMusic()
+                        }
+                        GameScene.scoreInt = 0
+                        // Configure the view.
+                        let skView = self.view as SKView!
+                        skView.showsFPS = true
+                        skView.showsNodeCount = true
+                        /* Sprite Kit applies additional optimizations to improve rendering performance */
+                        skView.ignoresSiblingOrder = true
+                        /* Set the scale mode to scale to fit the window */
+                        scene.scaleMode = .AspectFill
+                        let transition = SKTransition.fadeWithDuration(0.8)
+                        skView.presentScene(scene, transition: transition)
+                    }
+                    
                 }
-                if let scene = GameScene(fileNamed:"GameScene") {
+                else {
+                    replay.alpha = 1
+                }
+                
+                if homeButton.containsPoint(touchLocation) && homeButton.alpha != 1 {
                     if GameScene.soundOn == true {
                         self.scene?.runAction(buttonTouched)
                     }
-                    if NSUserDefaults.standardUserDefaults().boolForKey("music") != false || !NSUserDefaults.standardUserDefaults().boolForKey("music") {
+                    if NSUserDefaults.standardUserDefaults().boolForKey("music") != false  || !NSUserDefaults.standardUserDefaults().boolForKey("music")  {
                         SKTAudio.sharedInstance().resumeBackgroundMusic()
                     }
-                    GameScene.scoreInt = 0
-                    // Configure the view.
-                    let skView = self.view as SKView!
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
-                    /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
-                    /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
+                    if let scene = MainMenu(fileNamed:"GameScene") {
+                        
+                        // Configure the view.
+                        let skView = self.view as SKView!
+                        skView.showsFPS = true
+                        skView.showsNodeCount = true
+                        /* Sprite Kit applies additional optimizations to improve rendering performance */
+                        skView.ignoresSiblingOrder = true
+                        /* Set the scale mode to scale to fit the window */
+                        scene.scaleMode = .AspectFill
+                        let transition = SKTransition.fadeWithDuration(0.8)
+                        skView.presentScene(scene, transition: transition)
+                    }
+                }
+                else {
+                    homeButton.alpha = 1
+                }
+                
+                if movieButton.containsPoint(touchLocation) && movieButton.alpha != 1 {
+                    if Chartboost.hasRewardedVideo(CBLocationGameOver) {
+                        Chartboost.showRewardedVideo(CBLocationGameOver)
+                    }
+                    movieButton.alpha = 1
+                }
+                
+                else {
+                    movieButton.alpha = 1
                 }
                 
             }
-            else {
-                replay.alpha = 1
-            }
+        }
+        askQuestion(touches)
+    }
+    
+    func askQuestion(touches: Set<UITouch>) {
+        if let touch = touches.first {
+            let touchlocation = touch.locationInNode(self)
             
-            if homeButton.containsPoint(touchLocation) && homeButton.alpha != 1 {
+            if noAdRight.containsPoint(touchlocation) {
                 if GameScene.soundOn == true {
                     self.scene?.runAction(buttonTouched)
                 }
-                if NSUserDefaults.standardUserDefaults().boolForKey("music") != false  || !NSUserDefaults.standardUserDefaults().boolForKey("music")  {
-                    SKTAudio.sharedInstance().resumeBackgroundMusic()
-                }
-                if let scene = MainMenu(fileNamed:"GameScene") {
-                    
-                    // Configure the view.
-                    let skView = self.view as SKView!
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
-                    /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
-                    /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
-                }
-            }
-            else {
-                homeButton.alpha = 1
+                adNotificationActive = false
+                backGround.removeFromParent()
+                backGround.removeAllChildren()
             }
             
-            if movieButton.containsPoint(touchLocation) && movieButton.alpha != 1 {
+            else if watchAdLeft.containsPoint(touchlocation) {
+                
+                if GameScene.soundOn == true {
+                    self.scene?.runAction(buttonTouched)
+                }
                 if Chartboost.hasRewardedVideo(CBLocationGameOver) {
                     Chartboost.showRewardedVideo(CBLocationGameOver)
                 }
-                movieButton.alpha = 1
             }
-            
-            else {
-                movieButton.alpha = 1
-            }
-            
         }
     }
     
     func didCompleteRewardedVideo(location: String!, withReward reward: Int32) {
         if location == CBLocationGameOver {
             currency.coins += Int(reward)
+            
+            if adNotificationActive == true {
+                adNotificationActive = false
+                backGround.removeFromParent()
+                backGround.removeAllChildren()
+            }
         }
     }
     

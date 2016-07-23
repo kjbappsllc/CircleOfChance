@@ -230,7 +230,12 @@ class GameOver: SKScene, ChartboostDelegate {
                         if GameScene.soundOn == true {
                             self.scene?.runAction(buttonTouched)
                         }
-                        if NSUserDefaults.standardUserDefaults().boolForKey("music") != false || !NSUserDefaults.standardUserDefaults().boolForKey("music") {
+                        if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") != nil  {
+                            if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool != false {
+                                SKTAudio.sharedInstance().resumeBackgroundMusic()
+                            }
+                        }
+                        else {
                             SKTAudio.sharedInstance().resumeBackgroundMusic()
                         }
                         GameScene.scoreInt = 0
@@ -255,7 +260,12 @@ class GameOver: SKScene, ChartboostDelegate {
                     if GameScene.soundOn == true {
                         self.scene?.runAction(buttonTouched)
                     }
-                    if NSUserDefaults.standardUserDefaults().boolForKey("music") != false  || !NSUserDefaults.standardUserDefaults().boolForKey("music")  {
+                    if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") != nil  {
+                        if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool != false {
+                            SKTAudio.sharedInstance().resumeBackgroundMusic()
+                        }
+                    }
+                    else {
                         SKTAudio.sharedInstance().resumeBackgroundMusic()
                     }
                     if let scene = MainMenu(fileNamed:"GameScene") {

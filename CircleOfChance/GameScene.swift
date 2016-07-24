@@ -591,7 +591,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     self.addChild(starHit)
                     
                     // checkpoint sound effect
-                    self.runAction(checkpointSound)
+                    if GameScene.soundOn == true {
+                        self.runAction(checkpointSound)
+                    }
                     
                     let scale = SKAction.scaleTo(1.1, duration: 0.3)
                     let disappear = SKAction.scaleTo(0.0, duration: 0.3)
@@ -682,8 +684,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                     }
                                 }
                             }
-                            
-                            self.runAction(barrier_break_one)
+                            if GameScene.soundOn {
+                                self.runAction(barrier_break_one)
+                            }
                             
                         case 75..<95:
                             var limit = 0
@@ -703,7 +706,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                     }
                                 }
                             }
-                            self.runAction(barrier_break_two)
+                            if GameScene.soundOn == true {
+                                self.runAction(barrier_break_two)
+                            }
 
                         default:
                             var limit = 0
@@ -723,7 +728,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                     }
                                 }
                             }
-                            self.runAction(barrier_break_three)
+                            if GameScene.soundOn == true {
+                                self.runAction(barrier_break_three)
+                            }
                         }
                     }
                 }

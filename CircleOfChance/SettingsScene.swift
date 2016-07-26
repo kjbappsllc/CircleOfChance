@@ -26,6 +26,7 @@ class SettingsScene: SKScene {
     var changeMusicText2 = SKLabelNode()
     
     override func didMoveToView(view: SKView) {
+
         loadview()
         self.backgroundColor = SKColor(red: 31/255, green: 30/255, blue: 30/255, alpha: 1.0)
     
@@ -192,7 +193,9 @@ class SettingsScene: SKScene {
             }
             
             if resetHighScore.containsPoint(touchLocation) && resetHighScore.alpha != 1 {
-                self.scene?.runAction(buttonTouched)
+                if GameScene.soundOn == true {
+                    self.scene?.runAction(buttonTouched)
+                }
                 // Confirm some destructive action with a popup alert.
                 let alert = UIAlertController(title: "Are You Sure You Want To Reset Your High Score?", message: "", preferredStyle: UIAlertControllerStyle.Alert)
                 let cancelAction = UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: { (a) -> Void in

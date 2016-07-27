@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import StoreKit
 
 class ShopScene: SKScene, ChartboostDelegate {
     var shopTextContainer = SKShapeNode()
@@ -36,23 +37,29 @@ class ShopScene: SKScene, ChartboostDelegate {
     var shading = SKSpriteNode()
     
     var shopActive = false
+    let productID: NSSet = NSSet(objects: "com.KJBApps.CircleOfChance.500", "com.KJBApps.CircleOfChance.doublecoins", "com.KJBApps.CircleOfChance.1250", "com.KJBApps.CircleOfChance.3500", "com.KJBApps.CircleOfChance.7500", "com.KJBApps.CircleOfChance.23000")
     
-    var pricesArray = [Prices]()
-    
-    struct Prices {
-        var amount = Int()
-        var price = CGFloat()
-    }
-    
-    var price0 = Prices()
-    var price1 = Prices()
-    var price2 = Prices()
-    var price3 = Prices()
-    var price4 = Prices()
+    var store: IAPHelper?
+    var count = 0
+    var list = [SKProduct]()
     
     override func didMoveToView(view: SKView) {
+        
+        store = IAPHelper(productIds: productID as! Set<ProductIdentifier>)
+        
+        if IAPHelper.canMakePayments() {
+            store?.requestProducts({ (success, products) in
+                if success {
+                    self.list = products!
+                }
+            })
+        }
+        else {
+            print("can't make payments")
+        }
+        
+        
         Chartboost.setDelegate(self)
-        addPrices()
         addTitle()
         addSections()
         self.scene?.backgroundColor = UIColor(red: 31/255, green: 30/255, blue: 30/255, alpha: 1.0)
@@ -61,9 +68,9 @@ class ShopScene: SKScene, ChartboostDelegate {
             Chartboost.cacheRewardedVideo(CBLocationIAPStore)
             
         }
-
     }
     
+    //MARK: Scene setup
     func addTitle() {
         shopTextContainer = SKShapeNode(rectOfSize: CGSize(width: self.frame.size.width, height: 130))
         shopTextContainer.position = CGPoint(x: self.frame.width/2, y: self.frame.height - 65)
@@ -153,38 +160,55 @@ class ShopScene: SKScene, ChartboostDelegate {
         exitButton.zPosition = 5
         shopMenu.addChild(exitButton)
         
-        for i in 0...pricesArray.count-1 {
-            let price = SKSpriteNode(imageNamed: "priceContainer")
-            price.name = String(format: "price%d", i)
-            price.zPosition = 15
-            price.position = CGPoint(x: 0, y: -55 * CGFloat(i) + 130)
-            shopMenu.addChild(price)
-            
-            let amountLabel = SKLabelNode()
-            amountLabel.fontName = "DayPosterBlack"
-            amountLabel.fontSize = 20.0
-            amountLabel.text = "\(pricesArray[i].amount)"
-            amountLabel.position = CGPoint(x: price.position.x - 30, y: -10)
-            amountLabel.zPosition = 20
-            price.addChild(amountLabel)
-            
-            let priceLabel = SKLabelNode()
-            priceLabel.position = CGPoint(x: price.position.x + 75, y: -10)
-            priceLabel.fontName = "DayPosterBlack"
-            priceLabel.fontSize = 20.0
-            priceLabel.text = "$\(pricesArray[i].price)"
-            priceLabel.zPosition = 20
-            price.addChild(priceLabel)
-            
-            if i == pricesArray.count-1 {
-                let bestValue = SKLabelNode()
-                bestValue.fontName = "DayPosterBlack"
-                bestValue.fontSize = 17.0
-                bestValue.text = "best value"
-                bestValue.zPosition = 20
-                bestValue.position = CGPoint(x: price.position.x, y: price.position.y - 40)
-                shopMenu.addChild(bestValue)
+        if IAPHelper.canMakePayments() {
+            for product in list{
+                let prodID = product.productIdentifier
+                switch product.price.floatValue {
+    
+                    case 0.99:
+                        count = 0
+                    case 1.99:
+                        count = 1
+                    case 4.99:
+                        count = 2
+                    case 9.99:
+                        count = 3
+                    default:
+                        count = 4
+                    
+                }
+                if prodID != "com.KJBApps.CircleOfChance.doublecoins" {
+                    let price = SKSpriteNode(imageNamed: "priceContainer")
+                    price.name = prodID
+                    price.zPosition = 15
+                    price.position = CGPoint(x: 0, y: -60 * CGFloat(count) + 140)
+                    shopMenu.addChild(price)
+                    
+                    let amountLabel = SKLabelNode()
+                    amountLabel.fontName = "DayPosterBlack"
+                    amountLabel.fontSize = 20.0
+                    amountLabel.text = "\(product.localizedTitle)"
+                    amountLabel.position = CGPoint(x: price.position.x - 30, y: -10)
+                    amountLabel.zPosition = 20
+                    price.addChild(amountLabel)
+                    
+                    let priceLabel = SKLabelNode()
+                    priceLabel.position = CGPoint(x: price.position.x + 75, y: -10)
+                    priceLabel.fontName = "DayPosterBlack"
+                    priceLabel.fontSize = 20.0
+                    priceLabel.text = "$\(product.price.floatValue)"
+                    priceLabel.zPosition = 20
+                    price.addChild(priceLabel)
+                    
+                }
             }
+        }
+        else {
+            let unavailable = SKLabelNode()
+            unavailable.fontName = "DayPosterBlack"
+            unavailable.text = "Unavailable"
+            unavailable.fontSize = 16.0
+            shopMenu.addChild(unavailable)
         }
         
         restorePurchasesButton = SKSpriteNode(imageNamed: "restorePurchases")
@@ -226,28 +250,6 @@ class ShopScene: SKScene, ChartboostDelegate {
             shading.position = CGPoint(x: getMoreCoinsOptions.position.x + 85, y: getMoreCoinsOptions.position.y)
             getMoreCoinsOptions.addChild(shading)
         }
-    }
-    
-    func addPrices() {
-        price0.amount = 500
-        price0.price = 0.99
-        pricesArray.append(price0)
-        
-        price1.amount = 1200
-        price1.price = 1.99
-        pricesArray.append(price1)
-        
-        price2.amount = 3000
-        price2.price = 2.99
-        pricesArray.append(price2)
-        
-        price3.amount = 8000
-        price3.price = 9.99
-        pricesArray.append(price3)
-        
-        price4.amount = 23000
-        price4.price = 19.99
-        pricesArray.append(price4)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -294,6 +296,8 @@ class ShopScene: SKScene, ChartboostDelegate {
                     if GameScene.soundOn == true{
                         self.scene?.runAction(buttonTouched)
                     }
+                    SKPaymentQueue.defaultQueue().removeTransactionObserver(store!)
+                    
                     if let scene = MainMenu(fileNamed:"GameScene") {
                         
                         // Configure the view.
@@ -397,7 +401,7 @@ class ShopScene: SKScene, ChartboostDelegate {
                 shopActive = false
             }
             
-            if node == getMoreCoinsOptions {
+            else if node == getMoreCoinsOptions {
                 if GameScene.soundOn == true {
                     self.scene?.runAction(buttonTouched)
                 }
@@ -414,7 +418,29 @@ class ShopScene: SKScene, ChartboostDelegate {
                 }
             }
             
+            else if node == restorePurchasesButton {
+                store?.restorePurchases()
+            }
+            
+            else {
+                for product in list {
+                    if product.productIdentifier == node.name || product.productIdentifier == node.parent?.name{
+                        store?.buyProduct(product)
+                        
+                        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ShopScene.handlePurchaseNotification(_:)),
+                                                                         name: IAPHelper.IAPHelperPurchaseNotification,
+                                                                         object: nil)
+                        break
+                    }
+                }
+            }
+            
         }
+    }
+    
+    func handlePurchaseNotification(notification: NSNotification) {
+        coins.text = "\(currency.coins)"
+        
     }
     
     func didCompleteRewardedVideo(location: String!, withReward reward: Int32) {

@@ -18,11 +18,7 @@ class Character: SKSpriteNode {
         let texture = SKTexture(imageNamed: "Character")
         super.init(texture: texture,color: UIColor.clearColor(), size: CGSize(width: 32, height: 32))
         
-        self.physicsBody = SKPhysicsBody(circleOfRadius: 4.25)
-        self.physicsBody?.categoryBitMask = ballCategory
-        self.physicsBody?.contactTestBitMask = redBarrierCategory | dotCategory | textCategory
-        self.physicsBody?.affectedByGravity = false
-        self.physicsBody?.usesPreciseCollisionDetection = true
+        loadPhysics()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -55,6 +51,15 @@ class Character: SKSpriteNode {
     func SetBallSpeedClockWise(new:CGFloat) -> CGFloat {
         ballSpeedClockWise = new
         return ballSpeedClockWise
+    }
+    
+    func loadPhysics() {
+        self.physicsBody = SKPhysicsBody(circleOfRadius: 4.15)
+        self.physicsBody?.categoryBitMask = ballCategory
+        self.physicsBody?.contactTestBitMask = redBarrierCategory | dotCategory | textCategory
+        self.physicsBody?.affectedByGravity = false
+        self.physicsBody?.dynamic = true
+        self.physicsBody?.usesPreciseCollisionDetection = true
     }
     
 }

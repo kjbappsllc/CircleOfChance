@@ -250,22 +250,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         var added = false
         for i in 1...numberOfCircle {
             if (checkpoint != true) || (checkpoint == true && added == true) {
-                let circle = SKShapeNode(circleOfRadius: 6)
+                let circle = SKSpriteNode(imageNamed: "defaultTexture")
                 circle.alpha = 0
                 circle.physicsBody = SKPhysicsBody(circleOfRadius: 2)
                 circle.physicsBody?.categoryBitMask = dotCategory
                 circle.physicsBody?.contactTestBitMask = ballCategory
                 circle.physicsBody?.affectedByGravity = false
-                circle.physicsBody?.collisionBitMask = 0
-                circle.strokeColor = SKColor.clearColor()
-                circle.glowWidth = 1.0
+                circle.physicsBody?.collisionBitMask = ballCategory
+                circle.physicsBody?.dynamic = false
                 
                 if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-                    circle.fillColor = colorsArray[levelInt % colorsArray.count]
+                    circle.texture = SKTexture(imageNamed: "defaultTexture")
                 }
                 else {
-                    circle.fillTexture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
-                    circle.fillColor = SKColor.whiteColor()
+                    circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
                 }
                 
                 // You can get every single circle by name:
@@ -302,22 +300,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     added = true
                 }
                 else {
-                    let circle = SKShapeNode(circleOfRadius: 6)
+                    let circle = SKSpriteNode(imageNamed: "defaultTexture")
                     circle.alpha = 0
                     circle.physicsBody = SKPhysicsBody(circleOfRadius: 2)
                     circle.physicsBody?.categoryBitMask = dotCategory
                     circle.physicsBody?.contactTestBitMask = ballCategory
                     circle.physicsBody?.affectedByGravity = false
                     circle.physicsBody?.collisionBitMask = ballCategory
-                    circle.strokeColor = SKColor.clearColor()
-                    circle.glowWidth = 1.0
                     
                     if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-                        circle.fillColor = colorsArray[levelInt % colorsArray.count]
+                        circle.texture = SKTexture(imageNamed: "defaultTexture")
                     }
                     else {
-                        circle.fillTexture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
-                        circle.fillColor = SKColor.whiteColor()
+                        circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
                     }
                     
                     // You can get every single circle by name:
@@ -339,7 +334,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    func animateDot(circle: SKShapeNode) {
+    func animateDot(circle: SKSpriteNode) {
         let fadeIn = SKAction.fadeAlphaTo(1.0, duration: 0.4)
         let scale = SKAction.scaleTo(1.5, duration: 0.1)
         let scaleBack = SKAction.scaleTo(1.0, duration: 0.1)
@@ -886,24 +881,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func fluctuateBall(){
         let scale = SKAction.scaleTo(1.0, duration: 0.3)
-        let scaleUp = SKAction.scaleTo(1.5, duration: 0.3)
+        let scaleUp = SKAction.scaleTo(1.35, duration: 0.3)
         let scaling = SKAction.sequence([scaleUp,scale])
         let scalingCycle = SKAction.repeatActionForever(scaling)
         ball.runAction(scalingCycle, withKey: "fluctuate")
     }
     
     func Ghost() {
-        let fade = SKAction.fadeAlphaTo(0.5, duration: 0.2)
-        let fadeBack = SKAction.fadeAlphaTo(1.0, duration: 0.2)
-        let cycle = SKAction.sequence([fade,SKAction.waitForDuration(0.75),fadeBack,SKAction.waitForDuration(1.0)])
+        let fade = SKAction.fadeAlphaTo(0.5, duration: 0.0)
+        let fadeBack = SKAction.fadeAlphaTo(1.0, duration: 0.0)
+        let cycle = SKAction.sequence([fade,SKAction.waitForDuration(0.75),fadeBack,SKAction.waitForDuration(2.0)])
         
         ball.runAction(SKAction.repeatActionForever(cycle))
-        if ball.alpha != 1 {
-            ball.physicsBody?.categoryBitMask = ghostBallCategory
-        }
-        else {
-            ball.physicsBody?.categoryBitMask = ballCategory
-        }
+        
     }
     
     
@@ -1172,10 +1162,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
         if ball.alpha != 1 {
+            
             ball.physicsBody?.categoryBitMask = ghostBallCategory
+            ball.physicsBody?.collisionBitMask = redBarrierCategory
         }
         else {
             ball.physicsBody?.categoryBitMask = ballCategory
+            ball.physicsBody?.collisionBitMask = dotCategory | textCategory | redBarrierCategory
         }
 
     }

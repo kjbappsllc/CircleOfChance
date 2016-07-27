@@ -21,9 +21,11 @@
 */
 
 import StoreKit
+import SpriteKit
 
 public typealias ProductIdentifier = String
 public typealias ProductsRequestCompletionHandler = (success: Bool, products: [SKProduct]?) -> ()
+var currency = CurrencyManager()
 
 public class IAPHelper : NSObject {
     
@@ -83,7 +85,8 @@ extension IAPHelper{
   
   public func restorePurchases() {
      SKPaymentQueue.defaultQueue().restoreCompletedTransactions()
-  }
+    }
+    
 }
 
 
@@ -120,6 +123,7 @@ extension IAPHelper: SKPaymentTransactionObserver {
         for transaction in transactions {
             switch (transaction.transactionState) {
             case .Purchased:
+                buyCoins(transaction.payment.productIdentifier)
                 completeTransaction(transaction)
                 break
             case .Failed:
@@ -140,6 +144,32 @@ extension IAPHelper: SKPaymentTransactionObserver {
         print("completeTransaction...")
         deliverPurchaseNotificatioForIdentifier(transaction.payment.productIdentifier)
         SKPaymentQueue.defaultQueue().finishTransaction(transaction)
+    }
+    
+    func buyCoins(identifier: String) {
+        switch identifier {
+        case "com.KJBApps.CircleOfChance.500":
+            print("bought 500 coins")
+            currency.coins += 500
+            
+        case "com.KJBApps.CircleOfChance.1250":
+            print("bought 1250 coins")
+            currency.coins += 1250
+            
+        case "com.KJBApps.CircleOfChance.3500":
+            print("bought 3500 coins")
+            currency.coins += 3500
+            
+        case "com.KJBApps.CircleOfChance.7500":
+            print("bought 7500 coins")
+            currency.coins += 7500
+            
+        case "com.KJBApps.CircleOfChance.23000":
+            print("bought 23000 coins")
+            currency.coins += 23000
+        default:
+            print("nothing")
+        }
     }
     
     private func restoreTransaction(transaction: SKPaymentTransaction) {

@@ -33,6 +33,7 @@ class GameOver: SKScene, ChartboostDelegate {
     var noAdRight = SKSpriteNode()
     var adNotificationActive = false
     
+    var coinsMade = Int()
     
     
     var movieButton = SKSpriteNode()
@@ -157,13 +158,33 @@ class GameOver: SKScene, ChartboostDelegate {
         coinLabel.position = CGPoint(x: coins.position.x + 3, y: coins.position.y - 55)
         self.addChild(coinLabel)
         
-        coinsMadeNotifier.fontName = "DayPosterBlack"
-        coinsMadeNotifier.fontSize = 26.0
-        coinsMadeNotifier.position = CGPoint(x: coinLabel.position.x - 10, y: coinLabel.position.y - 40)
-        coinsMadeNotifier.fontColor = SKColor(red: 133/255, green: 0, blue: 241/255, alpha: 1.0)
-        self.addChild(coinsMadeNotifier)
+        if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == false {
+            coinsMade = GameScene.scoreInt / 16
+            
+            coinsMadeNotifier.fontName = "DayPosterBlack"
+            coinsMadeNotifier.fontSize = 26.0
+            coinsMadeNotifier.position = CGPoint(x: coinLabel.position.x - 10, y: coinLabel.position.y - 40)
+            coinsMadeNotifier.fontColor = SKColor(red: 133/255, green: 0, blue: 241/255, alpha: 1.0)
+            self.addChild(coinsMadeNotifier)
+        }
         
-        var coinsMade = GameScene.scoreInt / 16
+        else if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == true {
+            coinsMade = (GameScene.scoreInt / 16) * 2
+            
+            coinsMadeNotifier.fontName = "DayPosterBlack"
+            coinsMadeNotifier.fontSize = 26.0
+            coinsMadeNotifier.position = CGPoint(x: coinLabel.position.x - 10, y: coinLabel.position.y - 40)
+            coinsMadeNotifier.fontColor = SKColor(red: 223/255, green: 147/255, blue: 0, alpha: 1.0)
+            self.addChild(coinsMadeNotifier)
+            
+            let doubleC = SKLabelNode()
+            doubleC.fontName = "DayPosterBlack"
+            doubleC.fontSize = 14.0
+            doubleC.position = CGPoint(x: coinsMadeNotifier.position.x + 10, y: coinsMadeNotifier.position.y - 25)
+            doubleC.fontColor = SKColor(red: 223/255, green: 147/255, blue: 0, alpha: 1.0)
+            doubleC.text = "x2"
+            self.addChild(doubleC)
+        }
         
         if coinsMade < 0 {
             coinsMade = 0

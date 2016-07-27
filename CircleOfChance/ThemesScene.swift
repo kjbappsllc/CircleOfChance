@@ -171,7 +171,7 @@ class ThemesScene: SKScene {
     }
     
     func loadThemes() -> [Themes]? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(Skins.ArchiveURL.path!) as? [Themes]
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(Themes.ArchiveURL.path!) as? [Themes]
     }
     
     /// Touches began,

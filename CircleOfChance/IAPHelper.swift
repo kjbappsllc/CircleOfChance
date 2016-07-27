@@ -168,7 +168,7 @@ extension IAPHelper: SKPaymentTransactionObserver {
             print("bought 23000 coins")
             currency.coins += 23000
         default:
-            print("nothing")
+            print("Double Coins")
         }
     }
     

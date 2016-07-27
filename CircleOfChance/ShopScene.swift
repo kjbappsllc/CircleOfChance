@@ -42,8 +42,10 @@ class ShopScene: SKScene, ChartboostDelegate {
     var store: IAPHelper?
     var count = 0
     var list = [SKProduct]()
+    var doubleCoinsBool = Bool()
     
     override func didMoveToView(view: SKView) {
+        doubleCoinsBool = NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins")
         
         store = IAPHelper(productIds: productID as! Set<ProductIdentifier>)
         
@@ -68,6 +70,10 @@ class ShopScene: SKScene, ChartboostDelegate {
             Chartboost.cacheRewardedVideo(CBLocationIAPStore)
             
         }
+    }
+    
+    deinit {
+        SKPaymentQueue.defaultQueue().removeTransactionObserver(store!)
     }
     
     //MARK: Scene setup
@@ -106,6 +112,10 @@ class ShopScene: SKScene, ChartboostDelegate {
         
         doubleCoins = SKSpriteNode(imageNamed: "doubleCoinsButton")
         doubleCoins.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 - 215)
+        
+        if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == true {
+            doubleCoins.alpha = 0.5
+        }
         self.addChild(doubleCoins)
         
         skinsSection = SKSpriteNode(imageNamed: "shopTextContainer")
@@ -282,6 +292,14 @@ class ShopScene: SKScene, ChartboostDelegate {
                 else {
                     getMoreCoins.alpha = 1.0
                 }
+                if doubleCoins.containsPoint(touchLocation) {
+                    doubleCoins.alpha = 0.5
+                }
+                else {
+                    if doubleCoinsBool != true {
+                        doubleCoins.alpha = 1.0
+                    }
+                }
             }
             
         }
@@ -296,7 +314,6 @@ class ShopScene: SKScene, ChartboostDelegate {
                     if GameScene.soundOn == true{
                         self.scene?.runAction(buttonTouched)
                     }
-                    SKPaymentQueue.defaultQueue().removeTransactionObserver(store!)
                     
                     if let scene = MainMenu(fileNamed:"GameScene") {
                         
@@ -355,6 +372,7 @@ class ShopScene: SKScene, ChartboostDelegate {
                         let transition = SKTransition.fadeWithDuration(0.8)
                         skView.presentScene(scene, transition: transition)
                     }
+                    themesSection.alpha = 1.0
                 }
                 
                 else {
@@ -371,6 +389,26 @@ class ShopScene: SKScene, ChartboostDelegate {
                 }
                 else {
                     getMoreCoins.alpha = 1.0
+                }
+                
+                if doubleCoins.containsPoint(touchLocation) && doubleCoins.alpha != 1 {
+                    for product in list {
+                        if product.productIdentifier == "com.KJBApps.CircleOfChance.doublecoins" {
+                            if let isTrue = store?.isProductPurchased("com.KJBApps.CircleOfChance.doublecoins") {
+                                if isTrue == false {
+                                    store?.buyProduct(product)
+                                }
+                            }
+                        }
+                    }
+                    if doubleCoinsBool != true {
+                        doubleCoins.alpha = 1.0
+                    }
+                }
+                else {
+                    if doubleCoinsBool != true {
+                        doubleCoins.alpha = 1.0
+                    }
                 }
                 
                 if coinBox.containsPoint(backtoMenuTouch) {
@@ -439,7 +477,14 @@ class ShopScene: SKScene, ChartboostDelegate {
     }
     
     func handlePurchaseNotification(notification: NSNotification) {
-        coins.text = "\(currency.coins)"
+        guard let productID = notification.object as? String else { return }
+        
+        if productID == "com.KJBApps.CircleOfChance.doublecoins" {
+            doubleCoins.alpha = 0.5
+        }
+        else {
+            coins.text = "\(currency.coins)"
+        }
         
     }
     

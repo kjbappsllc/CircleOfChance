@@ -32,6 +32,7 @@ class ShopScene: SKScene, ChartboostDelegate {
     var backGround = SKShapeNode()
     var exitButton = SKSpriteNode()
     var restorePurchasesButton = SKSpriteNode()
+    var restorePurchasesLabel = SKLabelNode()
     
     var getMoreCoinsOptions = SKSpriteNode()
     var shading = SKSpriteNode()
@@ -226,7 +227,7 @@ class ShopScene: SKScene, ChartboostDelegate {
         restorePurchasesButton.zPosition = 20
         shopMenu.addChild(restorePurchasesButton)
         
-        let restorePurchasesLabel = SKLabelNode()
+        restorePurchasesLabel = SKLabelNode()
         restorePurchasesLabel.fontName = "DayPosterBlack"
         restorePurchasesLabel.fontSize = 20.0
         restorePurchasesLabel.text = "Restore Purchases"
@@ -456,8 +457,12 @@ class ShopScene: SKScene, ChartboostDelegate {
                 }
             }
             
-            else if node == restorePurchasesButton {
+            else if node == restorePurchasesButton || node.inParentHierarchy(restorePurchasesButton) {
                 store?.restorePurchases()
+                
+                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ShopScene.handlePurchaseNotification(_:)),
+                                                                 name: IAPHelper.IAPHelperPurchaseNotification,
+                                                                 object: nil)
             }
             
             else {

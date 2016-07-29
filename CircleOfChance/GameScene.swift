@@ -260,7 +260,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 circle.physicsBody?.dynamic = false
                 
                 if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-                    circle.texture = SKTexture(imageNamed: "defaultTexture")
+                    if levelInt % 2 == 0 {
+                        circle.texture = SKTexture(imageNamed: "defaultTexture")
+                    }
+                    else {
+                        circle.texture = SKTexture(imageNamed: "defaultTexture2")
+                    }
                 }
                 else {
                     circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
@@ -309,7 +314,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     circle.physicsBody?.collisionBitMask = ballCategory
                     
                     if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-                        circle.texture = SKTexture(imageNamed: "defaultTexture")
+                        if levelInt % 2 == 0 {
+                            circle.texture = SKTexture(imageNamed: "defaultTexture")
+                        }
+                        else {
+                            circle.texture = SKTexture(imageNamed: "defaultTexture2")
+                        }
                     }
                     else {
                         circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)

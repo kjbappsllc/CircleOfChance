@@ -148,7 +148,7 @@ class ThemesScene: SKScene {
                 theme.alpha = 1.0
                 let locked = SKSpriteNode(imageNamed: "unlock")
                 locked.name = "lock"
-                locked.position = CGPoint(x: -shape.frame.size.width/2 + 50, y: 0)
+                locked.position = CGPoint(x: -shape.frame.size.width/2 + 50, y: shape.frame.size.height/2 - 40)
                 shape.addChild(locked)
                 price.removeFromParent()
             }

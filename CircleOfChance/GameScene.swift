@@ -13,27 +13,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     //grouping Barriers Array
-    var barrierArray = [barrier]()
-    var dotsArray = [String]()
-    var colorsArray = [UIColor]()
-    var cardsDictionary : [String:Bool] = [:]
-    var cardsArray = [String]()
-    let card = FateCard()
+    private var barrierArray = [barrier]()
+    private var dotsArray = [String]()
+    private var cardsDictionary : [String:Bool] = [:]
+    private var cardsArray = [String]()
+    private let card = ChanceCard()
     
     //gameEssentials
-    var ball = Character()
-    var star = StarIcon()
+    private var ball = Character()
+    private var star = StarIcon()
     
     //Barriers
-    var barrierLeft = barrier()
-    var barrierRight = barrier()
-    var barrierBottom = barrier()
-    var barrierTop = barrier()
-    var barrierTopLeft = barrier()
-    var barrierTopRight = barrier()
-    var barrierBottomLeft = barrier()
-    var barrierBottomRight = barrier()
-    var hasIncreased = false
+    private var barrierLeft = barrier()
+    private var barrierRight = barrier()
+    private var barrierBottom = barrier()
+    private var barrierTop = barrier()
+    private var barrierTopLeft = barrier()
+    private var barrierTopRight = barrier()
+    private var barrierBottomLeft = barrier()
+    private var barrierBottomRight = barrier()
+    private var hasIncreased = false
+    
     var barrierCount = 0
     
     //Icons
@@ -147,11 +147,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for (cards,_) in cardsDictionary {
             cardsArray.append(cards)
         }
-        //Adding the colors to the dots
-        colorsArray.append(UIColor(red: 1.0, green: 215/255, blue: 0, alpha: 1.0))
-        colorsArray.append(UIColor(red: 220/255, green: 255/255, blue: 0.0, alpha: 1.0))
-        colorsArray.append(UIColor(red: 1.0, green: 173/255, blue: 38/255, alpha: 1.0))
-        colorsArray.append(UIColor(red: 38/255, green: 244/255, blue: 198/255, alpha: 1.0))
         
         scene?.backgroundColor = UIColor(red: 31/255, green: 30/255, blue: 30/255, alpha: 1.0)
         self.addChild(gameNodeGroup)

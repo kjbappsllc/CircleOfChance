@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-class FateCard: SKSpriteNode {
+class ChanceCard: SKSpriteNode {
     
     init() {
         let texture = SKTexture(imageNamed: "MotionCard")

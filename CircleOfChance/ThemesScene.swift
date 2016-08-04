@@ -11,9 +11,9 @@ import GameKit
 
 class ThemesScene: SKScene {
     
-    var shopTextContainer = SKShapeNode()
+    var shopTextContainer = SKSpriteNode()
     var backtoMenuButton = SKSpriteNode()
-    var skinsText = SKLabelNode()
+    var themesText = SKLabelNode()
     var coinBox = SKSpriteNode()
     var coins = SKLabelNode()
     
@@ -60,30 +60,31 @@ class ThemesScene: SKScene {
         addThemes()
     }
     
+    //MARK: Scene setup
     func addTitle() {
-        shopTextContainer = SKShapeNode(rectOfSize: CGSize(width: self.frame.size.width, height: 130))
+        shopTextContainer = SKSpriteNode(imageNamed: "ShoppingTopContainer")
+        shopTextContainer.size = CGSize(width: self.size.width, height: shopTextContainer.size.height + 50)
         shopTextContainer.position = CGPoint(x: self.frame.width/2, y: self.frame.height - 65)
-        shopTextContainer.fillColor = UIColor(red: 133/255, green: 0, blue: 241/255, alpha: 1.0)
-        shopTextContainer.strokeColor = UIColor.clearColor()
-        shopTextContainer.zPosition = 20
+        shopTextContainer.zPosition = 10
         self.addChild(shopTextContainer)
         
         backtoMenuButton = SKSpriteNode(imageNamed: "backButton")
         backtoMenuButton.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        backtoMenuButton.position = CGPoint(x: -120, y: 0)
-        backtoMenuButton.zPosition = 20
+        backtoMenuButton.size = CGSize(width: backtoMenuButton.size.width - 5, height: backtoMenuButton.size.height - 5)
+        backtoMenuButton.position = CGPoint(x: -120, y: -5)
+        backtoMenuButton.zPosition = 15
         shopTextContainer.addChild(backtoMenuButton)
         
-        skinsText.fontName = "DayPosterBlack"
-        skinsText.fontSize = 50.0
-        skinsText.text = "Themes"
-        skinsText.position = CGPoint(x: 0, y: -23)
-        skinsText.zPosition = 25
-        shopTextContainer.addChild(skinsText)
+        themesText.fontName = "DayPosterBlack"
+        themesText.fontSize = 50.0
+        themesText.text = "Themes"
+        themesText.position = CGPoint(x: 0, y: -18)
+        themesText.zPosition = 1
+        shopTextContainer.addChild(themesText)
         
         coinBox = SKSpriteNode(imageNamed: "coinBox")
-        coinBox.position = CGPoint(x: 0, y: -50)
-        coinBox.zPosition = 25
+        coinBox.position = CGPoint(x: 0, y: -45)
+        coinBox.zPosition = 15
         shopTextContainer.addChild(coinBox)
         coins.fontName = "DayPosterBlack"
         coins.fontColor = UIColor.whiteColor()
@@ -91,7 +92,6 @@ class ThemesScene: SKScene {
         coins.zPosition = 1
         coins.text = "\(currency.coins)"
         coins.fontSize = 16.0
-        coins.zPosition = 25
         coinBox.addChild(coins)
     }
     func loadInitialThemes() {
@@ -293,7 +293,7 @@ class ThemesScene: SKScene {
             
             // Set Top and Bottom scroll distances, measured in screenlengths
             let topLimit:CGFloat = 0.0
-            let bottomLimit:CGFloat = CGFloat(ThemesArray.count) / ((self.frame.height + shopTextContainer.frame.size.height) / 395)
+            let bottomLimit:CGFloat = CGFloat(ThemesArray.count) / ((self.frame.height + shopTextContainer.frame.size.height) / 425)
             
             // Set scrolling speed - Higher number is faster speed
             let scrollSpeed:CGFloat = 1.3

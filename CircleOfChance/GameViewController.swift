@@ -59,6 +59,10 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
         }
 
         
+        if Chartboost.hasRewardedVideo(CBLocationIAPStore) == false {
+            Chartboost.cacheRewardedVideo(CBLocationIAPStore)
+            
+        }
         loadBanner()
 
     }

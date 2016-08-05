@@ -15,7 +15,7 @@ class barrier: SKSpriteNode {
     init(){
         barrierSpeed = 80.0
         passable = true
-        let texture = SKTexture(imageNamed: "GreenBarrier")
+        let texture = SKTexture(imageNamed: "RedBarrier")
         super.init(texture: texture,color: UIColor.clearColor(), size: texture.size())
         alpha = 0
         zPosition = 5

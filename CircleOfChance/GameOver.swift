@@ -357,6 +357,7 @@ class GameOver: SKScene, ChartboostDelegate {
                 backGround.removeFromParent()
                 backGround.removeAllChildren()
             }
+            Chartboost.cacheRewardedVideo(CBLocationGameOver)
         }
     }
     

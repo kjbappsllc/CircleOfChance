@@ -164,14 +164,14 @@ class ThemesScene: SKScene {
     //Mark: NSCoding
     
     func saveThemes() {
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(ThemesArray, toFile: Themes.ArchiveURL.path!)
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(ThemesArray, toFile: Themes.ArchiveURL!.path!)
         if !isSuccessfulSave {
             print("Failed to save Themes...")
         }
     }
     
     func loadThemes() -> [Themes]? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(Themes.ArchiveURL.path!) as? [Themes]
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(Themes.ArchiveURL!.path!) as? [Themes]
     }
     
     /// Touches began,

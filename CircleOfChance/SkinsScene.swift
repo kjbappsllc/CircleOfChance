@@ -204,14 +204,14 @@ class SkinsScene: SKScene {
     //Mark: NSCoding
     
     func saveSkins() {
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(skinsArray, toFile: Skins.ArchiveURL.path!)
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(skinsArray, toFile: Skins.ArchiveURL!.path!)
         if !isSuccessfulSave {
             print("Failed to save Skins...")
         }
     }
     
     func loadSkins() -> [Skins]? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(Skins.ArchiveURL.path!) as? [Skins]
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(Skins.ArchiveURL!.path!) as? [Skins]
     }
     
     /// Touches began,

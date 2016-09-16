@@ -344,6 +344,7 @@ class ShopScene: SKScene, ChartboostDelegate {
         }
         backGround.removeAllChildren()
         backGround.removeFromParent()
+        Chartboost.cacheRewardedVideo(CBLocationIAPStore)
     }
     
     func didCloseRewardedVideo(location: String!) {

@@ -11,6 +11,10 @@ import GameKit
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    //Layers
+    private var gameLayer = SKNode()
+    private var hudLayer = SKNode()
+    private var pauseLayer = SKNode()
     
     //grouping Barriers Array
     private var barrierArray = [barrier]()
@@ -100,6 +104,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameCenterAchievements = [String:GKAchievement]()
     
     override func didMoveToView(view: SKView) {
+        anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        addChild(gameLayer)
+        
         loadAchievementPercentages()
         
         if (NSUserDefaults.standardUserDefaults().stringForKey("currentSkin") != nil){
@@ -117,7 +124,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ThemesScene.currentTheme = ["name": "defaultTheme", "OuterTexture": "Default", "InnerTexture": "Default", "dotTexture": "Default", "themeColor": UIColor(red: 133/255, green: 0, blue: 241/255, alpha: 1.0)]
         }
         loadView()
-        barrierLeft.addRedBarrier()
+        //barrierLeft.addRedBarrier()
         
         // add physics world
         physicsWorld.contactDelegate = self
@@ -127,11 +134,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //loads view
     func loadView() {
         //Sets Up the Scene
+        addBackground()
+        addGamePlayArea()
         
-        dotsArray.removeAll()
-        checkpoint = false
-        highScoreAchieved = false
-        barriersReversed = false
+        //dotsArray.removeAll()
+        //checkpoint = false
+        //highScoreAchieved = false
+        //barriersReversed = false
+        
+        /*
         cardsDictionary  = [
             "MotionCard": false,
             "FluctuateCard": false,
@@ -139,84 +150,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             "HasteCard": false,
             "UnstableCard": false
         ]
-        card.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2)
-        card.zPosition = 10
-        card.alpha = 0
-        self.addChild(card)
+ */
         
-        for (cards,_) in cardsDictionary {
-            cardsArray.append(cards)
-        }
-        
-        scene?.backgroundColor = UIColor(red: 31/255, green: 30/255, blue: 30/255, alpha: 1.0)
         self.addChild(gameNodeGroup)
-        addBall()
+        //addBall()
         
-        addText()
-        addBarriers()
-        addBackground()
-        addScoreDots()
-        MoveBarriers()
+        //addText()
+        //addBarriers()
+        
+        //addScoreDots()
+        //MoveBarriers()
     }
     
     func addBackground() {
-        let outerWheelCircle = SKShapeNode(circleOfRadius: 157.5)
-        outerWheelCircle.position = CGPointMake(frame.midX, frame.midY)
-        outerWheelCircle.strokeColor = ThemesScene.currentTheme["themeColor"] as! SKColor
-        outerWheelCircle.lineWidth = 18
-        outerWheelCircle.glowWidth = 5
+        //Adds the colorful background
         
-        if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-            outerWheelCircle.fillColor = UIColor(red: 32/255, green: 31/255, blue: 31/255, alpha: 1.0)
-        }
-        else {
-            outerWheelCircle.fillTexture = SKTexture(imageNamed: ThemesScene.currentTheme["outerTexture"] as! String)
-            outerWheelCircle.fillColor = SKColor.whiteColor()
-        }
+        let background = SKSpriteNode(imageNamed: "backGround")
+        background.zPosition = layerPositions.background.rawValue
+        gameLayer.addChild(background)
+    }
+    
+    func addGamePlayArea() {
+        //Adds the outside area where the game will be played
         
-        outerWheelCircle.zPosition = 1
-        gameNodeGroup.addChild(outerWheelCircle)
-        
-        let innerCirlce = SKShapeNode(circleOfRadius: 90)
-        innerCirlce.position = CGPointMake(frame.midX, frame.midY)
-        innerCirlce.strokeColor = ThemesScene.currentTheme["themeColor"] as! SKColor
-        innerCirlce.lineWidth = 4
-        innerCirlce.glowWidth = 2
-        
-        if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-            innerCirlce.fillColor = UIColor(red: 57/255, green: 49/255, blue: 49/255, alpha: 1.0)
-        }
-        else {
-            innerCirlce.fillTexture = SKTexture(imageNamed: ThemesScene.currentTheme["innerTexture"] as! String)
-            innerCirlce.fillColor = SKColor.whiteColor()
-        }
-        
-        innerCirlce.zPosition = 1
-        gameNodeGroup.addChild(innerCirlce)
-        
-        startingText.fontName = "DayPosterBlack"
-        startingText.fontColor = ThemesScene.currentTheme["themeColor"] as? SKColor
-        startingText.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 - 20)
-        startingText.fontSize = 24.0
-        startingText.text = "Chance"
-        startingText.zPosition = 5
-        gameNodeGroup.addChild(startingText)
-        
-        startingText.physicsBody = SKPhysicsBody(rectangleOfSize: CGSize(width: 30, height: 45))
-        startingText.physicsBody?.dynamic = false
-        startingText.physicsBody?.categoryBitMask = textCategory
-        startingText.physicsBody?.contactTestBitMask = ballCategory
-        
-        coinImage = SKSpriteNode(imageNamed: "coin")
-        coinImage.position = CGPoint(x: self.frame.width/2 - 205, y: self.frame.height - 58)
-        coinImage.size = CGSize(width: 30, height: 30)
-        coinImage.zPosition = 10
-        self.addChild(coinImage)
-        coinNotifier.fontName = "DayPosterBlack"
-        coinNotifier.fontSize = 18.0
-        coinNotifier.position = CGPoint(x: self.frame.width/2 - 153, y: self.frame.height-63)
-        coinNotifier.text = "\(currency.coins)"
-        self.addChild(coinNotifier)
+        let gamePlayArea = SKSpriteNode(imageNamed: "PlayingArea")
+        gamePlayArea.zPosition = layerPositions.gamePlayArea.rawValue
+        gamePlayArea.position = CGPoint(x: 0, y: -100)
+        gameLayer.addChild(gamePlayArea)
     }
     
     func removeText(label: SKLabelNode) {

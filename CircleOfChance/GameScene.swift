@@ -17,25 +17,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var pauseLayer = SKNode()
     
     //grouping Barriers Array
-    private var barrierArray = [barrier]()
+    
     private var dotsArray = [String]()
     private var cardsDictionary : [String:Bool] = [:]
     private var cardsArray = [String]()
     private let card = ChanceCard()
     
     //gameEssentials
+    private var gamePlayArea = SKSpriteNode()
     private var ball = Character()
     private var star = StarIcon()
     
     //Barriers
-    private var barrierLeft = barrier()
-    private var barrierRight = barrier()
-    private var barrierBottom = barrier()
-    private var barrierTop = barrier()
-    private var barrierTopLeft = barrier()
-    private var barrierTopRight = barrier()
-    private var barrierBottomLeft = barrier()
-    private var barrierBottomRight = barrier()
+    private var barrier1 = barrier()
+    private var barrier2 = barrier()
+    private var barrier3 = barrier()
+    private var barrier4 = barrier()
+    private var barrier5 = barrier()
+    private var barrier6 = barrier()
+    
+    private var barrierArray = [barrier]()
     private var hasIncreased = false
     
     var barrierCount = 0
@@ -106,6 +107,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func didMoveToView(view: SKView) {
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         addChild(gameLayer)
+        addChild(hudLayer)
+        
+        //Initializes the barrierArray to add all the barriers
+        barrierArray = [barrier1,barrier2,barrier3,barrier4,barrier5,barrier6]
         
         loadAchievementPercentages()
         
@@ -158,26 +163,190 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //addText()
         //addBarriers()
         
-        //addScoreDots()
         //MoveBarriers()
     }
     
+    //MARK: This function adds the background to the game
     func addBackground() {
         //Adds the colorful background
         
         let background = SKSpriteNode(imageNamed: "backGround")
         background.zPosition = layerPositions.background.rawValue
-        gameLayer.addChild(background)
+        self.addChild(background)
     }
     
+    //MARK:This function adds the gameplay area including the dots and the barriers
     func addGamePlayArea() {
         //Adds the outside area where the game will be played
         
-        let gamePlayArea = SKSpriteNode(imageNamed: "PlayingArea")
+        gamePlayArea = SKSpriteNode(imageNamed: "PlayingArea")
         gamePlayArea.zPosition = layerPositions.gamePlayArea.rawValue
-        gamePlayArea.position = CGPoint(x: 0, y: -100)
+        gamePlayArea.position = CGPoint(x: 0, y: OFFSET)
         gameLayer.addChild(gamePlayArea)
+        
+        //Adds the top bar/Also called the HUD
+        
+        let topBar = SKSpriteNode(imageNamed: "topBar")
+        topBar.zPosition = layerPositions.topLayer.rawValue
+        topBar.position = CGPoint(x: 0, y: (self.frame.height/2) - topBar.frame.height/2)
+        hudLayer.addChild(topBar)
+        
+        //Adds the Dots for the beginning of the game
+        addScoreUnits()
+        
+        //Adds the barriers
+        addBarriers()
+        MoveBarriers()
     }
+    
+    //MARK: THIS function adds the barriers to the gameplay area
+    func addBarriers() {
+        for i in 0...barrierArray.count-1 {
+            let angle = 2 * M_PI / Double(barrierArray.count) * Double(i)
+            
+            let barrierx = CONSTANTRADIUS * cos(CGFloat(angle))
+            let barriery = CONSTANTRADIUS * sin(CGFloat(angle))
+            
+            barrierArray[i].position = CGPoint(x: barrierx - gamePlayArea.position.x/2, y: barriery - gamePlayArea.position.y/2 - 10)
+            barrierArray[i].zRotation = CGFloat(angle)
+            gamePlayArea.addChild(barrierArray[i])
+            barrierArray[i].zPosition = layerPositions.barriers.rawValue
+            barrierArray[i].addRedBarrier()
+        }
+    }
+    
+    //MARK: This function adds the dots to the gamePlay area
+    func addScoreUnits() {
+        
+        //The constants
+        let randomNum = Int(arc4random_uniform(15) + 1)
+        let radius: CGFloat = CONSTANTRADIUS
+        let numberOfCircle = NUMBEROFCIRCLES
+        var added = false
+        for i in 1...numberOfCircle {
+            if (checkpoint != true) || (checkpoint == true && added == true) {
+                //Physics body
+                let circle = SKSpriteNode(imageNamed: "scoreDotYellow")
+                circle.alpha = 0
+                circle.physicsBody = SKPhysicsBody(circleOfRadius: 2)
+                circle.physicsBody?.categoryBitMask = dotCategory
+                circle.physicsBody?.contactTestBitMask = ballCategory
+                circle.physicsBody?.affectedByGravity = false
+                circle.physicsBody?.collisionBitMask = ballCategory
+                circle.physicsBody?.dynamic = false
+                
+                if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
+                    if levelInt % 2 == 0 {
+                        circle.texture = SKTexture(imageNamed: "scoreDotYellow")
+                    }
+                    else {
+                        circle.texture = SKTexture(imageNamed: "scoreDotWhite")
+                    }
+                }
+                else {
+                    circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
+                }
+                
+                // You can get every single circle by name:
+                circle.name = String(format:"circle%d",i)
+                dotsArray.append(circle.name!)
+                let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
+                
+                let circle_x = radius - radius * cos(CGFloat(angle))
+                let circle_y = radius - radius * sin(CGFloat(angle))
+                let initialPosition = CGPoint(x:circle_x, y:circle_y)
+                
+                let circleX = radius * cos(CGFloat(angle))
+                let circleY = radius * sin(CGFloat(angle))
+                let finalPosition = CGPoint(x:circleX - gamePlayArea.position.x / 2, y:circleY - gamePlayArea.position.y / 2 - 10)
+                
+                circle.position = initialPosition
+                circle.zPosition = layerPositions.dots.rawValue
+                
+                gamePlayArea.addChild(circle)
+                animateDot(circle, location: finalPosition)
+            }
+                
+            else if checkpoint == true && added == false {
+                if i == randomNum {
+                    let star = StarIcon()
+                    star.name = "Star"
+                    dotsArray.append("Star")
+                    
+                    let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
+                    
+                    let circle_x = radius - 10 * cos(CGFloat(angle))
+                    let circle_y = radius - 10 * sin(CGFloat(angle))
+                    let initialPosition = CGPoint(x:circle_x + frame.midX, y:circle_y + frame.midY + CGFloat(OFFSET/2 - 10))
+                    
+                    let circleX = radius * cos(CGFloat(angle))
+                    let circleY = radius * sin(CGFloat(angle))
+                    let finalPosition = CGPoint(x:circleX + frame.midX, y:circleY + frame.midY + CGFloat(OFFSET/2 - 10))
+                    
+                    star.position = initialPosition
+                    
+                    star.zPosition = layerPositions.dots.rawValue
+                    
+                    gameLayer.addChild(star)
+                    animateDot(star, location: finalPosition)
+                    star.animateStar()
+                    added = true
+                }
+                else {
+                    
+                    //Physics body
+                    let circle = SKSpriteNode(imageNamed: "scoreDotYellow")
+                    circle.alpha = 0
+                    circle.physicsBody = SKPhysicsBody(circleOfRadius: 2)
+                    circle.physicsBody?.categoryBitMask = dotCategory
+                    circle.physicsBody?.contactTestBitMask = ballCategory
+                    circle.physicsBody?.affectedByGravity = false
+                    circle.physicsBody?.collisionBitMask = ballCategory
+                    circle.physicsBody?.dynamic = false
+                    
+                    if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
+                        if levelInt % 2 == 0 {
+                            circle.texture = SKTexture(imageNamed: "scoreDotYellow")
+                        }
+                        else {
+                            circle.texture = SKTexture(imageNamed: "scoreDotWhite")
+                        }
+                    }
+                    else {
+                        circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
+                    }
+                    
+                    // You can get every single circle by name:
+                    circle.name = String(format:"circle%d",i)
+                    dotsArray.append(circle.name!)
+                    let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
+                    
+                    let circle_x = radius - 10 * cos(CGFloat(angle))
+                    let circle_y = radius - 10 * sin(CGFloat(angle))
+                    let initialPosition = CGPoint(x:circle_x, y:circle_y)
+                    
+                    let circleX = radius * cos(CGFloat(angle))
+                    let circleY = radius * sin(CGFloat(angle))
+                    let finalPosition = CGPoint(x:circleX, y:circleY )
+                    
+                    circle.position = initialPosition
+                    circle.zPosition = layerPositions.dots.rawValue
+                    
+                    gameLayer.addChild(circle)
+                    animateDot(circle, location: finalPosition)
+                }
+            }
+        }
+    }
+    
+    //MARK: This is to animate the dots into view
+    func animateDot(circle: SKSpriteNode, location: CGPoint) {
+        let moveAction = SKAction.moveTo(location, duration: 0.8)
+        let fadeIn = SKAction.fadeInWithDuration(0.5)
+        moveAction.timingMode = .EaseOut
+        circle.runAction(SKAction.group([moveAction,fadeIn]))
+    }
+    
     
     func removeText(label: SKLabelNode) {
         let fadeIn = SKAction.fadeAlphaTo(0.0, duration: 0.2)
@@ -196,158 +365,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.texture = SKTexture(imageNamed: SkinsScene.currentSkin)
         gameNodeGroup.addChild(ball)
         
-    }
-    
-    func addScoreDots() {
-        let randomNum = Int(arc4random_uniform(15) + 1)
-        let radius: CGFloat = CONSTANTRADIUS
-        let numberOfCircle = NUMBEROFCIRCLES
-        var added = false
-        for i in 1...numberOfCircle {
-            if (checkpoint != true) || (checkpoint == true && added == true) {
-                let circle = SKSpriteNode(imageNamed: "defaultTexture")
-                circle.alpha = 0
-                circle.physicsBody = SKPhysicsBody(circleOfRadius: 2)
-                circle.physicsBody?.categoryBitMask = dotCategory
-                circle.physicsBody?.contactTestBitMask = ballCategory
-                circle.physicsBody?.affectedByGravity = false
-                circle.physicsBody?.collisionBitMask = ballCategory
-                circle.physicsBody?.dynamic = false
-                
-                if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-                    if levelInt % 2 == 0 {
-                        circle.texture = SKTexture(imageNamed: "defaultTexture")
-                    }
-                    else {
-                        circle.texture = SKTexture(imageNamed: "defaultTexture2")
-                    }
-                }
-                else {
-                    circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
-                }
-                
-                // You can get every single circle by name:
-                circle.name = String(format:"circle%d",i)
-                dotsArray.append(circle.name!)
-                let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
-                
-                let circleX = radius * cos(CGFloat(angle))
-                let circleY = radius * sin(CGFloat(angle))
-                
-                circle.position = CGPoint(x:circleX + frame.midX, y:circleY + frame.midY)
-                circle.zPosition = 2
-                
-                gameNodeGroup.addChild(circle)
-                animateDot(circle)
-            }
-                
-            else if checkpoint == true && added == false {
-                if i == randomNum {
-                    let star = StarIcon()
-                    star.name = "Star"
-                    dotsArray.append("Star")
-                    
-                    let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
-                    
-                    let circleX = radius * cos(CGFloat(angle))
-                    let circleY = radius * sin(CGFloat(angle))
-                    
-                    star.position = CGPoint(x:circleX + frame.midX, y:circleY + frame.midY)
-                    star.zPosition = 2
-                    
-                    gameNodeGroup.addChild(star)
-                    star.animateStar()
-                    added = true
-                }
-                else {
-                    let circle = SKSpriteNode(imageNamed: "defaultTexture")
-                    circle.alpha = 0
-                    circle.physicsBody = SKPhysicsBody(circleOfRadius: 2)
-                    circle.physicsBody?.categoryBitMask = dotCategory
-                    circle.physicsBody?.contactTestBitMask = ballCategory
-                    circle.physicsBody?.affectedByGravity = false
-                    circle.physicsBody?.collisionBitMask = ballCategory
-                    
-                    if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-                        if levelInt % 2 == 0 {
-                            circle.texture = SKTexture(imageNamed: "defaultTexture")
-                        }
-                        else {
-                            circle.texture = SKTexture(imageNamed: "defaultTexture2")
-                        }
-                    }
-                    else {
-                        circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
-                    }
-                    
-                    // You can get every single circle by name:
-                    circle.name = String(format:"circle%d",i)
-                    dotsArray.append(circle.name!)
-                    let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
-                    
-                    let circleX = radius * cos(CGFloat(angle))
-                    let circleY = radius * sin(CGFloat(angle))
-                    
-                    circle.position = CGPoint(x:circleX + frame.midX, y:circleY + frame.midY)
-                    circle.zPosition = 2
-                    
-                    gameNodeGroup.addChild(circle)
-                    animateDot(circle)
-                }
-            }
-        }
-        
-    }
-    
-    func animateDot(circle: SKSpriteNode) {
-        let fadeIn = SKAction.fadeAlphaTo(1.0, duration: 0.4)
-        let scale = SKAction.scaleTo(1.5, duration: 0.1)
-        let scaleBack = SKAction.scaleTo(1.0, duration: 0.1)
-        
-        let cycle = SKAction.sequence([fadeIn,scale,scaleBack])
-        circle.runAction(cycle)
-        
-    }
-    
-    //Adds barriers to the scene
-    func addBarriers() {
-        barrierLeft.position = CGPoint(x: self.frame.width/2 - CONSTANTRADIUS, y: self.frame.height/2)
-        gameNodeGroup.addChild(barrierLeft)
-        barrierArray.append(barrierLeft)
-        
-        barrierRight.position = CGPoint(x: self.frame.width/2 + CONSTANTRADIUS, y: self.frame.height/2)
-        gameNodeGroup.addChild(barrierRight)
-        barrierArray.append(barrierRight)
-        
-        barrierTop.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 + CONSTANTRADIUS)
-        barrierTop.zRotation = 3.14 / 2
-        gameNodeGroup.addChild(barrierTop)
-        barrierArray.append(barrierTop)
-        
-        barrierBottom.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 - CONSTANTRADIUS)
-        barrierBottom.zRotation = 3.14 / 2
-        gameNodeGroup.addChild(barrierBottom)
-        barrierArray.append(barrierBottom)
-        
-        barrierTopLeft.position = CGPoint(x: self.frame.width / 2 - 83.25, y:self.frame.height / 2 + 83.25)
-        barrierTopLeft.zRotation = CGFloat((3*M_PI) / 4)
-        gameNodeGroup.addChild(barrierTopLeft)
-        barrierArray.append(barrierTopLeft)
-        
-        barrierTopRight.position = CGPoint(x: self.frame.width / 2 + 83.25, y:self.frame.height / 2 + 83.25)
-        barrierTopRight.zRotation = CGFloat(-(3*M_PI) / 4)
-        gameNodeGroup.addChild(barrierTopRight)
-        barrierArray.append(barrierTopRight)
-        
-        barrierBottomLeft.position = CGPoint(x: self.frame.width / 2 - 83.25, y:self.frame.height / 2 - 83.25)
-        barrierBottomLeft.zRotation = CGFloat((5*M_PI)/4)
-        gameNodeGroup.addChild(barrierBottomLeft)
-        barrierArray.append(barrierBottomLeft)
-        
-        barrierBottomRight.position = CGPoint(x: self.frame.width / 2 + 83.25, y:self.frame.height / 2 - 83.25)
-        barrierBottomRight.zRotation = CGFloat(-(5*M_PI)/4)
-        gameNodeGroup.addChild(barrierBottomRight)
-        barrierArray.append(barrierBottomRight)
     }
     
     //add the title bar to the scene
@@ -719,7 +736,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 else {
                     checkpoint = false
                 }
-                addScoreDots()
+                addScoreUnits()
                 resetted = true
                 
                 if ball.getballSpeedClockWise() < 350 && cardsDictionary["MotionCard"] == false{
@@ -817,10 +834,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func MoveBarriers(){
         for barrier in barrierArray {
-            let dx = barrier.position.x - self.frame.width/2
-            let dy = barrier.position.y - self.frame.height / 2
+            let dx = barrier.position.x
+            let dy = barrier.position.y
             let rad = atan2(dy,dx)
-            let Path3 = UIBezierPath(arcCenter: CGPoint(x: self.frame.width/2, y: self.frame.height/2), radius: CONSTANTRADIUS, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
+            let Path3 = UIBezierPath(arcCenter: CGPoint(x: 0, y: 30), radius: CONSTANTRADIUS, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
             
             let follow = SKAction.followPath(Path3.CGPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
             barrier.runAction(SKAction.repeatActionForever(follow), withKey: "Moving")

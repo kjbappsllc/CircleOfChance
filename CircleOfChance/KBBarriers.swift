@@ -18,7 +18,7 @@ class barrier: SKSpriteNode {
         let texture = SKTexture(imageNamed: "RedBarrier")
         super.init(texture: texture,color: UIColor.clearColor(), size: texture.size())
         alpha = 0
-        zPosition = 5
+        zPosition = layerPositions.barriers.rawValue
     }
     
     required internal init?(coder aDecoder: NSCoder) {
@@ -73,7 +73,7 @@ class barrier: SKSpriteNode {
         physicsBody = SKPhysicsBody(rectangleOfSize: size)
         physicsBody?.categoryBitMask = redBarrierCategory
         physicsBody?.contactTestBitMask = ballCategory
-        physicsBody?.collisionBitMask = 0
+        physicsBody?.collisionBitMask = ballCategory
         physicsBody?.affectedByGravity = false
         physicsBody?.dynamic = false
     }

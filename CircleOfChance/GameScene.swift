@@ -15,63 +15,57 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var gameLayer = SKNode()
     private var hudLayer = SKNode()
     private var pauseLayer = SKNode()
+    private var cropLayer = SKCropNode()
+    private var maskLayer = SKNode()
     
-    //grouping Barriers Array
-    
+    //groupings
     private var dotsArray = [String]()
-    private var cardsDictionary : [String:Bool] = [:]
-    private var cardsArray = [String]()
-    private let card = ChanceCard()
+    private var effectsArray = [Effect]()
+    private var barrierArray = [barrier]()
     
-    //gameEssentials
+    //Gameplay
     private var gamePlayArea = SKSpriteNode()
     private var ball = Character()
     private var star = StarIcon()
+    private var pauseScreen = SKSpriteNode()
+    private var multiplier = SKSpriteNode()
+    private var multiplyText = SKLabelNode()
+    private var mulitplyCounter = 1
     
-    //Barriers
-    private var barrier1 = barrier()
-    private var barrier2 = barrier()
-    private var barrier3 = barrier()
-    private var barrier4 = barrier()
-    private var barrier5 = barrier()
-    private var barrier6 = barrier()
+    //barriers
+    var barrier1 = barrier()
+    var barrier2 = barrier()
+    var barrier3 = barrier()
+    var barrier4 = barrier()
+    var barrier5 = barrier()
+    var barrier6 = barrier()
     
-    private var barrierArray = [barrier]()
-    private var hasIncreased = false
+    //effects
+    private let motionEffect = Effect(active: false, effecttype: EffectType.motion)
+    private let fluctuateEffect = Effect(active: false, effecttype: EffectType.fluctuate)
+    private let ghostEffect = Effect(active: false, effecttype: EffectType.ghost)
+    private let hasteEffect = Effect(active: false, effecttype: EffectType.haste)
+    private let unstableEffect = Effect(active: false, effecttype: EffectType.unstable)
+    private let shakeEffect = Effect(active: false, effecttype: EffectType.shake)
+    private var effectSprite = SKSpriteNode()
     
-    var barrierCount = 0
-    
-    //Icons
-    var settingsIcon = SKSpriteNode()
-    var informationIcon = SKSpriteNode()
-    var pauseView = UIView()
-    var pauseButton = UIButton()
-    var homeButton = UIButton()
-    var settingsButton = UIButton()
-    var pauseText = UILabel()
-    var coinImage = SKSpriteNode()
-    var achievementIcon = SKSpriteNode()
-    var achievementText = SKLabelNode()
-    
-    //Text
-    var highScoreContainer = SKSpriteNode()
-    var highScoreText = SKLabelNode()
-    static var highscoreInt = Int()
-    var highscore = SKLabelNode()
-    
-    var scoreContainer = SKSpriteNode()
+    //HUD
+    var topBar = SKSpriteNode()
+    var pause = SKSpriteNode()
+    let levelText = SKLabelNode()
+    var levelInt = 1
     var scoreText = SKLabelNode()
-    static var scoreInt = Int()
     var score = SKLabelNode()
     
-    var tapToStart = SKLabelNode()
+    //PauseLayer
+    var homeButton = SKSpriteNode()
+    var pausePlayButton = SKSpriteNode()
     
-    let levelText = SKLabelNode()
-    var levelCounterText = SKLabelNode()
-    var levelInt = 1
-    var startingText = SKLabelNode()
+    //HighScore
+    static var highscoreInt = Int()
+    var highscore = SKLabelNode()
+    static var scoreInt = Int()
     var newHighScore = SKLabelNode()
-    var coinNotifier = SKLabelNode()
     
     //GameLogic
     var Path = UIBezierPath()
@@ -79,8 +73,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameStarted = Bool()
     var isGameOver = false
     var IsPaused = false
-    var gameNodeGroup = SKNode()
-    var resetted = false
     var barriersReversed = Bool()
     var highScoreAchieved = Bool()
     var checkpoint = Bool()
@@ -88,32 +80,51 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var currency = CurrencyManager()
     var starHit = SKSpriteNode()
     
-    // sounds
-    let dotHitSound = SKAction.playSoundFileNamed("dotHit.wav", waitForCompletion: false)
-    let nextLevel = SKAction.playSoundFileNamed("nextLevel.wav", waitForCompletion: false)
-    let death = SKAction.playSoundFileNamed("death.wav", waitForCompletion: false)
-    let wordsBlip = SKAction.playSoundFileNamed("wordsBlip.wav", waitForCompletion: false)
-    let starPickup = SKAction.playSoundFileNamed("starPickup.wav", waitForCompletion: false)
-    let highScore = SKAction.playSoundFileNamed("newHighScore.wav", waitForCompletion: false)
-    let cardSound = SKAction.playSoundFileNamed("newCard.wav", waitForCompletion: false)
-    let barrier_break_one = SKAction.playSoundFileNamed("light_bulb_smash.mp3", waitForCompletion: false)
-    let barrier_break_two = SKAction.playSoundFileNamed("light_bulb_smash-2.mp3", waitForCompletion: false)
-    let barrier_break_three = SKAction.playSoundFileNamed("light_bulb_smash-3.mp3", waitForCompletion: false)
-    let checkpointSound = SKAction.playSoundFileNamed("checkpoint.wav", waitForCompletion: false)
+    
     
     //GameCenter
     var gameCenterAchievements = [String:GKAchievement]()
     
     override func didMoveToView(view: SKView) {
+        
+        
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         addChild(gameLayer)
         addChild(hudLayer)
         
-        //Initializes the barrierArray to add all the barriers
-        barrierArray = [barrier1,barrier2,barrier3,barrier4,barrier5,barrier6]
+        //Adds the cropLayer to the Scene and masks the middle area
+        gameLayer.addChild(cropLayer)
+        maskLayer.position = CGPoint(x: 0, y: -50)
+        let maskinglayer = SKSpriteNode(imageNamed: "cropLayer")
+        maskLayer.addChild(maskinglayer)
+        cropLayer.maskNode = maskLayer
+        cropLayer.zPosition = layerPositions.maskLayer.rawValue
+        effectSprite.zPosition = layerPositions.maskLayer.rawValue
+        effectSprite = SKSpriteNode(imageNamed: "fluctuate")
+        cropLayer.addChild(effectSprite)
         
+        effectSprite.position = CGPoint(x: 120, y: -50)
+        
+        //Pre set properties
+        gameLayer.hidden = true
+        hudLayer.hidden = true
+        ball.hidden = true
+        effectSprite.hidden = true
+        barriersReversed = false
+        checkpoint = false
+        highScoreAchieved = false
+        dotsArray.removeAll()
+        
+        //Initializes the barrierArray to add all the barriers
+        barrierArray = [barrier1,barrier2,barrier5,barrier3,barrier6,barrier4]
+        
+        //Intializes the effects array to add all of the effects
+        effectsArray = [motionEffect,fluctuateEffect, hasteEffect, ghostEffect, unstableEffect,shakeEffect]
+        
+        //Loads the Achievements from gameCenter
         loadAchievementPercentages()
         
+        //This Detects from NSUserDefauls whether or not if you have a skin before the data is viewed.
         if (NSUserDefaults.standardUserDefaults().stringForKey("currentSkin") != nil){
             SkinsScene.currentSkin = NSUserDefaults.standardUserDefaults().stringForKey("currentSkin")!
         }
@@ -128,8 +139,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         else{
             ThemesScene.currentTheme = ["name": "defaultTheme", "OuterTexture": "Default", "InnerTexture": "Default", "dotTexture": "Default", "themeColor": UIColor(red: 133/255, green: 0, blue: 241/255, alpha: 1.0)]
         }
+        
         loadView()
-        //barrierLeft.addRedBarrier()
         
         // add physics world
         physicsWorld.contactDelegate = self
@@ -139,31 +150,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //loads view
     func loadView() {
         //Sets Up the Scene
+        
+        userInteractionEnabled = false
+        
+        //Adds all the necessary stuff
         addBackground()
         addGamePlayArea()
+        addHud()
         
-        //dotsArray.removeAll()
-        //checkpoint = false
-        //highScoreAchieved = false
-        //barriersReversed = false
+        animateBeginGame {
+            
+            //Adds the barriers and the ball after the game begins
+            self.addBarriers()
+            self.MoveBarriers()
+            self.addBall({
+                self.userInteractionEnabled = true
+            })
+        }
         
-        /*
-        cardsDictionary  = [
-            "MotionCard": false,
-            "FluctuateCard": false,
-            "GhostCard": false,
-            "HasteCard": false,
-            "UnstableCard": false
-        ]
- */
-        
-        self.addChild(gameNodeGroup)
-        //addBall()
-        
-        //addText()
-        //addBarriers()
-        
-        //MoveBarriers()
     }
     
     //MARK: This function adds the background to the game
@@ -184,34 +188,167 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gamePlayArea.position = CGPoint(x: 0, y: OFFSET)
         gameLayer.addChild(gamePlayArea)
         
-        //Adds the top bar/Also called the HUD
+        //Adds the Dots for the beginning of the game
+        addScoreUnits()
         
-        let topBar = SKSpriteNode(imageNamed: "topBar")
+        //Adds the muliplier to the game
+        multiplier = SKSpriteNode(imageNamed: "Multiplier")
+        multiplier.position = CGPoint(x: -260, y: -460)
+        multiplier.zPosition = layerPositions.gamePlayArea.rawValue
+        
+        multiplyText.text = "1"
+        multiplyText.fontName = "Grand Hotel"
+        multiplyText.fontSize = 45.0
+        multiplyText.position = CGPoint(x: 30, y: -30)
+        multiplyText.zPosition = 100
+        
+        self.addChild(multiplier)
+        multiplier.addChild(multiplyText)
+        
+    }
+    
+    //Mark: This function ads the hud
+    func addHud() {
+        
+        //Adds the top bar area
+        topBar = SKSpriteNode(imageNamed: "topBar")
         topBar.zPosition = layerPositions.topLayer.rawValue
         topBar.position = CGPoint(x: 0, y: (self.frame.height/2) - topBar.frame.height/2)
         hudLayer.addChild(topBar)
         
-        //Adds the Dots for the beginning of the game
-        addScoreUnits()
+        //Adds the pause button
+        pause = SKSpriteNode(imageNamed: "PauseButton")
+        pause.zPosition = layerPositions.topLayer.rawValue
+        pause.position = CGPoint(x: 245, y: 15)
+        topBar.addChild(pause)
         
-        //Adds the barriers
-        addBarriers()
-        MoveBarriers()
+        //Adds the text that goes inside the top bar circle
+        levelText.text = "\(levelInt)"
+        levelText.fontName = "Grand Hotel"
+        levelText.position = CGPoint(x: 0, y: -5)
+        levelText.zPosition = layerPositions.textLayer.rawValue
+        levelText.fontSize = 96.0
+        topBar.addChild(levelText)
+        
+        
+        //Adds the text "Score"
+        scoreText.text = "Score:"
+        scoreText.fontName = "Bodoni 72 Smallcaps"
+        scoreText.position = CGPoint(x: -260, y: 0)
+        scoreText.fontSize = 46.0
+        scoreText.zPosition = layerPositions.textLayer.rawValue
+        topBar.addChild(scoreText)
+        
+        //Adds the players score that is initialized to zero
+        score.text = "0"
+        score.fontName = "Bodoni 72 Smallcaps"
+        score.position = CGPoint(x: -260, y: -45)
+        score.fontSize = 46.0
+        score.zPosition = layerPositions.textLayer.rawValue
+        topBar.addChild(score)
+        
+    }
+    
+    //Mark: This animates the beginning of the game
+    func animateBeginGame(completion_: () -> ()) {
+        
+        //Animates the gameLayer
+        gameLayer.hidden = false
+        gameLayer.position = CGPoint(x: size.width, y: 0)
+        let gameLayerMove = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.7)
+        gameLayerMove.timingMode = .EaseOut
+        gameLayer.runAction(gameLayerMove)
+        
+        //Animates the hudlayer
+        hudLayer.hidden = false
+        hudLayer.position = CGPoint(x: 0, y: size.height)
+        let hudAction = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.5, delay: 0.2, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.9)
+        hudAction.timingMode = .EaseOut
+        
+        //Animates the multiplier on screen
+        multiplier.position = CGPoint(x: multiplier.position.x - 400, y: multiplier.position.y)
+        let multiplierAction = SKAction.moveBy(CGVector(dx: 400, dy: 0), duration: 0.3, delay: 0.2, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.9)
+        
+        multiplier.runAction(multiplierAction)
+        hudLayer.runAction(hudAction, completion: completion_)
+    }
+    
+    //Mark: This function animates the end of the game when the character hits the barrier or when the home button is pressed during the pause screen.
+    func animateEndGame(completion: () -> ()) {
+
+        let gameLayerMove = SKAction.moveBy(CGVector(dx: size.width, dy:0), duration: 0.3)
+        
+        gameLayerMove.timingMode = .EaseIn
+        
+        let hudAction = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.5)
+        
+        hudAction.timingMode = .EaseIn
+        
+        let multiplierAction = SKAction.moveBy(CGVector(dx: -400, dy: 0), duration: 0.3)
+        
+        gameLayer.runAction(gameLayerMove)
+        multiplier.runAction(multiplierAction)
+        hudLayer.runAction(hudAction, completion: completion)
     }
     
     //MARK: THIS function adds the barriers to the gameplay area
     func addBarriers() {
-        for i in 0...barrierArray.count-1 {
-            let angle = 2 * M_PI / Double(barrierArray.count) * Double(i)
+        barrier1.position = CGPoint(x: 0, y: 210)
+        barrier1.zPosition = layerPositions.barriers.rawValue
+        barrier1.zRotation = CGFloat(M_PI / 2)
+        gamePlayArea.addChild(barrier1)
+        barrier1.addRedBarrier()
+        
+        barrier2.position = CGPoint(x: 0, y: -122.5)
+        barrier2.zPosition = layerPositions.barriers.rawValue
+        barrier2.zRotation = CGFloat(3*M_PI / 2)
+        gamePlayArea.addChild(barrier2)
+        
+        barrier5.position = CGPoint(x: -140, y: 135)
+        barrier5.zPosition = layerPositions.barriers.rawValue
+        barrier5.zRotation = CGFloat(5*M_PI / 6)
+        gamePlayArea.addChild(barrier5)
+        
+        barrier3.position = CGPoint(x: 145.5, y: -40)
+        barrier3.zPosition = layerPositions.barriers.rawValue
+        barrier3.zRotation = CGFloat(11 * M_PI / 6)
+        gamePlayArea.addChild(barrier3)
+        
+        barrier6.position = CGPoint(x: 140, y: 135)
+        barrier6.zPosition = layerPositions.barriers.rawValue
+        barrier6.zRotation = CGFloat(M_PI / 6)
+        gamePlayArea.addChild(barrier6)
+        
+        barrier4.position = CGPoint(x: -145.5, y: -40)
+        barrier4.zPosition = layerPositions.barriers.rawValue
+        barrier4.zRotation = CGFloat(7 * M_PI / 6)
+        gamePlayArea.addChild(barrier4)
+    }
+    
+    //MARK: This function moves the barriers at the start of the game
+    func MoveBarriers(){
+        for barrier in barrierArray {
+            let dx = barrier.position.x
+            let dy = barrier.position.y - 45
             
-            let barrierx = CONSTANTRADIUS * cos(CGFloat(angle))
-            let barriery = CONSTANTRADIUS * sin(CGFloat(angle))
+            let rad = atan2(dy, dx)
+            let Path3 = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
             
-            barrierArray[i].position = CGPoint(x: barrierx - gamePlayArea.position.x/2, y: barriery - gamePlayArea.position.y/2 - 10)
-            barrierArray[i].zRotation = CGFloat(angle)
-            gamePlayArea.addChild(barrierArray[i])
-            barrierArray[i].zPosition = layerPositions.barriers.rawValue
-            barrierArray[i].addRedBarrier()
+            let follow = SKAction.followPath(Path3.CGPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
+            barrier.runAction(SKAction.repeatActionForever(follow), withKey: "Moving")
+        }
+    }
+    
+    //Mark: This function moves the barriers in the opposite direction
+    func ReversedMoveBarriers() {
+        for barrier in barrierArray {
+            let dx = barrier.position.x
+            let dy = barrier.position.y - 45
+            let rad = atan2(dy,dx)
+            let Path3 = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
+            
+            let follow = SKAction.followPath(Path3.CGPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
+            barrier.runAction(SKAction.repeatActionForever(follow).reversedAction(), withKey: "Moving")
         }
     }
     
@@ -228,12 +365,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 //Physics body
                 let circle = SKSpriteNode(imageNamed: "scoreDotYellow")
                 circle.alpha = 0
-                circle.physicsBody = SKPhysicsBody(circleOfRadius: 2)
-                circle.physicsBody?.categoryBitMask = dotCategory
-                circle.physicsBody?.contactTestBitMask = ballCategory
-                circle.physicsBody?.affectedByGravity = false
-                circle.physicsBody?.collisionBitMask = ballCategory
-                circle.physicsBody?.dynamic = false
+                circle.physicsBody = nil
                 
                 if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
                     if levelInt % 2 == 0 {
@@ -252,9 +384,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 dotsArray.append(circle.name!)
                 let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
                 
-                let circle_x = radius - radius * cos(CGFloat(angle))
-                let circle_y = radius - radius * sin(CGFloat(angle))
-                let initialPosition = CGPoint(x:circle_x, y:circle_y)
+                let initialPosition = CGPoint(x:0, y:50)
                 
                 let circleX = radius * cos(CGFloat(angle))
                 let circleY = radius * sin(CGFloat(angle))
@@ -264,45 +394,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 circle.zPosition = layerPositions.dots.rawValue
                 
                 gamePlayArea.addChild(circle)
-                animateDot(circle, location: finalPosition)
+                animateDot(circle, location: finalPosition) {
+                    circle.physicsBody = SKPhysicsBody(circleOfRadius: 2.5)
+                    circle.physicsBody?.categoryBitMask = dotCategory
+                    circle.physicsBody?.contactTestBitMask = ballCategory
+                    circle.physicsBody?.affectedByGravity = false
+                    circle.physicsBody?.dynamic = false
+                    
+                }
             }
                 
             else if checkpoint == true && added == false {
                 if i == randomNum {
                     let star = StarIcon()
+                    star.physicsBody = nil
                     star.name = "Star"
                     dotsArray.append("Star")
                     
                     let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
-                    
-                    let circle_x = radius - 10 * cos(CGFloat(angle))
-                    let circle_y = radius - 10 * sin(CGFloat(angle))
-                    let initialPosition = CGPoint(x:circle_x + frame.midX, y:circle_y + frame.midY + CGFloat(OFFSET/2 - 10))
+ 
+                    let initialPosition = CGPoint(x:0, y:50)
                     
                     let circleX = radius * cos(CGFloat(angle))
                     let circleY = radius * sin(CGFloat(angle))
-                    let finalPosition = CGPoint(x:circleX + frame.midX, y:circleY + frame.midY + CGFloat(OFFSET/2 - 10))
+                    
+                    let finalPosition = CGPoint(x:circleX - gamePlayArea.position.x / 2, y:circleY - gamePlayArea.position.y / 2 - 10)
                     
                     star.position = initialPosition
                     
                     star.zPosition = layerPositions.dots.rawValue
                     
-                    gameLayer.addChild(star)
-                    animateDot(star, location: finalPosition)
+                    gamePlayArea.addChild(star)
+                    animateDot(star, location: finalPosition){
+                        star.LoadPhysics()
+                    }
                     star.animateStar()
                     added = true
                 }
                 else {
-                    
-                    //Physics body
                     let circle = SKSpriteNode(imageNamed: "scoreDotYellow")
                     circle.alpha = 0
-                    circle.physicsBody = SKPhysicsBody(circleOfRadius: 2)
-                    circle.physicsBody?.categoryBitMask = dotCategory
-                    circle.physicsBody?.contactTestBitMask = ballCategory
-                    circle.physicsBody?.affectedByGravity = false
-                    circle.physicsBody?.collisionBitMask = ballCategory
-                    circle.physicsBody?.dynamic = false
+                    circle.physicsBody = nil
                     
                     if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
                         if levelInt % 2 == 0 {
@@ -321,146 +453,411 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     dotsArray.append(circle.name!)
                     let angle = 2 * M_PI / Double(numberOfCircle) * Double(i)
                     
-                    let circle_x = radius - 10 * cos(CGFloat(angle))
-                    let circle_y = radius - 10 * sin(CGFloat(angle))
-                    let initialPosition = CGPoint(x:circle_x, y:circle_y)
+                    let initialPosition = CGPoint(x:0, y:50)
                     
                     let circleX = radius * cos(CGFloat(angle))
                     let circleY = radius * sin(CGFloat(angle))
-                    let finalPosition = CGPoint(x:circleX, y:circleY )
+                    let finalPosition = CGPoint(x:circleX - gamePlayArea.position.x / 2, y:circleY - gamePlayArea.position.y / 2 - 10)
                     
                     circle.position = initialPosition
                     circle.zPosition = layerPositions.dots.rawValue
                     
-                    gameLayer.addChild(circle)
-                    animateDot(circle, location: finalPosition)
+                    gamePlayArea.addChild(circle)
+                    animateDot(circle, location: finalPosition) {
+                        circle.physicsBody = SKPhysicsBody(circleOfRadius: 2.5)
+                        circle.physicsBody?.categoryBitMask = dotCategory
+                        circle.physicsBody?.contactTestBitMask = ballCategory
+                        circle.physicsBody?.affectedByGravity = false
+                        circle.physicsBody?.dynamic = false
+                        
+                    }
                 }
             }
         }
     }
     
     //MARK: This is to animate the dots into view
-    func animateDot(circle: SKSpriteNode, location: CGPoint) {
-        let moveAction = SKAction.moveTo(location, duration: 0.8)
+    func animateDot(circle: SKSpriteNode, location: CGPoint, completion: () -> ()) {
+        let moveAction = SKAction.moveTo(location, duration: 0.7)
         let fadeIn = SKAction.fadeInWithDuration(0.5)
         moveAction.timingMode = .EaseOut
-        circle.runAction(SKAction.group([moveAction,fadeIn]))
+        circle.runAction(SKAction.group([moveAction,fadeIn]), completion: completion)
     }
     
-    
-    func removeText(label: SKLabelNode) {
-        let fadeIn = SKAction.fadeAlphaTo(0.0, duration: 0.2)
-        let fadeOut = SKAction.fadeAlphaTo(1.0, duration: 0.2)
-        let cycle = SKAction.sequence([fadeOut,fadeIn,fadeOut])
+    //Mark: This Function adds the ball onto the area
+    func addBall(completion: () -> ()) {
+        ball.position = CGPoint(x: -40, y: 45)
+        ball.zPosition = layerPositions.character.rawValue
+        ball.hidden = false
+        gamePlayArea.addChild(ball)
         
-        label.runAction(SKAction.sequence([cycle,SKAction.removeFromParent()]))
-        label.physicsBody = nil
-    }
-    
-    //addBall
-    func addBall() {
-        ball.position = CGPoint(x: self.frame.width / 2, y: self.frame.height / 2)
-        ball.zPosition = 10
-        ball.physicsBody?.affectedByGravity = true
-        ball.texture = SKTexture(imageNamed: SkinsScene.currentSkin)
-        gameNodeGroup.addChild(ball)
+        let moveAction = SKAction.moveBy(CGVector(dx: 80, dy: 0), duration: 0.7)
+        let wait = SKAction.waitForDuration(0.1)
+        
+        moveAction.timingMode = .EaseOut
+        
+        ball.runAction(SKAction.repeatActionForever(SKAction.sequence([moveAction, wait, moveAction.reversedAction(), wait])), withKey: "moveAction")
+        
+        ball.runAction(SKAction.waitForDuration(0.0), completion: completion)
         
     }
     
-    //add the title bar to the scene
-    func addText() {
-        settingsIcon  = SKSpriteNode(imageNamed: "SettingsIcon")
-        settingsIcon.position = CGPoint(x: self.frame.width/2 + 160, y: self.frame.height/2 + 330)
-        settingsIcon.zPosition = 1
-        self.addChild(settingsIcon)
-        
-        highScoreContainer = SKSpriteNode(imageNamed: "textContainer")
-        highScoreContainer.position = CGPoint(x: self.frame.width/2 , y: self.frame.height / 2 + 330)
-        highScoreContainer.zPosition = 1
-        self.addChild(highScoreContainer)
-        
-        highscore.fontName = "DayPosterBlack"
-        highscore.fontSize = 28.0
-        
-        if NSUserDefaults.standardUserDefaults().integerForKey("highscore") != 0 {
-            GameScene.highscoreInt = NSUserDefaults.standardUserDefaults().integerForKey("highscore")
-            highscore.text = "\(GameScene.highscoreInt)"
-        }
-        else{
-            highscore.text = "0"
-        }
-        
-        highscore.position = CGPoint(x: 0, y: -10)
-        highscore.zPosition = 2
-        highScoreContainer.addChild(highscore)
-        
-        newHighScore.fontName = "DayPosterBlack"
-        newHighScore.fontSize = 12.5
-        newHighScore.text = "New High Score !"
-        newHighScore.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2 + 290)
-        newHighScore.alpha = 0
-        self.addChild(newHighScore)
-        
-        score.fontName = "DayPosterBlack"
-        score.fontSize = 58.0
-        score.fontColor = ThemesScene.currentTheme["themeColor"] as? SKColor
-        score.zPosition = 10
-        score.text = "0"
-        score.position = CGPoint(x: self.frame.width / 2 , y: self.frame.height / 2 + 200)
-        score.zPosition = 2
-        self.addChild(score)
-        
-        levelText.fontName = "DayPosterBlack"
-        levelText.fontSize = 22.0
-        levelText.text = "Level"
-        levelText.position = CGPoint(x: self.frame.width / 2, y: self.frame.height/2 - 275)
-        gameNodeGroup.addChild(levelText)
-        
-        levelCounterText.fontName = "DayPosterBlack"
-        levelCounterText.fontSize = 22.0
-        levelCounterText.text = "1"
-        levelCounterText.position = CGPoint(x: self.frame.width / 2, y: self.frame.height/2 - 305)
-        gameNodeGroup.addChild(levelCounterText)
-        
-        tapToStart.fontName = "DayPosterBlack"
-        tapToStart.fontSize = 34.0
-        tapToStart.text = "Tap To Start"
-        tapToStart.fontColor = ThemesScene.currentTheme["themeColor"] as? SKColor
-        tapToStart.alpha = 1
-        tapToStart.zPosition = 3
-        let fadeIn = SKAction.fadeAlphaTo(0.0, duration: 0.9)
-        let fadeOut = SKAction.fadeAlphaTo(1.0, duration: 0.6)
-        let cycle = SKAction.sequence([fadeIn,fadeOut])
-        tapToStart.position = CGPoint(x: self.frame.width / 2, y: self.frame.height/2 - 225)
-        gameNodeGroup.addChild(tapToStart)
-        tapToStart.runAction(SKAction.repeatActionForever(cycle))
-    }
-    
-    //Moves character Clockwise
+    //Mark: Moves the ball counter clockwise
     func moveCounterClockWise(){
-        let dx = ball.position.x - self.frame.width/2
-        let dy = ball.position.y - self.frame.height / 2
+        let dx = ball.position.x
+        let dy = ball.position.y - 45
         
         let rad = atan2(dy,dx)
-        Path = UIBezierPath(arcCenter: CGPoint(x: self.frame.width/2, y: self.frame.height/2), radius: 118.75, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
+        Path = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
         
-        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: true, speed: ball.getballSpeedCounterClockWise())
+        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: false, speed: ball.getballSpeedCounterClockWise())
         ball.runAction(SKAction.repeatActionForever(follow))
         
     }
     
-    //moves character counterClockwise
+    //Mark: moves the ball Clockwise
     func moveClockWise() {
-        let dx = ball.position.x - self.frame.width/2
-        let dy = ball.position.y - self.frame.height / 2
+        let dx = ball.position.x
+        let dy = ball.position.y - 45
         
         let rad = atan2(dy,dx)
-        Path = UIBezierPath(arcCenter: CGPoint(x: self.frame.width/2, y: self.frame.height/2), radius: 118.75, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
+        Path = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
         
-        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: true, speed: ball.getballSpeedClockWise())
+        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: false, speed: ball.getballSpeedClockWise())
         ball.runAction(SKAction.repeatActionForever(follow).reversedAction())
     }
     
+    
+
+    //Mark: Executed When there is contact with the dots or the star
+    // create a random percent, with a precision of one decimal place
+    func randomPercent() -> Double {
+        return Double(arc4random() % 1000) / 10.0;
+    }
+    
+    //Mark: Checks to see whether or not there is a need to update the achievements
+    func updatePointAchievements() {
+        
+        if GameScene.scoreInt == 300 {
+            self.incrementCurrentPercentageOfAchievement("achievement_300points", amount: 100.0)
+        }
+        
+        if GameScene.scoreInt == 800 {
+            self.incrementCurrentPercentageOfAchievement("achievement_800points", amount: 100.0)
+        }
+        
+        if GameScene.scoreInt >= 1500 {
+            self.incrementCurrentPercentageOfAchievement("achievement_1500points", amount: 100.0)
+        }
+        
+        if GameScene.scoreInt >= 3000 {
+            self.incrementCurrentPercentageOfAchievement("achievement_3000points", amount: 100.0)
+        }
+    }
+    
+    //Mark: This function checks to see whether or not the player should go to the next level
+    func handleNewLevel() {
+        //If the there are no dots in play do this
+        if dotsArray.count <= 0{
+            
+            let randomChance = arc4random_uniform(100)
+            
+            //Checks and sees whether or not between each level the barriers will reverse
+            if randomChance < 70 {
+                if barriersReversed == false{
+                    ReversedMoveBarriers()
+                    barriersReversed = true
+                }
+                else{
+                    MoveBarriers()
+                    barriersReversed = false
+                }
+            }
+            
+            //When their are no dots the level increase and check whether or not their should be a checkpoint
+            levelInt += 1
+            levelText.text = "\(levelInt)"
+            
+            let scale = SKAction.scaleTo(1.4, duration: 0.3, delay: 0.0, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.0)
+            let scaleBack = SKAction.scaleTo(1.0, duration: 0.3, delay: 0.1, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.9)
+            levelText.runAction(SKAction.sequence([scale, scaleBack]))
+            
+            if levelInt % 5 == 0 {
+                checkpoint = true
+            }
+            else {
+                checkpoint = false
+            }
+            
+            //Adds the score units back into play for the next level
+            addScoreUnits()
+            
+            
+            //Checks to see whether or not to add more speed to the ball based on whether the effect "Motion" is up
+            if ball.getballSpeedClockWise() < 350 && motionEffect.isActive == false{
+                ball.AddBallSpeedClockWise(3)
+                ball.AddBallSpeedCounterClockWise(3)
+            }
+            
+            //Adds the new level in the beginning of the level
+            for barrier in barrierArray {
+                if barrier.IsActive() == false {
+                    barrier.addRedBarrier()
+                    break
+                }
+            }
+            
+            let randomNumber = randomPercent()
+            switch(randomNumber) {
+            case 0..<55:
+                
+                effectsArray.shuffleInPlace()
+                for effect in effectsArray {
+                    if effect.isActive == false {
+                        switch effect.effectType {
+                            
+                        case .motion:
+                            effectSprite.hidden = false
+                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .EaseOut
+                            
+                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
+                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
+                            let wait = SKAction.waitForDuration(1.0)
+                            
+                            let resizeAction = SKAction.sequence([resizing,scaleback,wait])
+                            
+                            effectSprite.texture = SKTexture(imageNamed: "motion")
+                            
+                            IrregularMotion()
+                            effect.isActive = true
+                            
+                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
+                                self.effectSprite.hidden = true
+                            }
+                            
+                        case .fluctuate:
+                            
+                            effectSprite.hidden = false
+                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .EaseOut
+                            
+                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
+                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
+                            let wait = SKAction.waitForDuration(1.0)
+                            
+                            let resizeAction = SKAction.sequence([resizing,scaleback,wait])
+                            effectSprite.texture = SKTexture(imageNamed: "fluctuate")
+                            fluctuateBall()
+                            effect.isActive = true
+                            
+                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
+                                self.effectSprite.hidden = true
+                            }
+                            
+                        case .haste:
+                            effectSprite.hidden = false
+                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .EaseOut
+                            
+                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
+                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
+                            let wait = SKAction.waitForDuration(1.0)
+                            
+                            let resizeAction = SKAction.sequence([resizing,scaleback,wait])
+                            
+                            effectSprite.texture = SKTexture(imageNamed: "haste")
+                            Haste()
+                            effect.isActive = true
+                            
+                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
+                                self.effectSprite.hidden = true
+                            }
+                            
+ 
+                        case .unstable:
+                            effectSprite.hidden = false
+                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .EaseOut
+                            
+                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
+                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
+                            let wait = SKAction.waitForDuration(1.0)
+
+                            
+                            let resizeAction = SKAction.sequence([resizing,scaleback,wait])
+                            
+                            effectSprite.texture = SKTexture(imageNamed: "unstable")
+                            FluctuateBarriers()
+                            effect.isActive = true
+                            
+
+                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
+                                self.effectSprite.hidden = true
+                            }
+                            
+ 
+                        case .ghost:
+                            effectSprite.hidden = false
+                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .EaseOut
+                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
+                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
+                            let wait = SKAction.waitForDuration(1.0)
+                            
+                            let resizeAction = SKAction.sequence([resizing,scaleback,wait])
+                            effectSprite.texture = SKTexture(imageNamed: "ghost")
+                            Ghost()
+                            effect.isActive = true
+                            
+                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
+                                self.effectSprite.hidden = true
+                            }
+                            
+                        case .shake:
+                            
+                            effectSprite.hidden = false
+                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .EaseOut
+                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
+                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
+                            let wait = SKAction.waitForDuration(1.0)
+                            
+                            let resizeAction = SKAction.sequence([resizing,scaleback,wait])
+                            effectSprite.texture = SKTexture(imageNamed: "shake")
+                            Shake()
+                            effect.isActive = true
+                            
+                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
+                                self.effectSprite.hidden = true
+                            }
+ 
+                        }
+                        break
+                    }
+                }
+                
+            default:
+                return
+            }
+        }
+    }
+
+
+    //Mark: Adds the particles when the barrier breaks
+    func addBarrierBreakParticles(bar: barrier) {
+        let particles = SKEmitterNode(fileNamed: "BarrierBreak")!
+        particles.position = bar.position
+        particles.zPosition = bar.zPosition + 1
+        self.addChild(particles)
+        bar.removeBarrier()
+        
+        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()]))
+    }
+    
+    //Mark: This function handles the logic for when the star is hit
+    func handleStarPickup(node:SKNode) {
+        if node.name == "Star" {
+            
+            let moveR = SKAction.moveBy(CGVector(dx: 10, dy:0), duration: 0.15)
+            let moveL = SKAction.moveBy(CGVector(dx: -20, dy:0), duration: 0.3)
+            
+            mulitplyCounter += 1
+            multiplyText.text = "\(mulitplyCounter)"
+            
+            multiplyText.runAction(SKAction.sequence([moveR,moveL,moveL.reversedAction(),moveR.reversedAction()]))
+            
+            let randomNum = self.randomPercent()
+            switch randomNum {
+                
+            case 0..<75:
+                var limit = 0
+                for barriers in self.barrierArray.reverse() {
+                    if limit != 2 {
+                        if barriers.IsActive() {
+                            
+                            addBarrierBreakParticles(barriers)
+                            
+                            limit += 1
+                        }
+                    }
+                }
+                
+            default:
+                var limit = 0
+                for barriers in self.barrierArray.reverse() {
+                    if limit != 3 {
+                        if barriers.IsActive() {
+                            
+                            addBarrierBreakParticles(barriers)
+                            
+                            limit += 1
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    
+    //Mark: This is an auxiliary function that does action when the ball hits the dots or the star
+    func handleScoreUnitContact(node: SKNode) {
+        node.physicsBody = nil
+        node.runAction(SKAction.removeFromParent())
+        
+        for (index,value) in self.dotsArray.enumerate() {
+            if node.name == value {
+                
+                self.dotsArray.removeAtIndex(index)
+                GameScene.scoreInt += 1 * mulitplyCounter
+                self.score.text = "\(GameScene.scoreInt)"
+                self.updatePointAchievements()
+                
+                if GameScene.scoreInt > GameScene.highscoreInt {
+                    NSUserDefaults.standardUserDefaults().setInteger(GameScene.highscoreInt, forKey: "highscore")
+                    
+                    let scaleUp = SKAction.scaleTo(1.1, duration: 0.2)
+                    let scaleDown = SKAction.scaleTo(1.0, duration: 0.2)
+                    
+                    self.newHighScore.alpha = 1
+                    self.newHighScore.runAction(SKAction.repeatActionForever(SKAction.sequence([scaleUp,scaleDown])))
+                }
+                
+                self.handleStarPickup(node)
+                self.handleNewLevel()
+            }
+        }
+        
+        
+    }
+    
+    // Mark: Lets me know when there is contact
+    func didBeginContact(contact: SKPhysicsContact) {
+        var firstBody: SKPhysicsBody
+        var secondBody: SKPhysicsBody
+        
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            firstBody = contact.bodyA
+            secondBody = contact.bodyB
+        } else {
+            firstBody = contact.bodyB
+            secondBody = contact.bodyA
+        }
+        
+        if firstBody.categoryBitMask == ballCategory && (secondBody.categoryBitMask == dotCategory || secondBody.categoryBitMask == starCategory) {
+            
+            handleScoreUnitContact(secondBody.node!)
+            
+        }
+            
+        else if (firstBody.categoryBitMask == ballCategory || firstBody.categoryBitMask == ghostBallCategory) && secondBody.categoryBitMask == redBarrierCategory {
+            
+            gameOver(firstBody.node!)
+        }
+    }
+    
+    
+    //Mark: This function is called when the player hits the barrier and the game is over
     func gameOver(node: SKNode) {
         
         currency.games += 1
@@ -498,369 +895,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             barrier.removeAllActions()
         }
         
+        ball.removeAllActions()
+        
         let action1 = SKAction.colorizeWithColor(UIColor.redColor(), colorBlendFactor: 1.0, duration: 0.1)
         let action2 = SKAction.colorizeWithColor(scene!.backgroundColor, colorBlendFactor: 1.0, duration: 0.1)
         self.scene?.runAction(SKAction.sequence([action1,action2]))
         
         let particles = SKEmitterNode(fileNamed: "GameOver")!
-        particles.position = node.position
-        particles.zPosition = node.zPosition + 1
-        particles.particleTexture = SKTexture(imageNamed: SkinsScene.currentSkin)
-        addChild(particles)
-        node.removeFromParent()
-        node.physicsBody = nil
+        particles.particlePosition = ball.position
+        particles.zPosition = layerPositions.barriers.rawValue + 1
+        gamePlayArea.addChild(particles)
+        
+        ball.removeFromParent()
+
         particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()])) {
-            if let scene = GameOver(fileNamed:"GameScene") {
-                
-                // Configure the view.
-                let skView = self.view as SKView!
-                skView.showsFPS = true
-                skView.showsNodeCount = true
-                /* Sprite Kit applies additional optimizations to improve rendering performance */
-                skView.ignoresSiblingOrder = true
-                /* Set the scale mode to scale to fit the window */
-                scene.scaleMode = .AspectFill
-                let transition = SKTransition.fadeWithDuration(0.8)
-                skView.presentScene(scene, transition: transition)
-            }
+            self.animateEndGame({
+                if let scene = GameOver(fileNamed:"GameScene") {
+                    
+                    // Configure the view.
+                    let skView = self.view as SKView!
+                    skView.showsFPS = true
+                    skView.showsNodeCount = true
+                    /* Sprite Kit applies additional optimizations to improve rendering performance */
+                    skView.ignoresSiblingOrder = true
+                    /* Set the scale mode to scale to fit the window */
+                    scene.scaleMode = .AspectFill
+                    let transition = SKTransition.fadeWithDuration(0.8)
+                    skView.presentScene(scene, transition: transition)
+                }
+            })
         }
     }
     
-
-    
-    // create a random percent, with a precision of one decimal place
-    func randomPercent() -> Double {
-        return Double(arc4random() % 1000) / 10.0;
-    }
-    
-    func didBeginContact(contact: SKPhysicsContact) {
-        var firstBody: SKPhysicsBody
-        var secondBody: SKPhysicsBody
-        
-        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
-            firstBody = contact.bodyA
-            secondBody = contact.bodyB
-        } else {
-            firstBody = contact.bodyB
-            secondBody = contact.bodyA
-        }
-        
-        if firstBody.categoryBitMask == ballCategory && (secondBody.categoryBitMask == dotCategory || secondBody.categoryBitMask == starCategory) {
-            
-            if resetted == false {
-                
-                let moveAction = SKAction.moveTo(CGPoint(x: score.position.x, y: score.position.y), duration: 0.4)
-                let fade = SKAction.fadeAlphaTo(0.0, duration: 0.1)
-                
-                if secondBody.node?.name != "Star" {
-                    secondBody.node?.runAction(SKAction.sequence([moveAction,fade,SKAction.removeFromParent()]))
-                }
-                else if secondBody.node?.name == "Star" {
-                    
-                    //handing the Star and its effects
-                    let moveAction = SKAction.moveTo(CGPoint(x: score.position.x, y: score.position.y), duration: 0.8)
-                    secondBody.node?.runAction(SKAction.sequence([moveAction,fade,SKAction.removeFromParent()]))
-                    
-                    // adding the checkpoint text
-                    starHit = SKSpriteNode(imageNamed: "Checkpoint")
-                    starHit.position = CGPoint(x: self.frame.width / 2, y: self.frame.height/2 - 210)
-                    starHit.setScale(0)
-                    self.addChild(starHit)
-                    
-                    // checkpoint sound effect
-                    if GameScene.soundOn == true {
-                        self.runAction(checkpointSound)
-                    }
-                    
-                    let scale = SKAction.scaleTo(1.1, duration: 0.3)
-                    let disappear = SKAction.scaleTo(0.0, duration: 0.3)
-                    let wait = SKAction.waitForDuration(1.0)
-                    let cycle = SKAction.sequence([scale,wait,disappear])
-                    
-                    
-                    // animating the Checkpoint Text
-                    starHit.runAction(cycle) {
-                        self.starHit.removeFromParent()
-                    }
-                }
-                
-                if secondBody.node?.name != "Star" {
-                    if GameScene.soundOn {
-                        secondBody.node?.runAction(dotHitSound)
-                    }
-                }
-            }
-            
-            for (index,value) in dotsArray.enumerate() {
-                if secondBody.node?.name == value && resetted == false {
-                    dotsArray.removeAtIndex(index)
-                    
-                    GameScene.scoreInt += levelInt
-                    
-                    if GameScene.scoreInt == 300 {
-                        incrementCurrentPercentageOfAchievement("achievement_300points", amount: 100.0)
-                    }
-                    
-                    if GameScene.scoreInt == 800 {
-                        incrementCurrentPercentageOfAchievement("achievement_800points", amount: 100.0)
-                    }
-                    
-                    if GameScene.scoreInt >= 1500 {
-                        incrementCurrentPercentageOfAchievement("achievement_1500points", amount: 100.0)
-                    }
-                    
-                    if GameScene.scoreInt >= 3000 {
-                        incrementCurrentPercentageOfAchievement("achievement_3000points", amount: 100.0)
-                    }
-                    score.text = "\(GameScene.scoreInt)"
-                    
-                    if GameScene.scoreInt > GameScene.highscoreInt {
-                        GameScene.highscoreInt += levelInt
-                        highscore.text = "\(GameScene.highscoreInt)"
-                        NSUserDefaults.standardUserDefaults().setInteger(GameScene.highscoreInt, forKey: "highscore")
-
-                        if highScoreAchieved == false {
-                            if GameScene.soundOn {
-                                self.scene?.runAction(highScore)
-                            }
-                            let action1 = SKAction.colorizeWithColor(UIColor.whiteColor(), colorBlendFactor: 1.0, duration: 0.2)
-                            let action2 = SKAction.colorizeWithColor(scene!.backgroundColor, colorBlendFactor: 1.0, duration: 0.2)
-                            self.scene?.runAction(SKAction.sequence([action1,action2]))
-                            highScoreAchieved = true
-                        }
-                        
-                        let scaleUp = SKAction.scaleTo(1.1, duration: 0.2)
-                        let scaleDown = SKAction.scaleTo(1.0, duration: 0.2)
-                        
-                        newHighScore.alpha = 1
-                        newHighScore.runAction(SKAction.repeatActionForever(SKAction.sequence([scaleUp,scaleDown])))
-                    }
-                    
-                    if secondBody.node?.name == "Star" {
-                        if GameScene.soundOn {
-                            secondBody.node?.runAction(starPickup)
-                        }
-                        let randomNum = randomPercent()
-                        switch randomNum {
-                            
-                        case 0..<75:
-                            var limit = 0
-                            for barriers in barrierArray {
-                                if limit != 2 {
-                                    if barriers.IsActive() {
-                                        
-                                        let particles = SKEmitterNode(fileNamed: "BarrierBreak")!
-                                        particles.position = barriers.position
-                                        particles.zPosition = barriers.zPosition + 1
-                                        addChild(particles)
-                                        barriers.removeBarrier()
-                                        
-                                        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()]))
-                                        
-                                        limit += 1
-                                    }
-                                }
-                            }
-                            if GameScene.soundOn {
-                                self.runAction(barrier_break_one)
-                            }
-                            
-                        case 75..<95:
-                            var limit = 0
-                            for barriers in barrierArray {
-                                if limit != 3 {
-                                    if barriers.IsActive() {
-                                        
-                                        let particles = SKEmitterNode(fileNamed: "BarrierBreak")!
-                                        particles.position = barriers.position
-                                        particles.zPosition = barriers.zPosition + 1
-                                        addChild(particles)
-                                        barriers.removeBarrier()
-                                        
-                                        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()]))
-                                        
-                                        limit += 1
-                                    }
-                                }
-                            }
-                            if GameScene.soundOn == true {
-                                self.runAction(barrier_break_two)
-                            }
-
-                        default:
-                            var limit = 0
-                            for barriers in barrierArray {
-                                if limit != 4 {
-                                    if barriers.IsActive() {
-                                        
-                                        let particles = SKEmitterNode(fileNamed: "BarrierBreak")!
-                                        particles.position = barriers.position
-                                        particles.zPosition = barriers.zPosition + 1
-                                        addChild(particles)
-                                        barriers.removeBarrier()
-                                        
-                                        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()]))
-                                        
-                                        limit += 1
-                                    }
-                                }
-                            }
-                            if GameScene.soundOn == true {
-                                self.runAction(barrier_break_three)
-                            }
-                        }
-                    }
-                }
-            }
-            
-            if dotsArray.count <= 0{
-                if GameScene.soundOn {
-                    self.scene?.runAction(nextLevel)
-                }
-                
-                let randomChance = arc4random_uniform(100)
-                if randomChance < 70 {
-                    if barriersReversed == false{
-                        ReversedMoveBarriers()
-                        barriersReversed = true
-                    }
-                    else{
-                        MoveBarriers()
-                        barriersReversed = false
-                    }
-                }
-                levelInt += 1
-                if levelInt % 5 == 0 {
-                    checkpoint = true
-                }
-                else {
-                    checkpoint = false
-                }
-                addScoreUnits()
-                resetted = true
-                
-                if ball.getballSpeedClockWise() < 350 && cardsDictionary["MotionCard"] == false{
-                    ball.AddBallSpeedClockWise(3)
-                    ball.AddBallSpeedCounterClockWise(3)
-                }
-                levelCounterText.text = "\(levelInt)"
-                for barrier in barrierArray {
-                    if barrier.IsActive() == false {
-                        barrier.addRedBarrier()
-                        break
-                    }
-                }
-                
-                let randomNumber = randomPercent()
-                switch(randomNumber) {
-                case 0..<50:
-                    if GameScene.soundOn {
-                        self.scene?.runAction(cardSound)
-                    }
-                    cardsArray.shuffleInPlace()
-                    for carder in cardsArray {
-                        if cardsDictionary[carder] == false {
-                            switch carder {
-                            case "MotionCard":
-                                card.animateAppear(SKTexture(imageNamed: "MotionCard"))
-                                IrregularMotion()
-                                card.runAction(SKAction.waitForDuration(3.0), completion: {
-                                    self.card.animateDisappear()
-                                })
-                                
-                                cardsDictionary[carder] = true
-                                
-                            case "FluctuateCard":
-                                card.animateAppear(SKTexture(imageNamed: "FluctuateCard"))
-                                fluctuateBall()
-                                card.runAction(SKAction.waitForDuration(3.0), completion: {
-                                    self.card.animateDisappear()
-                                })
-                                cardsDictionary[carder] = true
-                                
-                            case "HasteCard":
-                                card.animateAppear(SKTexture(imageNamed: "HasteCard"))
-                                Haste()
-                                card.runAction(SKAction.waitForDuration(3.0), completion: {
-                                    self.card.animateDisappear()
-                                })
-                                cardsDictionary[carder] = true
-                                
-                            case "UnstableCard":
-                                card.animateAppear(SKTexture(imageNamed: "UnstableCard"))
-                                FluctuateBarriers()
-                                card.runAction(SKAction.waitForDuration(3.0),completion: {
-                                    self.card.animateDisappear()
-                                })
-                                cardsDictionary[carder] = true
-                                
-                            default:
-                                card.animateAppear(SKTexture(imageNamed: "GhostCard"))
-                                Ghost()
-                                card.runAction(SKAction.waitForDuration(3.0), completion: {
-                                    self.card.animateDisappear()
-                                })
-                                cardsDictionary[carder] = true
-                            }
-                            break
-                        }
-                    }
-                default:
-                    return
-                }
-                
-            }
-            else {
-                resetted = false
-            }
-            
-        }
-            
-        else if (firstBody.categoryBitMask == ballCategory || firstBody.categoryBitMask == ghostBallCategory) && secondBody.categoryBitMask == textCategory {
-            if GameScene.soundOn == true {
-                secondBody.node?.runAction(wordsBlip)
-            }
-            
-            firstBody.applyImpulse(CGVector(dx: 0, dy: 0.65))
-        }
-            
-        else if (firstBody.categoryBitMask == ballCategory || firstBody.categoryBitMask == ghostBallCategory) && secondBody.categoryBitMask == redBarrierCategory {
-            if GameScene.soundOn == true {
-                self.scene?.runAction(death)
-            }
-            gameOver(ball)
-        }
-    }
-    
-    func MoveBarriers(){
-        for barrier in barrierArray {
-            let dx = barrier.position.x
-            let dy = barrier.position.y
-            let rad = atan2(dy,dx)
-            let Path3 = UIBezierPath(arcCenter: CGPoint(x: 0, y: 30), radius: CONSTANTRADIUS, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
-            
-            let follow = SKAction.followPath(Path3.CGPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
-            barrier.runAction(SKAction.repeatActionForever(follow), withKey: "Moving")
-        }
-    }
-    
-    func ReversedMoveBarriers() {
-        for barrier in barrierArray {
-            let dx = barrier.position.x - self.frame.width/2
-            let dy = barrier.position.y - self.frame.height / 2
-            let rad = atan2(dy,dx)
-            let Path3 = UIBezierPath(arcCenter: CGPoint(x: self.frame.width/2, y: self.frame.height/2), radius: CONSTANTRADIUS, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
-            
-            let follow = SKAction.followPath(Path3.CGPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
-            barrier.runAction(SKAction.repeatActionForever(follow).reversedAction(), withKey: "Moving")
-        }
-    }
-    
+    //An effect that changes the motion of the ball
     func IrregularMotion() {
-        ball.SetBallSpeedClockWise(275)
-        ball.SetBallSpeedCounterClockWise(110)
+        ball.SetBallSpeedClockWise(310)
+        ball.SetBallSpeedCounterClockWise(130)
     }
     
+    //An effect that changes the size of the ball
     func fluctuateBall(){
         let scale = SKAction.scaleTo(1.0, duration: 0.3)
         let scaleUp = SKAction.scaleTo(1.35, duration: 0.3)
@@ -869,16 +942,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ball.runAction(scalingCycle, withKey: "fluctuate")
     }
     
+    //An effect that changes the visibility of the ball
     func Ghost() {
         let fade = SKAction.fadeAlphaTo(0.5, duration: 0.0)
         let fadeBack = SKAction.fadeAlphaTo(1.0, duration: 0.0)
-        let cycle = SKAction.sequence([fade,SKAction.waitForDuration(0.75),fadeBack,SKAction.waitForDuration(2.0)])
+        let cycle = SKAction.sequence([fade,SKAction.waitForDuration(0.5),fadeBack,SKAction.waitForDuration(2.0)])
         
         ball.runAction(SKAction.repeatActionForever(cycle))
-        
     }
     
-    
+    //An effect that changes the speed of the barriers
     func Haste() {
         for bar in barrierArray {
             let speed = SKAction.speedTo(1.45, duration: 0.1)
@@ -888,6 +961,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    //An effect that changes the size of the barriers
     func FluctuateBarriers(){
         let scaler = SKAction.scaleYTo(1.5, duration: 0.5)
         let scaleback = SKAction.scaleYTo(1.0, duration: 0.5)
@@ -897,29 +971,60 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    //An effect that shakes the area
+    func Shake() {
+        let moveR = SKAction.moveBy(CGVector(dx: -25, dy: 0), duration: 0.2)
+        let moveU = SKAction.moveBy(CGVector(dx: 0, dy: 25), duration: 0.2)
+        let wait = SKAction.waitForDuration(0.1)
+        
+        moveR.timingMode = .EaseOut
+        moveU.timingMode = .EaseOut
+        
+        let moveHorizonalActionL = SKAction.sequence([moveR,wait,moveR.reversedAction(),wait])
+        let moveVerticalActionU = SKAction.sequence([moveU,wait,moveU.reversedAction(),wait])
+        
+        let moveHorizonalActionR = SKAction.sequence([moveR.reversedAction(),wait,moveR,wait])
+        let moveVerticalActionD = SKAction.sequence([moveU.reversedAction(),wait,moveU,wait])
+        
+        let shakeAction = SKAction.sequence([moveHorizonalActionL, moveVerticalActionU, moveHorizonalActionR,moveVerticalActionD])
+        
+        gameLayer.runAction(SKAction.repeatActionForever(shakeAction))
+    }
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
        /* Called when a touch begins */
-        
-        pause(touches)
-        if gameStarted == false && IsPaused == false {
-            tapToStart.removeFromParent()
-            removeText(startingText)
-            ball.physicsBody?.affectedByGravity = false
-            ball.runAction(SKAction.moveToY(self.frame.height/2 + CONSTANTRADIUS, duration: 0.3), completion: {
-                let trailNode = SKNode()
-                trailNode.zPosition = 1
-                self.addChild(trailNode)
-                let trail = SKEmitterNode(fileNamed: "BallTrail")!
-                trail.particleTexture = SKTexture(imageNamed: SkinsScene.currentSkin)
-                trail.targetNode = trailNode
-                self.ball.addChild(trail)
-                self.moveClockWise()
-                self.movingClockWise = true
-                self.gameStarted = true
-            })
+        var node = SKNode()
+        if let touch = touches.first {
+            let pos = touch.locationInNode(topBar)
+            node = topBar.nodeAtPoint(pos)
+        }
+        if gameStarted == false && IsPaused == false && node != pause{
+            self.scene?.userInteractionEnabled = false
+            
+            if ball.position.x > gamePlayArea.position.x {
+                ball.removeAllActions()
+                let move = SKAction.moveBy(CGVector(dx: CONSTANTRADIUS - ball.position.x, dy: 0), duration: 0.4)
+                move.timingMode = .EaseIn
+                ball.runAction(move, completion: {
+                    SKAction.waitForDuration(0.3)
+                    self.moveCounterClockWise()
+                    self.gameStarted = true
+                    self.scene?.userInteractionEnabled = true
+                })
+            }
+            else {
+                ball.removeAllActions()
+                let move = SKAction.moveBy(CGVector(dx: -CONSTANTRADIUS - ball.position.x, dy: 0), duration: 0.4)
+                move.timingMode = .EaseIn
+                ball.runAction(move, completion: {
+                    SKAction.waitForDuration(0.3)
+                    self.moveClockWise()
+                    self.gameStarted = true
+                    self.scene?.userInteractionEnabled = true
+                })
+            }
             
         }
-        else if gameStarted == true && IsPaused == false {
+        else if gameStarted == true && IsPaused == false && node != pause {
             
             if movingClockWise == true && IsPaused == false {
                 moveCounterClockWise()
@@ -930,102 +1035,71 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 movingClockWise = true
             }
         }
+        pause(touches)
 
     }
     
+    //Mark: This function is called when the pause button is pressed
     func pause(touches: Set<UITouch>) {
         
         if let touch = touches.first as UITouch! {
-            let pos = touch.locationInNode(self)
-            let node = self.nodeAtPoint(pos)
+            let pos = touch.locationInNode(topBar)
+            let node = topBar.nodeAtPoint(pos)
             
-            if node == settingsIcon && IsPaused == false{
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(buttonTouched)
-                }
-                pauseView = UIView(frame: CGRectMake(0, 0, self.view!.bounds.width, self.view!.bounds.height))
+            let loc = touch.locationInNode(pauseLayer)
+            
+            if node == pause && IsPaused == false {
+                self.addChild(pauseLayer)
+                pauseScreen = SKSpriteNode(imageNamed: "pauseLayer")
+                pauseScreen.zPosition = 100
+                pauseLayer.addChild(pauseScreen)
                 
-                let image = UIImage(named: "PlayButton")
-                pauseButton = UIButton(type: UIButtonType.Custom) as UIButton
-                pauseButton.frame = CGRectMake(0, 0, 85, 85)
-                pauseButton.setImage(image, forState: .Normal)
-                pauseButton.addTarget(self, action: #selector(GameScene.btnTouched), forControlEvents: .TouchUpInside)
-                pauseView.addSubview(pauseButton)
+                homeButton = SKSpriteNode(imageNamed: "homebutton")
+                homeButton.position = CGPoint(x: -240, y: 440)
+                homeButton.zPosition = 150
                 
-                let homeImage = UIImage(named: "homeButton")
-                homeButton = UIButton(type: UIButtonType.Custom) as UIButton
-                homeButton.frame = CGRectMake(0, 0, 90, 90)
-                homeButton.setImage(homeImage, forState: .Normal)
-                homeButton.addTarget(self, action: #selector(GameScene.homeTouched), forControlEvents: .TouchUpInside)
-                pauseView.addSubview(homeButton)
+                pausePlayButton = SKSpriteNode(imageNamed: "playButton")
+                pausePlayButton.position = CGPoint(x: 0, y: -60)
+                pausePlayButton.zPosition = 150
                 
-                pauseText = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 100))
-                pauseText.font = UIFont(name: "DayPosterBlack", size: 44)
-                pauseText.text = "Paused"
-                pauseText.textColor = UIColor.whiteColor()
-                pauseView.addSubview(pauseText)
-                
-                pauseView.backgroundColor = UIColor.blackColor()
-                pauseView.alpha = 0.66
-                self.view?.addSubview(pauseView)
-                self.pauseView.center = CGPointMake(CGRectGetMidX((self.view?.bounds)!), CGRectGetMidY((self.view?.bounds)!))
-                self.pauseButton.center = CGPointMake(CGRectGetMidX(pauseView.bounds), CGRectGetMidY(pauseView.bounds) - 50)
-                self.homeButton.center = CGPointMake(CGRectGetMidX(pauseView.bounds), CGRectGetMidY(pauseView.bounds) + 50)
-                self.pauseText.center = CGPointMake(CGRectGetMidX(pauseView.bounds) + 20, CGRectGetMidY(pauseView.bounds) - 140)
-                self.scene!.view?.paused = true
+                pauseLayer.addChild(pausePlayButton)
+                pauseLayer.addChild(homeButton)
+                self.scene?.paused = true
                 IsPaused = true
+            }
+            
+            if IsPaused == true && pausePlayButton.containsPoint(loc) {
+                for children in pauseLayer.children {
+                    children.removeFromParent()
+                }
+                pauseLayer.removeFromParent()
+                self.scene?.paused = false
+                IsPaused = false
                 
-                pauseButton.transform = CGAffineTransformMakeScale(0.6, 0.6)
-                
-                UIView.animateWithDuration(2.0,
-                                           delay: 0,
-                                           usingSpringWithDamping: CGFloat(0.20),
-                                           initialSpringVelocity: CGFloat(6.0),
-                                           options: UIViewAnimationOptions.AllowUserInteraction,
-                                           animations: {
-                                            self.pauseButton.transform = CGAffineTransformIdentity
-                    },
-                                           completion: { Void in()  })
-                
-                homeButton.transform = CGAffineTransformMakeScale(0.6, 0.6)
-                
-                UIView.animateWithDuration(2.0,
-                                           delay: 0,
-                                           usingSpringWithDamping: CGFloat(0.20),
-                                           initialSpringVelocity: CGFloat(6.0),
-                                           options: UIViewAnimationOptions.AllowUserInteraction,
-                                           animations: {
-                                            self.homeButton.transform = CGAffineTransformIdentity
-                    },
-                                           completion: { Void in()  })
+            }
+            
+            if IsPaused == true && homeButton.containsPoint(loc) {
+                scene?.userInteractionEnabled = false
+                for children in pauseLayer.children {
+                    children.removeFromParent()
+                }
+                pauseLayer.removeFromParent()
+                self.scene!.paused = false
+                self.animateEndGame({
+                    if let scene = MainMenu(fileNamed:"GameScene") {
+                        
+                        // Configure the view.
+                        let skView = self.view as SKView!
+                        /* Sprite Kit applies additional optimizations to improve rendering performance */
+                        skView.ignoresSiblingOrder = true
+                        /* Set the scale mode to scale to fit the window */
+                        scene.scaleMode = .AspectFill
+                        skView.presentScene(scene)
+                    }
+                })
             }
         }
-    }
-    
-    func btnTouched() {
-        self.scene!.view?.paused = false
-        pauseView.removeFromSuperview()
-        IsPaused = false
-    }
-    
-    func homeTouched() {
-        pauseView.removeFromSuperview()
-        IsPaused = false
-        self.scene?.view?.paused = false
-        
-        if let scene = MainMenu(fileNamed:"GameScene") {
-            
-            // Configure the view.
-            let skView = self.view as SKView!
-            skView.showsFPS = true
-            skView.showsNodeCount = true
-            /* Sprite Kit applies additional optimizations to improve rendering performance */
-            skView.ignoresSiblingOrder = true
-            /* Set the scale mode to scale to fit the window */
-            scene.scaleMode = .AspectFill
-            let transition = SKTransition.fadeWithDuration(0.8)
-            skView.presentScene(scene, transition: transition)
-        }
+   
     }
     
     //MARK: GAMECENTER
@@ -1150,7 +1224,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         else {
             ball.physicsBody?.categoryBitMask = ballCategory
-            ball.physicsBody?.collisionBitMask = dotCategory | textCategory | redBarrierCategory
+            ball.physicsBody?.collisionBitMask = dotCategory | redBarrierCategory
         }
 
     }

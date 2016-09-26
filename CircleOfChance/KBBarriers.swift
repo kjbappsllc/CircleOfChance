@@ -13,7 +13,7 @@ class barrier: SKSpriteNode {
     var passable = Bool()
     var barrierSpeed = CGFloat()
     init(){
-        barrierSpeed = 80.0
+        barrierSpeed = 120.0
         passable = true
         let texture = SKTexture(imageNamed: "RedBarrier")
         super.init(texture: texture,color: UIColor.clearColor(), size: texture.size())

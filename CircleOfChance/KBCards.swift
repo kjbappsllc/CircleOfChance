@@ -9,37 +9,39 @@
 import Foundation
 import SpriteKit
 
-class ChanceCard: SKSpriteNode {
+enum EffectType: Int {
+    case motion = 0, fluctuate, ghost, haste, unstable, shake
     
-    init() {
-        let texture = SKTexture(imageNamed: "MotionCard")
-        super.init(texture: nil, color: UIColor.clearColor(), size: texture.size())
-        self.zPosition = 2
-        self.hidden = true
+    var getEffectName: String {
+        let effectNames = [
+            "motion",
+            "fluctuate",
+            "ghost",
+            "haste",
+            "unstable",
+            "shake"
+        ]
+        
+        return effectNames[rawValue-1]
+    }
+    
+    static func getFruitType(num: Int) -> EffectType {
+        return EffectType(rawValue: num)!
+    }
+}
+
+class Effect{
+    
+    var isActive: Bool
+    var effectType: EffectType
+    
+    init(active: Bool, effecttype: EffectType) {
+        self.isActive = active
+        self.effectType = effecttype
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func animateAppear(texture: SKTexture) {
-        self.hidden = false
-        let scaleUp = SKAction.scaleTo(1.1, duration: 0.2)
-        let scaleFurther = SKAction.scaleTo(1.3, duration: 0.2)
-        let scaleDown = SKAction.scaleTo(1.0, duration: 0.2)
-        
-        self.runAction(scaleUp)
-        self.texture = texture
-        self.runAction(SKAction.sequence([scaleFurther,scaleDown]))
-        self.alpha = 1
-    }
-    
-    func animateDisappear() {
-        let scale = SKAction.scaleTo(1.1, duration: 1.0)
-        let disappear = SKAction.scaleTo(0.0, duration: 0.1)
-        let cycle = SKAction.sequence([scale,disappear])
-        self.runAction(cycle)
-        
     }
     
 }

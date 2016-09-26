@@ -12,12 +12,12 @@ class StarIcon: SKSpriteNode {
     
     init(){
 
-        let texture = SKTexture(imageNamed: "Star2")
+        let texture = SKTexture(imageNamed: "Star")
         
-        super.init(texture: texture ,color: UIColor.clearColor(), size: CGSize(width: 25, height: 24))
+        super.init(texture: texture ,color: UIColor.clearColor(), size: texture.size())
         
-        zPosition = 2
-        LoadPhysics()
+        zPosition = layerPositions.dots.rawValue
+        physicsBody = nil
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -25,8 +25,10 @@ class StarIcon: SKSpriteNode {
     }
     
     func animateStar() {
-        let scaled = SKAction.scaleTo(1.2, duration: 0.2)
-        let scaleDown = SKAction.scaleTo(1.0, duration: 0.2)
+        let scaled = SKAction.scaleTo(1.2, duration: 0.4)
+        let scaleDown = SKAction.scaleTo(1.0, duration: 0.4)
+        scaled.timingMode = .EaseOut
+        
         self.runAction(SKAction.repeatActionForever(SKAction.sequence([scaled,scaleDown])))
     }
     

@@ -22,7 +22,7 @@ let dotCategory: UInt32 = 0x1 << 4
 let textCategory: UInt32 = 0x1 << 5
 
 
-let CONSTANTRADIUS: CGFloat = 174
+let CONSTANTRADIUS: CGFloat = 167
 
 let NUMBEROFCIRCLES = 15
 

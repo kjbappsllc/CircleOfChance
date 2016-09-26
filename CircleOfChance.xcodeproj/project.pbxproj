@@ -64,6 +64,7 @@
 		047A662D1D36E5D7005396D9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A662C1D36E5D7005396D9 /* Foundation.framework */; };
 		047A662F1D36E5DF005396D9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A662E1D36E5DF005396D9 /* CoreGraphics.framework */; };
 		047A66311D36E5F2005396D9 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A66301D36E5F2005396D9 /* MessageUI.framework */; };
+		04C18DC41D90CFC7001EC4A7 /* GrandHotel-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 04C18DC31D90CFC7001EC4A7 /* GrandHotel-Regular.otf */; };
 		04F278B41D3D2D5200281F9D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F278B31D3D2D5200281F9D /* QuartzCore.framework */; };
 		04FBB87D1D4114E9007D1A52 /* BarrierBreak.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB87B1D4114E9007D1A52 /* BarrierBreak.sks */; };
 		04FBB8821D414E87007D1A52 /* light_bulb_smash-2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 04FBB87F1D414E87007D1A52 /* light_bulb_smash-2.mp3 */; };
@@ -133,6 +134,7 @@
 		047A662C1D36E5D7005396D9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		047A662E1D36E5DF005396D9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		047A66301D36E5F2005396D9 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		04C18DC31D90CFC7001EC4A7 /* GrandHotel-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GrandHotel-Regular.otf"; sourceTree = "<group>"; };
 		04F278B31D3D2D5200281F9D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		04FBB87B1D4114E9007D1A52 /* BarrierBreak.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = BarrierBreak.sks; sourceTree = "<group>"; };
 		04FBB87F1D414E87007D1A52 /* light_bulb_smash-2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "light_bulb_smash-2.mp3"; sourceTree = "<group>"; };
@@ -204,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				047A656C1D36CDF7005396D9 /* AppDelegate.swift */,
+				04C18DC31D90CFC7001EC4A7 /* GrandHotel-Regular.otf */,
 				047A65CA1D36CF81005396D9 /* DAYPBL__.ttf */,
 				047A65F11D36D2D0005396D9 /* Scenes */,
 				047A65F21D36D2EE005396D9 /* Globals/Constants/Extensions */,
@@ -360,6 +363,7 @@
 				04FBB8841D414E87007D1A52 /* light_bulb_smash.mp3 in Resources */,
 				047A65BD1D36CEDE005396D9 /* starPickup.wav in Resources */,
 				04FBB8821D414E87007D1A52 /* light_bulb_smash-2.mp3 in Resources */,
+				04C18DC41D90CFC7001EC4A7 /* GrandHotel-Regular.otf in Resources */,
 				047A65BA1D36CEDE005396D9 /* bgMusic.wav in Resources */,
 				047A65B91D36CEDE005396D9 /* wordsBlip.wav in Resources */,
 				047A65A91D36CEC9005396D9 /* BallTrail.sks in Resources */,

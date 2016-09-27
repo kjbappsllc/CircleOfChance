@@ -200,7 +200,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         multiplyText.fontName = "Grand Hotel"
         multiplyText.fontSize = 45.0
         multiplyText.position = CGPoint(x: 30, y: -30)
-        multiplyText.zPosition = 100
+        multiplyText.zPosition = 40
         
         self.addChild(multiplier)
         multiplier.addChild(multiplyText)

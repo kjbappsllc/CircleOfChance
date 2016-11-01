@@ -62,9 +62,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var pausePlayButton = SKSpriteNode()
     
     //HighScore
-    static var highscoreInt = Int()
+    var highscoreInt = Int()
     var highscore = SKLabelNode()
-    static var scoreInt = Int()
+    var scoreInt = Int()
     var newHighScore = SKLabelNode()
     
     //GameLogic
@@ -538,19 +538,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //Mark: Checks to see whether or not there is a need to update the achievements
     func updatePointAchievements() {
         
-        if GameScene.scoreInt == 300 {
+        if scoreInt == 300 {
             self.incrementCurrentPercentageOfAchievement("achievement_300points", amount: 100.0)
         }
         
-        if GameScene.scoreInt == 800 {
+        if scoreInt == 800 {
             self.incrementCurrentPercentageOfAchievement("achievement_800points", amount: 100.0)
         }
         
-        if GameScene.scoreInt >= 1500 {
+        if scoreInt >= 1500 {
             self.incrementCurrentPercentageOfAchievement("achievement_1500points", amount: 100.0)
         }
         
-        if GameScene.scoreInt >= 3000 {
+        if scoreInt >= 3000 {
             self.incrementCurrentPercentageOfAchievement("achievement_3000points", amount: 100.0)
         }
     }
@@ -599,18 +599,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 ball.AddBallSpeedCounterClockWise(3)
             }
             
-            //Adds the new level in the beginning of the level
-            for barrier in barrierArray {
-                if barrier.IsActive() == false {
-                    barrier.addRedBarrier()
-                    break
+            //Adds the new level in the beginning of every other level the level
+            if levelInt % 2 == 1 {
+                for barrier in barrierArray {
+                    if barrier.isActive == false {
+                        barrier.addRedBarrier()
+                        break
+                    }
                 }
             }
             
-            let randomNumber = randomPercent()
-            switch(randomNumber) {
-            case 0..<55:
-                
+            if levelInt % 3 == 0 {
                 effectsArray.shuffleInPlace()
                 for effect in effectsArray {
                     if effect.isActive == false {
@@ -736,9 +735,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         break
                     }
                 }
-                
-            default:
-                return
             }
         }
     }
@@ -768,30 +764,63 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             multiplyText.runAction(SKAction.sequence([moveR,moveL,moveL.reversedAction(),moveR.reversedAction()]))
             
             let randomNum = self.randomPercent()
-            switch randomNum {
-                
-            case 0..<75:
-                var limit = 0
-                for barriers in self.barrierArray.reverse() {
-                    if limit != 2 {
-                        if barriers.IsActive() {
-                            
-                            addBarrierBreakParticles(barriers)
-                            
-                            limit += 1
+            
+            if levelInt < 15 {
+                switch randomNum {
+                    
+                case 0..<90:
+                    var limit = 0
+                    for barriers in self.barrierArray.reverse() {
+                        if limit != 1 {
+                            if barriers.isActive {
+                                
+                                addBarrierBreakParticles(barriers)
+                                
+                                limit += 1
+                            }
+                        }
+                    }
+                    
+                default:
+                    var limit = 0
+                    for barriers in self.barrierArray.reverse() {
+                        if limit != 2 {
+                            if barriers.isActive {
+                                
+                                addBarrierBreakParticles(barriers)
+                                
+                                limit += 1
+                            }
                         }
                     }
                 }
-                
-            default:
-                var limit = 0
-                for barriers in self.barrierArray.reverse() {
-                    if limit != 3 {
-                        if barriers.IsActive() {
-                            
-                            addBarrierBreakParticles(barriers)
-                            
-                            limit += 1
+            }
+            else {
+                switch randomNum {
+                    
+                case 0..<90:
+                    var limit = 0
+                    for barriers in self.barrierArray.reverse() {
+                        if limit != 3 {
+                            if barriers.isActive {
+                                
+                                addBarrierBreakParticles(barriers)
+                                
+                                limit += 1
+                            }
+                        }
+                    }
+                    
+                default:
+                    var limit = 0
+                    for barriers in self.barrierArray.reverse() {
+                        if limit != 4 {
+                            if barriers.isActive {
+                                
+                                addBarrierBreakParticles(barriers)
+                                
+                                limit += 1
+                            }
                         }
                     }
                 }
@@ -809,18 +838,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if node.name == value {
                 
                 self.dotsArray.removeAtIndex(index)
-                GameScene.scoreInt += 1 * mulitplyCounter
-                self.score.text = "\(GameScene.scoreInt)"
+                scoreInt += 1 * mulitplyCounter
+                self.score.text = "\(scoreInt)"
                 self.updatePointAchievements()
-                
-                if GameScene.scoreInt > GameScene.highscoreInt {
-                    NSUserDefaults.standardUserDefaults().setInteger(GameScene.highscoreInt, forKey: "highscore")
-                    
-                    let scaleUp = SKAction.scaleTo(1.1, duration: 0.2)
-                    let scaleDown = SKAction.scaleTo(1.0, duration: 0.2)
-                    
-                    self.newHighScore.alpha = 1
-                    self.newHighScore.runAction(SKAction.repeatActionForever(SKAction.sequence([scaleUp,scaleDown])))
+                let highscore = NSUserDefaults.standardUserDefaults().integerForKey("highscore")
+                if scoreInt > highscore {
+                    NSUserDefaults.standardUserDefaults().setInteger(scoreInt, forKey: "highscore")
                 }
                 
                 self.handleStarPickup(node)
@@ -883,8 +906,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             currency.coins += 75
         }
         
-        if GameScene.highscoreInt == GameScene.scoreInt {
-            saveHighscore(GameScene.highscoreInt)
+        if highscoreInt == scoreInt {
+            saveHighscore(highscoreInt)
         }
         
         SKTAudio.sharedInstance().pauseBackgroundMusic()
@@ -914,14 +937,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     // Configure the view.
                     let skView = self.view as SKView!
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
                     skView.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
                     scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
+                    scene.userData = NSMutableDictionary()
+                    scene.userData?.setObject(self.scoreInt, forKey: "score")
+                    skView.presentScene(scene)
                 }
             })
         }
@@ -929,7 +951,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //An effect that changes the motion of the ball
     func IrregularMotion() {
-        ball.SetBallSpeedClockWise(310)
+        ball.SetBallSpeedClockWise(350)
         ball.SetBallSpeedCounterClockWise(130)
     }
     
@@ -965,7 +987,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func FluctuateBarriers(){
         let scaler = SKAction.scaleYTo(1.5, duration: 0.5)
         let scaleback = SKAction.scaleYTo(1.0, duration: 0.5)
-        let cycle = SKAction.sequence([scaler,SKAction.waitForDuration(2.0),scaleback,SKAction.waitForDuration(1.0)])
+        let cycle = SKAction.sequence([scaler,SKAction.waitForDuration(0.5),scaleback,SKAction.waitForDuration(1.0)])
         for barrier in barrierArray{
             barrier.runAction(SKAction.repeatActionForever(cycle), withKey: "barrierfluctuation")
         }

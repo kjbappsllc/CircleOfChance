@@ -12,8 +12,10 @@ import SpriteKit
 class barrier: SKSpriteNode {
     var passable = Bool()
     var barrierSpeed = CGFloat()
+    var isActive = Bool()
     init(){
-        barrierSpeed = 120.0
+        isActive = false
+        barrierSpeed = 125.0
         passable = true
         let texture = SKTexture(imageNamed: "RedBarrier")
         super.init(texture: texture,color: UIColor.clearColor(), size: texture.size())
@@ -42,9 +44,11 @@ class barrier: SKSpriteNode {
         self.runAction(fadeOut)
         self.canPass()
         self.physicsBody = nil
+        isActive = false
     }
     
     func addRedBarrier() {
+        isActive = true
         self.texture = SKTexture(imageNamed: "RedBarrierIndicator")
         self.physicsBody = nil
         let fadeIn = SKAction.fadeInWithDuration(0.2)
@@ -56,16 +60,6 @@ class barrier: SKSpriteNode {
         self.runAction(cycle) { 
             self.notPassable()
             self.alpha = 1
-        }
-    }
-    
-    
-    func IsActive() -> Bool {
-        if self.alpha == 0 {
-            return false
-        }
-        else {
-            return true
         }
     }
     

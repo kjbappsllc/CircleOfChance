@@ -203,7 +203,6 @@ class SettingsScene: SKScene {
                 })
                 let confirmAction = UIAlertAction(title: "Yes", style: UIAlertActionStyle.Destructive, handler: { (a) -> Void in
                     NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "highscore")
-                    GameScene.highscoreInt = NSUserDefaults.standardUserDefaults().integerForKey("highscore")
                     let scene = MainMenu(size: self.view!.bounds.size)
                     scene.scaleMode = .ResizeFill
                     self.view!.presentScene(scene, transition: SKTransition.fadeWithDuration(0.3))

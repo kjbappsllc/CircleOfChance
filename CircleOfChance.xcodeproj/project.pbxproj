@@ -227,11 +227,11 @@
 			isa = PBXGroup;
 			children = (
 				047A65841D36CE82005396D9 /* GameScene.swift */,
+				047A65881D36CE96005396D9 /* MainMenu.swift */,
 				047A656E1D36CDF7005396D9 /* GameScene.sks */,
 				047A65821D36CE6A005396D9 /* ProgressScene.swift */,
 				047A65861D36CE95005396D9 /* howToPlayScene.swift */,
 				047A65871D36CE96005396D9 /* SettingsScene.swift */,
-				047A65881D36CE96005396D9 /* MainMenu.swift */,
 				047A65891D36CE96005396D9 /* GameOver.swift */,
 				047A65EA1D36D092005396D9 /* ShopScene.swift */,
 				047A65EB1D36D092005396D9 /* SkinsScene.swift */,

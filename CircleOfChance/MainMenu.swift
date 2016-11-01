@@ -20,10 +20,8 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
     var topBar = SKSpriteNode()
     var title = SKSpriteNode()
     
+    //Buttons
     var playButton = SKSpriteNode()
-    var playButtonNode = SKNode()
-    var playButtonBall = Character()
-    
     var shopButton = SKSpriteNode()
     var helpButton = SKSpriteNode()
     var settingsButton = SKSpriteNode()
@@ -49,14 +47,86 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
         addChild(topButtonLayer)
         addChild(bottomButtonLayer)
         addChild(playButtonLayer)
+        
+        //Pre set properties
+        titleLayer.hidden = true
+        topButtonLayer.hidden = true
+        bottomButtonLayer.hidden = true
 
         loadview()
     }
     
     func loadview() {
+        userInteractionEnabled = false
         addBackground()
         addTopArea()
         addPlayButton()
+        addButtons()
+        
+        let resize = SKAction.resizeByWidth(7, height: 0, duration: 1.0)
+        let ShiftAction = SKAction.sequence([resize, resize.reversedAction()])
+        
+        animateBeginGame {
+            self.userInteractionEnabled = true
+            
+            for children in self.bottomButtonLayer.children {
+                children.runAction(SKAction.repeatActionForever(ShiftAction))
+            }
+            
+            for children in self.topButtonLayer.children {
+                children.runAction(SKAction.repeatActionForever(ShiftAction))
+            }
+            
+            self.title.runAction(SKAction.repeatActionForever(ShiftAction))
+            self.playButton.runAction(SKAction.repeatActionForever(ShiftAction))
+        }
+        
+
+    }
+    
+    //Mark: This function animates the begin of the game
+    func animateBeginGame(completion: () -> ()) {
+        titleLayer.hidden = false
+        titleLayer.position = CGPoint(x: 0, y: size.height)
+        let titleAction = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.5, delay: 0.0, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.9)
+        titleAction.timingMode = .EaseOut
+        
+        titleLayer.runAction(titleAction)
+        
+        topButtonLayer.hidden = false
+        topButtonLayer.position = CGPoint(x: -size.width, y: 0)
+        let topButtonAction = SKAction.moveBy(CGVector(dx: size.width, dy:0), duration: 0.5)
+        topButtonAction.timingMode = .EaseOut
+        topButtonLayer.runAction(topButtonAction)
+        
+        bottomButtonLayer.hidden = false
+        bottomButtonLayer.position = CGPoint(x: 0, y: -size.height)
+        let bottomButtonAction = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.5)
+        bottomButtonAction.timingMode = .EaseOut
+        bottomButtonLayer.runAction(bottomButtonAction)
+        
+        playButton.setScale(0)
+        let playAction = SKAction.scaleTo(1.0, duration: 1.0, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.0)
+        playButton.runAction(playAction, completion: completion)
+    }
+    
+    //Mark: This function animates the end
+    func animateExit(completion: () -> ()) {
+        
+        let titeExit = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.5, delay: 0.0, usingSpringWithDamping: 0.0, initialSpringVelocity: 0.0)
+        titeExit.timingMode = .EaseIn
+        
+        titleLayer.runAction(titeExit, completion: completion)
+        
+        let topbuttonExit = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.3)
+        topButtonLayer.runAction(topbuttonExit)
+        topbuttonExit.timingMode = .EaseIn
+        
+        let bottomExit = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.5)
+        bottomButtonLayer.runAction(bottomExit)
+        bottomExit.timingMode = .EaseIn
+        
+        playButton.runAction(SKAction.scaleTo(0.0, duration: 0.2))
     }
     
     //Mark: This adds the colorful background
@@ -80,12 +150,36 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
         topBar.addChild(title)
     }
     
-    //This adds the button to me played
+    //Mark: This adds the button to me played
     func addPlayButton() {
         playButton = SKSpriteNode(imageNamed: "playButton")
         playButton.zPosition = layerPositions.topLayer.rawValue
+        playButton.size = CGSize(width: 202, height: 202)
         playButton.position = CGPoint(x: 220, y: -300)
         playButtonLayer.addChild(playButton)
+    }
+    
+    //Mark: This adds the rest of the buttons
+    func addButtons() {
+        helpButton = SKSpriteNode(imageNamed: "HelpButton")
+        helpButton.zPosition = layerPositions.topLayer.rawValue
+        helpButton.position = CGPoint(x: -210, y: -180)
+        topButtonLayer.addChild(helpButton)
+        
+        shopButton = SKSpriteNode(imageNamed: "ShopButton")
+        shopButton.zPosition = layerPositions.topLayer.rawValue
+        shopButton.position = CGPoint(x: -10, y: -180)
+        topButtonLayer.addChild(shopButton)
+        
+        settingsButton = SKSpriteNode(imageNamed: "SettingsButton")
+        settingsButton.zPosition = layerPositions.topLayer.rawValue
+        settingsButton.position = CGPoint(x: -210, y: -380)
+        bottomButtonLayer.addChild(settingsButton)
+        
+        achievementsButton = SKSpriteNode(imageNamed: "AchievementButton")
+        achievementsButton.zPosition = layerPositions.topLayer.rawValue
+        achievementsButton.position = CGPoint(x: -10, y: -380)
+        bottomButtonLayer.addChild(achievementsButton)
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -94,24 +188,20 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first {
-            let touchLocation = touch.locationInNode(self)
-            if playButton.containsPoint(touchLocation) && playButtonNode.alpha != 1{
-                if let scene = GameScene(fileNamed:"GameScene") {
-                    if GameScene.soundOn == true {
-                        self.scene?.runAction(buttonTouched)
+            let touchLocation = touch.locationInNode(playButtonLayer)
+            if playButton.containsPoint(touchLocation) {
+                animateExit({
+                    if let scene = GameScene(fileNamed:"GameScene") {
+                        
+                        // Configure the view.
+                        let skView = self.view as SKView!
+                        /* Sprite Kit applies additional optimizations to improve rendering performance */
+                        skView.ignoresSiblingOrder = true
+                        /* Set the scale mode to scale to fit the window */
+                        scene.scaleMode = .AspectFill
+                        skView.presentScene(scene)
                     }
-                    GameScene.scoreInt = 0
-                    // Configure the view.
-                    let skView = self.view as SKView!
-                    /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
-                    /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
-                    skView.presentScene(scene)
-                }
-            }
-            else {
-                playButtonNode.alpha = 1
+                })
             }
         }
     }

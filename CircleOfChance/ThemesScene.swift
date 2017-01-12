@@ -199,9 +199,6 @@ class ThemesScene: SKScene {
             let goBack = touch.locationInNode(shopTextContainer)
             let touchedNode = self.nodeAtPoint(location)
             if backtoMenuButton.containsPoint(goBack) && backtoMenuButton.alpha != 1{
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(buttonTouched)
-                }
                 if let scene = ShopScene(fileNamed:"GameScene") {
                     
                     // Configure the view.
@@ -262,10 +259,6 @@ class ThemesScene: SKScene {
                             ThemesScene.currentTheme["themeColor"] = ThemesArray[i].themeColor 
                             let data = NSKeyedArchiver.archivedDataWithRootObject(ThemesScene.currentTheme)
                             NSUserDefaults.standardUserDefaults().setObject(data, forKey: "currentTheme")
-                            
-                            if GameScene.soundOn == true{
-                                self.scene?.runAction(buttonTouched)
-                            }
                             if let scene = MainMenu(fileNamed:"GameScene") {
                                 
                                 // Configure the view.

@@ -204,9 +204,6 @@ class ShopScene: SKScene, ChartboostDelegate {
             let touchLocation = touch.locationInNode(self)
             let backtoMenuTouch = touch.locationInNode(shopTextContainer)
             if backtoMenuButton.containsPoint(backtoMenuTouch) && backtoMenuButton.alpha != 1 {
-                if GameScene.soundOn == true{
-                    self.scene?.runAction(buttonTouched)
-                }
                 
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
@@ -273,12 +270,8 @@ class ShopScene: SKScene, ChartboostDelegate {
             }
             
             if getMoreCoins.containsPoint(touchLocation) && getMoreCoins.alpha != 1 {
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(buttonTouched)
-                }
                 if Chartboost.hasRewardedVideo(CBLocationIAPStore) {
                     Chartboost.showRewardedVideo(CBLocationIAPStore)
-                    SKTAudio.sharedInstance().pauseBackgroundMusic()
                 }
                 
                 getMoreCoins.alpha = 1.0
@@ -353,7 +346,6 @@ class ShopScene: SKScene, ChartboostDelegate {
         }
         backGround.removeFromParent()
         backGround.removeAllChildren()
-        SKTAudio.sharedInstance().playBackgroundMusic(currentMusic)
     }
 
     

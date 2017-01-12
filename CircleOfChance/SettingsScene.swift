@@ -9,7 +9,12 @@
 import SpriteKit
 
 class SettingsScene: SKScene {
+    //nodes
+    var topBarLayer = SKNode()
+    var buttonLayer = SKNode()
+    
     //images
+    
     var backButton = SKSpriteNode()
     var soundContainer = SKSpriteNode()
     var musicContainer = SKSpriteNode()
@@ -25,44 +30,49 @@ class SettingsScene: SKScene {
     var changeMusicText1 = SKLabelNode()
     var changeMusicText2 = SKLabelNode()
     
+    //TopBar
+    var settingsBar = SKSpriteNode()
+    
     override func didMoveToView(view: SKView) {
+        addChild(buttonLayer)
+        addChild(topBarLayer)
+        anchorPoint = CGPoint(x: 0.5, y: 0.5)
 
         loadview()
         self.backgroundColor = SKColor(red: 31/255, green: 30/255, blue: 30/255, alpha: 1.0)
     
-        if GameScene.soundOn == true {
+        if AudioManager.sharedInstance().SoundisPlaying {
             soundText.text = "Sound Off"
             volumeIcon.texture = SKTexture(imageNamed: "soundIcon")
             soundContainer.alpha = 1.0
             volumeIcon.alpha = 1.0
         }
-        else if GameScene.soundOn == false {
+        else {
             soundText.text = "Sound On"
             volumeIcon.texture = SKTexture(imageNamed: "NoSoundIcon")
             volumeIcon.alpha = 0.5
             soundContainer.alpha = 0.5
         }
         
-        if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil {
+        if AudioManager.sharedInstance().BackgroundisPlaying {
             musicText.text = "Music Off"
             musicIcon.alpha = 1.0
             musicContainer.alpha = 1.0
         }
             
-        else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
+        else {
             musicText.text = "Music On"
             musicIcon.alpha = 0.5
             musicContainer.alpha = 0.5
         }
-        
-        else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
-            musicText.text = "Music Off"
-            musicIcon.alpha = 1.0
-            musicContainer.alpha = 1.0
-        }
     }
     
     func loadview() {
+        
+        settingsBar = SKSpriteNode(imageNamed: "SettingsBar")
+        settingsBar.position = CGPoint(x: 0, y: self.frame.height/2 - settingsBar.frame.height/2)
+        settingsBar.zPosition = layerPositions.topLayer.rawValue
+        topBarLayer.addChild(settingsBar)
         
         settingsText.fontName = "DayPosterBlack"
         settingsText.fontSize = 54.0
@@ -72,10 +82,10 @@ class SettingsScene: SKScene {
         self.addChild(settingsText)
         
         backButton = SKSpriteNode(imageNamed: "backButton")
-        backButton.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        backButton.position = CGPoint(x: settingsText.position.x - settingsText.frame.width/2 - 30, y: settingsText.position.y + 20)
-        backButton.zPosition = 10
-        self.addChild(backButton)
+        backButton.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        backButton.position = CGPoint(x: -settingsBar.width/2 + 100, y: 10)
+        backButton.zPosition = layerPositions.textLayer.rawValue
+        settingsBar.addChild(backButton)
         
         //sound button
         soundContainer = SKSpriteNode(imageNamed: "SettingsContainer")
@@ -144,12 +154,6 @@ class SettingsScene: SKScene {
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first{
             let touchLocation = touch.locationInNode(self)
-            if backButton.containsPoint(touchLocation) {
-                backButton.alpha = 0.5
-            }
-            else {
-                backButton.alpha = 1.0
-            }
             
             if resetHighScore.containsPoint(touchLocation) {
                 resetHighScore.alpha = 0.5
@@ -170,10 +174,9 @@ class SettingsScene: SKScene {
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first{
             let touchLocation = touch.locationInNode(self)
-            if backButton.containsPoint(touchLocation) && backButton.alpha != 1 {
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(buttonTouched)
-                }
+            if backButton.containsPoint(touchLocation) {
+                AudioManager.sharedInstance().playSoundEffect("buttonTouched.wav")
+                
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
                     // Configure the view.
@@ -188,117 +191,41 @@ class SettingsScene: SKScene {
                     skView.presentScene(scene, transition: transition)
                 }
             }
-            else {
-                backButton.alpha = 1.0
-            }
-            
-            if resetHighScore.containsPoint(touchLocation) && resetHighScore.alpha != 1 {
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(buttonTouched)
-                }
-                // Confirm some destructive action with a popup alert.
-                let alert = UIAlertController(title: "Are You Sure You Want To Reset Your High Score?", message: "", preferredStyle: UIAlertControllerStyle.Alert)
-                let cancelAction = UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: { (a) -> Void in
-                    // User tapped 'cancel', so do nothing
-                })
-                let confirmAction = UIAlertAction(title: "Yes", style: UIAlertActionStyle.Destructive, handler: { (a) -> Void in
-                    NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "highscore")
-                    let scene = MainMenu(size: self.view!.bounds.size)
-                    scene.scaleMode = .ResizeFill
-                    self.view!.presentScene(scene, transition: SKTransition.fadeWithDuration(0.3))
-                })
-                
-                alert.addAction(cancelAction)
-                alert.addAction(confirmAction)
-                
-                self.view?.window?.rootViewController?.presentViewController(alert, animated: true, completion: nil)
-                resetHighScore.alpha = 1
-            }
-            else {
-                resetHighScore.alpha = 1.0
-            }
             
             if soundContainer.containsPoint(touchLocation) {
-                if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") == nil {
-                    NSUserDefaults.standardUserDefaults().setObject(false, forKey: "soundOn")
-                    GameScene.soundOn = false
+                if AudioManager.sharedInstance().SoundisPlaying == true {
+                    AudioManager.sharedInstance().SoundisPlaying = false
                     soundText.text = "Sound On"
                     volumeIcon.texture = SKTexture(imageNamed: "NoSoundIcon")
                     soundContainer.alpha = 0.5
                     volumeIcon.alpha = 0.5
-                }
-                else if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") as! Bool == false{
-                    NSUserDefaults.standardUserDefaults().setObject(true, forKey: "soundOn")
-                    GameScene.soundOn = true
-                    soundText.text = "Sound Off"
-                    volumeIcon.texture = SKTexture(imageNamed: "soundIcon")
-                    volumeIcon.alpha = 1.0
-                    soundContainer.alpha = 1.0
                 }
                 
-                else if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") as! Bool == true {
-                    NSUserDefaults.standardUserDefaults().setObject(false, forKey: "soundOn")
-                    GameScene.soundOn = false
-                    soundText.text = "Sound On"
-                    volumeIcon.texture = SKTexture(imageNamed: "NoSoundIcon")
-                    soundContainer.alpha = 0.5
-                    volumeIcon.alpha = 0.5
+                else if AudioManager.sharedInstance().SoundisPlaying == false {
+                    AudioManager.sharedInstance().SoundisPlaying = true
+                    soundText.text = "Sound Off"
+                    volumeIcon.texture = SKTexture(imageNamed: "soundIcon")
+                    soundContainer.alpha = 1.0
+                    volumeIcon.alpha = 1.0
                 }
             }
             
             if musicContainer.containsPoint(touchLocation){
-                if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil{
-                    NSUserDefaults.standardUserDefaults().setObject(false, forKey: "musicOn")
-                    SKTAudio.sharedInstance().pauseBackgroundMusic()
+                if AudioManager.sharedInstance().BackgroundisPlaying == true{
+                    AudioManager.sharedInstance().BackgroundisPlaying = false
+                    AudioManager.sharedInstance().pauseBackgroundMusic()
                     musicText.text = "Music On"
                     musicIcon.alpha = 0.5
                     musicContainer.alpha = 0.5
                 }
-                else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
-                    NSUserDefaults.standardUserDefaults().setObject(true, forKey: "musicOn")
-                    SKTAudio.sharedInstance().playBackgroundMusic(currentMusic)
+                else if AudioManager.sharedInstance().BackgroundisPlaying == false {
+                    AudioManager.sharedInstance().BackgroundisPlaying = true
+                    AudioManager.sharedInstance().resumeBackgroundMusic()
                     musicText.text = "Music Off"
                     musicIcon.alpha = 1.0
                     musicContainer.alpha = 1.0
                 }
-                
-                else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
-                    NSUserDefaults.standardUserDefaults().setObject(false, forKey: "musicOn")
-                    SKTAudio.sharedInstance().pauseBackgroundMusic()
-                    musicText.text = "Music On"
-                    musicIcon.alpha = 0.5
-                    musicContainer.alpha = 0.5
-                }
-            }
-            if changeMusic.containsPoint(touchLocation) && changeMusic.alpha != 1 {
-                if currentMusic == "bgMusic.wav" {
-                    if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil  || NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
-                        SKTAudio.sharedInstance().playBackgroundMusic("bgMusic2.mp3")
-                        currentMusic = "bgMusic2.mp3"
-                    }
-                    else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
-                        SKTAudio.sharedInstance().playBackgroundMusic("bgMusic2.mp3")
-                        currentMusic = "bgMusic2.mp3"
-                        SKTAudio.sharedInstance().pauseBackgroundMusic()
-                    }
-                }
-                else {
-                    if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil || NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
-                        SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
-                        currentMusic = "bgMusic.wav"
-                    }
-                    else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
-                        SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
-                        currentMusic = "bgMusic.wav"
-                        SKTAudio.sharedInstance().pauseBackgroundMusic()
-                    }
-                }
-                changeMusic.alpha = 1.0
-            }
-            else {
-                changeMusic.alpha = 1.0
             }
         }
-
     }
 }

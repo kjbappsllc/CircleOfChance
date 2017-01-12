@@ -72,9 +72,6 @@ class howToPlayScene: SKScene {
             let tiplocation = touch.locationInNode(backGround)
             let touchLocation = touch.locationInNode(self)
             if goBack.containsPoint(touchLocation){
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(buttonTouched)
-                }
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
                     // Configure the view.

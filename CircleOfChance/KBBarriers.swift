@@ -55,7 +55,7 @@ class barrier: SKSpriteNode {
         let fadeOut = SKAction.fadeAlphaTo(0.0, duration: 0.2)
         
         let pulse = SKAction.sequence([fadeIn,fadeOut])
-        let cycle = SKAction.repeatAction(pulse, count: 4)
+        let cycle = SKAction.repeatAction(pulse, count: 3)
         
         self.runAction(cycle) { 
             self.notPassable()

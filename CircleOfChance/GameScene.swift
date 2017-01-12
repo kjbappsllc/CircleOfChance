@@ -770,7 +770,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 case 0..<90:
                     var limit = 0
-                    for barriers in self.barrierArray.reverse() {
+                    for barriers in self.barrierArray {
                         if limit != 1 {
                             if barriers.isActive {
                                 
@@ -783,7 +783,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 default:
                     var limit = 0
-                    for barriers in self.barrierArray.reverse() {
+                    for barriers in self.barrierArray {
                         if limit != 2 {
                             if barriers.isActive {
                                 
@@ -800,7 +800,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 case 0..<90:
                     var limit = 0
-                    for barriers in self.barrierArray.reverse() {
+                    for barriers in self.barrierArray {
                         if limit != 3 {
                             if barriers.isActive {
                                 
@@ -813,7 +813,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 default:
                     var limit = 0
-                    for barriers in self.barrierArray.reverse() {
+                    for barriers in self.barrierArray {
                         if limit != 4 {
                             if barriers.isActive {
                                 
@@ -910,7 +910,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             saveHighscore(highscoreInt)
         }
         
-        SKTAudio.sharedInstance().pauseBackgroundMusic()
         dotsArray.removeAll()
         gameStarted = false
         isGameOver = true

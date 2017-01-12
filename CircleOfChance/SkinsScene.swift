@@ -239,9 +239,6 @@ class SkinsScene: SKScene {
             let goBack = touch.locationInNode(shopTextContainer)
             let touchedNode = self.nodeAtPoint(location)
             if backtoMenuButton.containsPoint(goBack) && backtoMenuButton.alpha != 1{
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(buttonTouched)
-                }
                 if let scene = ShopScene(fileNamed:"GameScene") {
                     
                     // Configure the view.
@@ -297,10 +294,6 @@ class SkinsScene: SKScene {
                         else if skinsArray[i].locked == false {
                             SkinsScene.currentSkin = skinsArray[i].name
                             NSUserDefaults.standardUserDefaults().setObject(SkinsScene.currentSkin, forKey: "currentSkin")
-                            
-                            if GameScene.soundOn == true{
-                                self.scene?.runAction(buttonTouched)
-                            }
                             if let scene = MainMenu(fileNamed:"GameScene") {
                                 
                                 // Configure the view.

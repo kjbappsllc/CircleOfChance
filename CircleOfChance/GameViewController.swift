@@ -10,6 +10,7 @@ import UIKit
 import SpriteKit
 import GoogleMobileAds
 import GameKit
+import AVFoundation
 
 class GameViewController: UIViewController, GKGameCenterControllerDelegate{
     
@@ -21,29 +22,13 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
         
         super.viewDidLoad()
         
-        if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") == nil {
-             SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
-        }
-        else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == false {
-            SKTAudio.sharedInstance().pauseBackgroundMusic()
-        }
-        
-        else if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool == true {
-            SKTAudio.sharedInstance().playBackgroundMusic("bgMusic.wav")
+        let sess = AVAudioSession.sharedInstance()
+        if sess.otherAudioPlaying {
+            _ = try? sess.setCategory(AVAudioSessionCategoryAmbient, withOptions: .DuckOthers)
+            _ = try? sess.setActive(true, withOptions: [])
         }
         
-        
-        if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") == nil {
-            GameScene.soundOn = true
-        }
-        else if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") as! Bool == false {
-            GameScene.soundOn = false
-        }
-        
-        else if NSUserDefaults.standardUserDefaults().objectForKey("soundOn") as! Bool == true {
-            GameScene.soundOn = true
-        }
-        
+        AudioManager.sharedInstance().playBackgroundMusic("bgMusic.wav")
         if let scene = MainMenu(fileNamed:"GameScene") {
             
             // Configure the view.
@@ -56,12 +41,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
             let transition = SKTransition.fadeWithDuration(0.8)
             skView.presentScene(scene, transition: transition)
         }
-
         
-        if Chartboost.hasRewardedVideo(CBLocationIAPStore) == false {
-            Chartboost.cacheRewardedVideo(CBLocationIAPStore)
-            
-        }
         loadBanner()
 
     }

@@ -12,6 +12,7 @@ import GameKit
 class GameOver: SKScene, ChartboostDelegate {
     //layers
     let gameOverLayer = SKNode()
+    var shadowBG = SKSpriteNode()
     
     //buttons
     var homeButton = SKSpriteNode()
@@ -23,9 +24,9 @@ class GameOver: SKScene, ChartboostDelegate {
     var coinsBox = SKSpriteNode()
     var coinsMade = Int()
     var currency = CurrencyManager()
-    var coinLabel = SKLabelNode()
     
     var score = SKLabelNode()
+    var scoring = Int()
     
     var highscoreRect = SKSpriteNode()
     var highscoreTitle = SKLabelNode()
@@ -43,10 +44,16 @@ class GameOver: SKScene, ChartboostDelegate {
         
         loadView()
         
-        if Chartboost.hasRewardedVideo(CBLocationGameOver) == true {
-            
-            let scale = SKAction.scaleTo(1.1, duration: 0.5)
-            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
+        if Chartboost.hasRewardedVideo(CBLocationGameOver) == false {
+            Chartboost.cacheRewardedVideo(CBLocationGameOver)
+            let scale = SKAction.scaleTo(1.05, duration: 1.0)
+            let scaleback = SKAction.scaleTo(1.0, duration: 1.0)
+            let pulsing = SKAction.sequence([scale,scaleback])
+            movieButton.runAction(SKAction.repeatActionForever(pulsing))
+        }
+        else {
+            let scale = SKAction.scaleTo(1.05, duration: 1.0)
+            let scaleback = SKAction.scaleTo(1.0, duration: 1.0)
             let pulsing = SKAction.sequence([scale,scaleback])
             movieButton.runAction(SKAction.repeatActionForever(pulsing))
         }
@@ -54,42 +61,9 @@ class GameOver: SKScene, ChartboostDelegate {
     }
     
     
-    
     func loadView() {
         addBackground()
         addGameOver()
-        
-        if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == false {
-            //coinsMade = GameScene.scoreInt / 8
-            
-            coinsMadeNotifier.fontName = "DayPosterBlack"
-            coinsMadeNotifier.fontSize = 26.0
-            coinsMadeNotifier.position = CGPoint(x: coinLabel.position.x - 10, y: coinLabel.position.y - 40)
-            coinsMadeNotifier.fontColor = SKColor(red: 133/255, green: 0, blue: 241/255, alpha: 1.0)
-            self.addChild(coinsMadeNotifier)
-        }
-        
-        else if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == true {
-            //coinsMade = (GameScene.scoreInt / 16) * 2
-            
-            coinsMadeNotifier.fontName = "DayPosterBlack"
-            coinsMadeNotifier.fontSize = 26.0
-            coinsMadeNotifier.position = CGPoint(x: coinLabel.position.x - 10, y: coinLabel.position.y - 40)
-            coinsMadeNotifier.fontColor = SKColor(red: 223/255, green: 147/255, blue: 0, alpha: 1.0)
-            self.addChild(coinsMadeNotifier)
-            
-            let doubleC = SKLabelNode()
-            doubleC.fontName = "DayPosterBlack"
-            doubleC.fontSize = 14.0
-            doubleC.position = CGPoint(x: coinsMadeNotifier.position.x + 10, y: coinsMadeNotifier.position.y - 25)
-            doubleC.fontColor = SKColor(red: 223/255, green: 147/255, blue: 0, alpha: 1.0)
-            doubleC.text = "x2"
-            self.addChild(doubleC)
-        }
-        
-        if coinsMade < 0 {
-            coinsMade = 0
-        }
         
         currency.coins += coinsMade
         currency.totalCoins += coinsMade
@@ -110,8 +84,6 @@ class GameOver: SKScene, ChartboostDelegate {
             incrementCurrentPercentageOfAchievement("achievement_12000coins", amount: 100.0)
         }
         
-        coinLabel.text = "\(currency.coins)"
-        coinsMadeNotifier.text = "+ \(coinsMade)"
     }
     
     //MARK: This function adds the background to the game
@@ -125,7 +97,7 @@ class GameOver: SKScene, ChartboostDelegate {
     
     //MARK: This function adds the gameOver panel
     func addGameOver() {
-        let shadowBG = SKSpriteNode(imageNamed: "GameOverLayerBG")
+        shadowBG = SKSpriteNode(imageNamed: "GameOverLayerBG")
         shadowBG.zPosition = layerPositions.background.rawValue + 1
         self.addChild(shadowBG)
         
@@ -158,8 +130,8 @@ class GameOver: SKScene, ChartboostDelegate {
         scoreBox.zPosition = layerPositions.textLayer.rawValue
         gameOverSign.addChild(scoreBox)
         
-        let scoring = self.userData?.objectForKey("score")
-        score.text = "\(scoring!)"
+        scoring = self.userData?.objectForKey("score") as! Int
+        score.text = "\(scoring)"
         score.fontSize = 45.0
         score.fontName = "Grand Hotel"
         score.position = CGPoint(x: 8, y: -38)
@@ -173,6 +145,42 @@ class GameOver: SKScene, ChartboostDelegate {
         coinsBox.position = CGPoint(x: 0, y: -164)
         coinsBox.zPosition = layerPositions.textLayer.rawValue
         gameOverSign.addChild(coinsBox)
+        
+        if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == false {
+            coinsMade = scoring + (scoring/2)
+            coinsMadeNotifier.fontName = "Grand Hotel"
+            coinsMadeNotifier.fontSize = 45.0
+            coinsMadeNotifier.position = CGPoint(x: 8, y: -26)
+            coinsMadeNotifier.text = "\(coinsMade)"
+            coinsMadeNotifier.zPosition = layerPositions.topLayer.rawValue
+            coinsBox.addChild(coinsMadeNotifier)
+            
+            let pusleOut = SKAction.scaleTo(1.05, duration: 0.5)
+            pusleOut.timingMode = .EaseOut
+            let pulseIn = SKAction.scaleTo(1.0, duration: 0.5)
+            pulseIn.timingMode = .EaseOut
+            let loop = SKAction.sequence([pusleOut,pulseIn])
+            loop.timingMode = .EaseOut
+            
+            coinsMadeNotifier.runAction(SKAction.repeatActionForever(loop))
+        }
+            
+        else if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == true {
+            coinsMade = (scoring + (scoring/2)) * 2
+            coinsMadeNotifier.fontName = "Grand Hotel"
+            coinsMadeNotifier.fontSize = 45.0
+            coinsMadeNotifier.position = CGPoint(x: 8, y: -26)
+            coinsMadeNotifier.text = "\(coinsMade)"
+            coinsBox.addChild(coinsMadeNotifier)
+            
+            let doubleC = SKLabelNode()
+            doubleC.fontName = "DayPosterBlack"
+            doubleC.fontSize = 14.0
+            doubleC.position = CGPoint(x: 8, y: -38)
+            doubleC.fontColor = SKColor(red: 223/255, green: 147/255, blue: 0, alpha: 1.0)
+            doubleC.text = "x2"
+            self.addChild(doubleC)
+        }
         ///////////////////////////////////////////////////////////////////////////
         
         //This is to bottom buttons//
@@ -193,6 +201,23 @@ class GameOver: SKScene, ChartboostDelegate {
         homeButton.zPosition = layerPositions.textLayer.rawValue
         gameOverSign.addChild(homeButton)
         ////////////////////////////
+    }
+    
+    //This function removes the gameover
+    func removeGameOver(type: String, completion: () -> ()) {
+        shadowBG.removeFromParent()
+        if type == "replay" {
+            let moveAction = SKAction.moveBy(CGVector(dx: -size.width, dy:0) , duration: 0.3)
+            let wait = SKAction.waitForDuration(0.35)
+            moveAction.timingMode = .EaseOut
+            gameOverLayer.runAction(SKAction.sequence([moveAction,wait]), completion: completion)
+        }
+        else{
+            let moveAction = SKAction.moveBy(CGVector(dx: size.width, dy:0) , duration: 0.3)
+            let wait = SKAction.waitForDuration(0.35)
+            moveAction.timingMode = .EaseOut
+            gameOverLayer.runAction(SKAction.sequence([moveAction,wait]), completion: completion)
+        }
     }
     
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
@@ -218,25 +243,15 @@ class GameOver: SKScene, ChartboostDelegate {
             let touchLocation = touch.locationInNode(self)
             if replay.containsPoint(touchLocation) && replay.alpha != 1 {
                 if let scene = GameScene(fileNamed:"GameScene") {
-                    if GameScene.soundOn == true {
-                        self.scene?.runAction(buttonTouched)
-                    }
-                    if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") != nil  {
-                        if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool != false {
-                            SKTAudio.sharedInstance().resumeBackgroundMusic()
-                        }
-                    }
-                    else {
-                        SKTAudio.sharedInstance().resumeBackgroundMusic()
-                    }
                     // Configure the view.
                     let skView = self.view as SKView!
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
                     skView.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
                     scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
+                    removeGameOver("replay") {
+                        skView.presentScene(scene)
+                    }
                 }
                 
             }
@@ -245,17 +260,6 @@ class GameOver: SKScene, ChartboostDelegate {
             }
             
             if homeButton.containsPoint(touchLocation) && homeButton.alpha != 1 {
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(buttonTouched)
-                }
-                if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") != nil  {
-                    if NSUserDefaults.standardUserDefaults().objectForKey("musicOn") as! Bool != false {
-                        SKTAudio.sharedInstance().resumeBackgroundMusic()
-                    }
-                }
-                else {
-                    SKTAudio.sharedInstance().resumeBackgroundMusic()
-                }
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
                     // Configure the view.
@@ -264,8 +268,9 @@ class GameOver: SKScene, ChartboostDelegate {
                     skView.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
                     scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
+                    removeGameOver("Home") {
+                        skView.presentScene(scene)
+                    }
                 }
             }
             else {
@@ -289,6 +294,7 @@ class GameOver: SKScene, ChartboostDelegate {
     func didCompleteRewardedVideo(location: String!, withReward reward: Int32) {
         if location == CBLocationGameOver {
             currency.coins += Int(reward)
+            coinsMade += Int(reward)
             Chartboost.cacheRewardedVideo(CBLocationGameOver)
         }
     }
@@ -299,11 +305,14 @@ class GameOver: SKScene, ChartboostDelegate {
             let scaleback = SKAction.scaleTo(1.0, duration: 0.1)
 
             
-            coinLabel.runAction(SKAction.sequence([scaleUp,changeFontAction(coinLabel, color: UIColor.purpleColor()), scaleback, changeFontAction(coinLabel, color: UIColor.whiteColor())]))
+            coinsMadeNotifier.runAction(SKAction.sequence([scaleUp,changeFontAction(coinsMadeNotifier, color: UIColor.purpleColor()), scaleback, changeFontAction(coinsMadeNotifier, color: UIColor.whiteColor())]))
             
-            coinLabel.text = "\(currency.coins)"
+            coinsMadeNotifier.text = "\(coinsMade)"
             
             movieButton.runAction(SKAction.sequence([SKAction.scaleTo(0.0, duration: 0.3),SKAction.removeFromParent()]))
+            let moveAction = SKAction.moveBy(CGVector(dx: 100, dy: 0), duration: 0.3)
+            moveAction.timingMode = .EaseOut
+            replay.runAction(moveAction)
         }
     }
     

@@ -113,20 +113,20 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
     //Mark: This function animates the end
     func animateExit(completion: () -> ()) {
         
-        let titeExit = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.5, delay: 0.0, usingSpringWithDamping: 0.0, initialSpringVelocity: 0.0)
-        titeExit.timingMode = .EaseIn
+        let titeExit = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.7)
+        titeExit.timingMode = .EaseOut
         
-        titleLayer.runAction(titeExit, completion: completion)
+        titleLayer.runAction(titeExit)
         
-        let topbuttonExit = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.3)
+        let topbuttonExit = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.5)
         topButtonLayer.runAction(topbuttonExit)
-        topbuttonExit.timingMode = .EaseIn
+        topbuttonExit.timingMode = .EaseOut
         
         let bottomExit = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.5)
         bottomButtonLayer.runAction(bottomExit)
-        bottomExit.timingMode = .EaseIn
+        bottomExit.timingMode = .EaseOut
         
-        playButton.runAction(SKAction.scaleTo(0.0, duration: 0.2))
+        playButton.runAction(SKAction.scaleTo(0.0, duration: 0.5, delay: 0.0, usingSpringWithDamping: 0.0, initialSpringVelocity: 0.0), completion: completion)
     }
     
     //Mark: This adds the colorful background
@@ -203,7 +203,35 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
                     }
                 })
             }
+            else if settingsButton.containsPoint(touchLocation) {
+                animateExit({
+                    if let scene = SettingsScene(fileNamed:"GameScene") {
+                        
+                        // Configure the view.
+                        let skView = self.view as SKView!
+                        /* Sprite Kit applies additional optimizations to improve rendering performance */
+                        skView.ignoresSiblingOrder = true
+                        /* Set the scale mode to scale to fit the window */
+                        scene.scaleMode = .AspectFill
+                        skView.presentScene(scene)
+                    }
+                })
+            }
+            
+            else if achievementsButton.containsPoint(touchLocation) {
+                showLeaderOrAchievements(GKGameCenterViewControllerState.Achievements)
+            }
         }
+    }
+    
+    
+    func showLeaderOrAchievements(state:GKGameCenterViewControllerState) {
+        let viewControllerVar = self.view?.window?.rootViewController
+        let gKGCViewController = GKGameCenterViewController()
+        gKGCViewController.gameCenterDelegate = self
+        
+        gKGCViewController.viewState = GKGameCenterViewControllerState.Achievements
+        viewControllerVar?.presentViewController(gKGCViewController, animated: true, completion: nil)
     }
     
     func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController) {

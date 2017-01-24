@@ -22,12 +22,6 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
         
         super.viewDidLoad()
         
-        let sess = AVAudioSession.sharedInstance()
-        if sess.otherAudioPlaying {
-            _ = try? sess.setCategory(AVAudioSessionCategoryAmbient, withOptions: .DuckOthers)
-            _ = try? sess.setActive(true, withOptions: [])
-        }
-        
         AudioManager.sharedInstance().playBackgroundMusic("bgMusic.wav")
         if let scene = MainMenu(fileNamed:"GameScene") {
             

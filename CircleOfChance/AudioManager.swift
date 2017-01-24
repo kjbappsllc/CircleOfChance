@@ -36,7 +36,13 @@ public class AudioManager {
     }
     
     init() {
-        if let boolexist = NSUserDefaults.standardUserDefaults().objectForKey("sound")  where
+        let sess = AVAudioSession.sharedInstance()
+        if sess.otherAudioPlaying {
+            _ = try? sess.setCategory(AVAudioSessionCategoryAmbient, withOptions: [])
+            _ = try? sess.setActive(true, withOptions: [])
+        }
+        
+        if let boolexist = NSUserDefaults.standardUserDefaults().objectForKey("sound")   where
             boolexist is Bool {
                 print("EXIST")
             }
@@ -81,7 +87,7 @@ public class AudioManager {
     
     
     public func playBackgroundMusic(filename: String) {
-        if BackgroundisPlaying != false {
+        if BackgroundisPlaying != false{
             let url = NSBundle.mainBundle().URLForResource(filename, withExtension: nil)
             if (url == nil) {
                 print("Could not find file: \(filename)")
@@ -119,6 +125,9 @@ public class AudioManager {
                 player.play()
             }
         }
+    }
+    public func playerExist() -> Bool {
+        return backgroundMusicPlayer != nil
     }
 }
 

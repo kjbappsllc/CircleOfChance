@@ -60,6 +60,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //PauseLayer
     var homeButton = SKSpriteNode()
     var pausePlayButton = SKSpriteNode()
+    var pauseSound = SKSpriteNode()
+    var pauseMusic = SKSpriteNode()
     
     //HighScore
     var highscoreInt = Int()
@@ -1083,8 +1085,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 pausePlayButton.position = CGPoint(x: 0, y: -60)
                 pausePlayButton.zPosition = 150
                 
+                pauseMusic = SKSpriteNode(imageNamed: "pauseMusic")
+                pauseMusic.position = CGPoint(x: -100, y: -250)
+                pauseMusic.zPosition = 150
+                
+                if AudioManager.sharedInstance().BackgroundisPlaying == false {
+                    pauseMusic.alpha = 0.66
+                }
+                
+                pauseSound = SKSpriteNode(imageNamed: "pauseSound")
+                pauseSound.position = CGPoint(x: 100, y: -250)
+                pauseSound.zPosition = 150
+                
+                if AudioManager.sharedInstance().SoundisPlaying == false {
+                    pauseSound.alpha = 0.66
+                }
+                
                 pauseLayer.addChild(pausePlayButton)
                 pauseLayer.addChild(homeButton)
+                pauseLayer.addChild(pauseMusic)
+                pauseLayer.addChild(pauseSound)
                 self.scene?.paused = true
                 IsPaused = true
             }
@@ -1097,6 +1117,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.scene?.paused = false
                 IsPaused = false
                 
+            }
+            
+            if IsPaused == true && pauseMusic.containsPoint(loc) {
+                if AudioManager.sharedInstance().BackgroundisPlaying == false {
+                    AudioManager.sharedInstance().BackgroundisPlaying = true
+                    if AudioManager.sharedInstance().playerExist() {
+                        AudioManager.sharedInstance().resumeBackgroundMusic()
+                    }
+                    else{
+                        AudioManager.sharedInstance().playBackgroundMusic("bgMusic.wav")
+                    }
+                    pauseMusic.alpha = 1.0
+                }
+                else {
+                    AudioManager.sharedInstance().BackgroundisPlaying = false
+                    AudioManager.sharedInstance().pauseBackgroundMusic()
+                    pauseMusic.alpha = 0.66
+                }
+            }
+            
+            if IsPaused == true && pauseSound.containsPoint(loc) {
+                if AudioManager.sharedInstance().SoundisPlaying == true {
+                    AudioManager.sharedInstance().SoundisPlaying = false
+                    pauseSound.alpha = 0.66
+                }
+                    
+                else if AudioManager.sharedInstance().SoundisPlaying == false {
+                    AudioManager.sharedInstance().SoundisPlaying = true
+                    pauseSound.alpha = 1.0
+                }
             }
             
             if IsPaused == true && homeButton.containsPoint(loc) {

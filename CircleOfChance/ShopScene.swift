@@ -10,39 +10,53 @@ import SpriteKit
 import StoreKit
 
 class ShopScene: SKScene, ChartboostDelegate {
-    var shopTextContainer = SKSpriteNode()
-    var backtoMenuButton = SKSpriteNode()
-    var shopText = SKLabelNode()
-    var coinBox = SKSpriteNode()
-    var coins = SKLabelNode()
-    var skinsSection = SKSpriteNode()
-    var skinsSectionText = SKLabelNode()
-    var themesSection = SKSpriteNode()
-    var themesSectionText = SKLabelNode()
-    var getMoreCoinsButton = SKSpriteNode()
-    var getMoreCoinsText = SKLabelNode()
-    let button = SKAction.playSoundFileNamed("buttonTouched.wav", waitForCompletion: false)
+    
+    //Currency and shopping
     var currency = CurrencyManager()
-    var doubleCoins = SKSpriteNode()
-    var getMoreCoins = SKSpriteNode()
-    
-    var shopMenu = SKSpriteNode()
-    var shopMenuText = SKLabelNode()
-    var backGround = SKShapeNode()
-    var restorePurchasesButton = SKSpriteNode()
-    var restorePurchasesLabel = SKLabelNode()
-    
-    var getMoreCoinsOptions = SKSpriteNode()
-
     let productID: NSSet = NSSet(objects:"com.KJBApps.CircleOfChance.doublecoins")
-    
     var store: IAPHelper?
     var list = [SKProduct]()
     var doubleCoinsBool = Bool()
+    var doubleCoins = SKSpriteNode()
+    
+    //TopBar
+    var backButton = SKSpriteNode()
+    var topBar = SKNode()
+    var coins = SKLabelNode()
+    
+    //Selection
+    var selectionLayer = SKNode()
+    var skinsSection = SKSpriteNode()
+    var themesSection = SKSpriteNode()
+    var skins_selected = Bool()
     
     override func didMoveToView(view: SKView) {
+        userInteractionEnabled = false
+        loadView()
+        animateEnter { 
+            self.userInteractionEnabled = true
+        }
+    }
+    
+    deinit {
+        SKPaymentQueue.defaultQueue().removeTransactionObserver(store!)
+    }
+    
+    //Mark: Loads the View
+    func loadView() {
+        // Top Bar
+        topBar = self.childNodeWithName("topBar")!
+        backButton = topBar.childNodeWithName("backButton") as! SKSpriteNode
+        coins = topBar.childNodeWithName("coins") as! SKLabelNode
         
+        //Shop
         doubleCoinsBool = NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins")
+        
+        //Selection
+        selectionLayer = self.childNodeWithName("selection")!
+        skinsSection = selectionLayer.childNodeWithName("skinSelection") as! SKSpriteNode
+        themesSection = selectionLayer.childNodeWithName("themeSelection") as! SKSpriteNode
+        skins_selected = true
         
         store = IAPHelper(productIds: productID as! Set<ProductIdentifier>)
         
@@ -57,232 +71,42 @@ class ShopScene: SKScene, ChartboostDelegate {
             print("can't make payments")
         }
         
-        
-        Chartboost.setDelegate(self)
-        addTitle()
-        addSections()
-        self.scene?.backgroundColor = UIColor(red: 31/255, green: 30/255, blue: 30/255, alpha: 1.0)
-        
-        if Chartboost.hasRewardedVideo(CBLocationIAPStore) == false {
-            Chartboost.cacheRewardedVideo(CBLocationIAPStore)
-            
-        }
-    }
-    
-    deinit {
-        SKPaymentQueue.defaultQueue().removeTransactionObserver(store!)
-    }
-    
-    //MARK: Scene setup
-    func addTitle() {
-        
-        shopTextContainer = SKSpriteNode(imageNamed: "ShoppingTopContainer")
-        shopTextContainer.size = CGSize(width: self.size.width, height: shopTextContainer.size.height + 50)
-        shopTextContainer.position = CGPoint(x: self.frame.width/2, y: self.frame.height - 65)
-        self.addChild(shopTextContainer)
-        
-        backtoMenuButton = SKSpriteNode(imageNamed: "backButton")
-        backtoMenuButton.anchorPoint = CGPoint(x: 1.0, y: 0.5)
-        backtoMenuButton.size = CGSize(width: backtoMenuButton.size.width - 5, height: backtoMenuButton.size.height - 5)
-        backtoMenuButton.position = CGPoint(x: -120, y: -5)
-        backtoMenuButton.zPosition = 1
-        shopTextContainer.addChild(backtoMenuButton)
-        
-        shopText.fontName = "DayPosterBlack"
-        shopText.fontSize = 50.0
-        shopText.text = "Shop"
-        shopText.position = CGPoint(x: 0, y: -18)
-        shopText.zPosition = 1
-        shopTextContainer.addChild(shopText)
-        
-        coinBox = SKSpriteNode(imageNamed: "coinBox")
-        coinBox.position = CGPoint(x: 0, y: -45)
-        coinBox.zPosition = 1
-        shopTextContainer.addChild(coinBox)
-        coins.fontName = "DayPosterBlack"
-        coins.fontColor = UIColor.whiteColor()
-        coins.position = CGPoint(x: 0, y: -6)
-        coins.zPosition = 1
         coins.text = "\(currency.coins)"
-        coins.fontSize = 16.0
-        coinBox.addChild(coins)
     }
     
-    func addSections() {
+    func animateEnter(completion: ()->()){
+        topBar.position.y = size.height
+        selectionLayer.position.x = -size.width
         
-        doubleCoins = SKSpriteNode(imageNamed: "doubleCoinsButton")
-        doubleCoins.position = CGPoint(x: self.frame.width/2 + 90, y: self.frame.height/2 - 85)
+        let topBarEnter = SKAction.moveBy(CGVector(dx: 0,dy: -size.height), duration: 0.4)
+        topBarEnter.timingMode = .EaseIn
+        topBar.runAction(topBarEnter)
         
-        if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == true || !IAPHelper.canMakePayments() {
-            doubleCoins.alpha = 0.5
-        }
-        self.addChild(doubleCoins)
-        
-        skinsSection = SKSpriteNode(imageNamed: "shopTextContainer")
-        skinsSection.position = CGPoint(x: self.frame.width/2 - 90, y: self.frame.height/2 + 85)
-        skinsSection.size = CGSize(width: doubleCoins.size.width, height: skinsSection.size.height)
-        self.addChild(skinsSection)
-        skinsSectionText.fontName = "DayPosterBlack"
-        skinsSectionText.text = "Skins"
-        skinsSectionText.position = CGPoint(x: 0, y: -9)
-        skinsSectionText.zPosition = 1
-        skinsSectionText.fontSize = 30.0
-        skinsSectionText.fontColor = UIColor.whiteColor()
-        skinsSection.addChild(skinsSectionText)
-        
-        themesSection = SKSpriteNode(imageNamed: "shopTextContainer")
-        themesSection.position = CGPoint(x: self.frame.width/2 + 90, y: self.frame.height/2 + 85)
-        themesSection.size = CGSize(width: doubleCoins.size.width, height: themesSection.size.height)
-        self.addChild(themesSection)
-        themesSectionText.fontName = "DayPosterBlack"
-        themesSectionText.text = "Themes"
-        themesSectionText.position = CGPoint(x: 0, y: -9)
-        themesSectionText.zPosition = 1
-        themesSectionText.fontSize = 30.0
-        themesSectionText.fontColor = UIColor.whiteColor()
-        themesSection.addChild(themesSectionText)
-        
-        getMoreCoins = SKSpriteNode(imageNamed: "getMoreCoinsButton")
-        getMoreCoins.position = CGPoint(x: self.frame.width/2 - 90, y: self.frame.height/2 - 85)
-        getMoreCoins.size = CGSize(width: doubleCoins.size.width, height: getMoreCoins.size.height)
-        
-        if Chartboost.hasRewardedVideo(CBLocationIAPStore) == false {
-            getMoreCoins.alpha = 0.5
-        }
-        self.addChild(getMoreCoins)
-        
-        restorePurchasesButton = SKSpriteNode(imageNamed: "restorePurchases")
-        restorePurchasesButton.anchorPoint = CGPoint(x: 0.5,y: 1.0)
-        restorePurchasesButton.position = CGPoint(x: self.frame.width/2, y: doubleCoins.position.y - 115)
-        restorePurchasesButton.zPosition = 1
-        self.addChild(restorePurchasesButton)
-        
-    }
-    
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        if let touch = touches.first{
-            let touchLocation = touch.locationInNode(self)
-            let backtoMenuTouch = touch.locationInNode(shopTextContainer)
-            if backtoMenuButton.containsPoint(backtoMenuTouch) {
-                backtoMenuButton.alpha = 0.7
-            }
-            else {
-                backtoMenuButton.alpha = 1.0
-            }
-            if skinsSection.containsPoint(touchLocation) {
-                skinsSection.alpha = 0.5
-            }
-            else {
-                skinsSection.alpha = 1.0
-            }
-            
-            if themesSection.containsPoint(touchLocation) {
-                themesSection.alpha = 0.5
-            }
-            else {
-                themesSection.alpha = 1.0
-            }
-            if getMoreCoins.containsPoint(touchLocation) {
-                getMoreCoins.alpha = 0.5
-            }
-            else {
-                getMoreCoins.alpha = 1.0
-            }
-            
-            if restorePurchasesButton.containsPoint(touchLocation) {
-                restorePurchasesButton.alpha = 0.5
-            }
-            else {
-                restorePurchasesButton.alpha = 1.0
-            }
-        }
-        
+        let selectionEnter = SKAction.moveBy(CGVector(dx: size.width,dy: 0), duration: 0.4)
+        selectionEnter.timingMode = .EaseIn
+        selectionLayer.runAction(selectionEnter)
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first{
             let touchLocation = touch.locationInNode(self)
-            let backtoMenuTouch = touch.locationInNode(shopTextContainer)
-            if backtoMenuButton.containsPoint(backtoMenuTouch) && backtoMenuButton.alpha != 1 {
+            let backtoMenuTouch = touch.locationInNode(topBar)
+            let selectionTouch = touch.locationInNode(selectionLayer)
+            if backButton.containsPoint(backtoMenuTouch){
                 
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
                     // Configure the view.
                     let skView = self.view as SKView!
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
                     skView.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
                     scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
-                }
-            }
-            else {
-                backtoMenuButton.alpha = 1.0
-            }
-            
-            if skinsSection.containsPoint(touchLocation) && skinsSection.alpha != 1 {
-                if GameScene.soundOn == true {
-                    self.scene!.runAction(button)
-                }
-                if let scene = SkinsScene(fileNamed:"GameScene") {
-                    
-                    // Configure the view.
-                    let skView = self.view as SKView!
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
-                    /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
-                    /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
-                }
-            }
-            else {
-                skinsSection.alpha = 1.0
-            }
-            
-            if themesSection.containsPoint(touchLocation) && themesSection.alpha != 1 {
-                if GameScene.soundOn == true {
-                    self.scene?.runAction(button)
-                }
-                if let scene = ThemesScene(fileNamed:"GameScene") {
-                    
-                    // Configure the view.
-                    let skView = self.view as SKView!
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
-                    /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
-                    /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
-                }
-                themesSection.alpha = 1.0
-            }
-            
-            else {
-                themesSection.alpha = 1.0
-            }
-            
-            if getMoreCoins.containsPoint(touchLocation) && getMoreCoins.alpha != 1 {
-                if Chartboost.hasRewardedVideo(CBLocationIAPStore) {
-                    Chartboost.showRewardedVideo(CBLocationIAPStore)
-                }
-                
-                getMoreCoins.alpha = 1.0
-            }
-            else {
-                if Chartboost.hasRewardedVideo(CBLocationIAPStore){
-                    getMoreCoins.alpha = 1.0
+                    skView.presentScene(scene)
                 }
             }
             
-            if doubleCoins.containsPoint(touchLocation) && doubleCoins.alpha == 1 {
+            if doubleCoins.containsPoint(touchLocation){
                 for product in list {
                     if product.productIdentifier == "com.KJBApps.CircleOfChance.doublecoins" {
                         if let isTrue = store?.isProductPurchased("com.KJBApps.CircleOfChance.doublecoins") {
@@ -300,12 +124,25 @@ class ShopScene: SKScene, ChartboostDelegate {
                                                                  name: IAPHelper.IAPHelperPurchaseNotification,
                                                                  object: nil)
             }
-            else {
-                if doubleCoinsBool != true {
-                    doubleCoins.alpha = 1.0
+            
+            if skinsSection.containsPoint(selectionTouch) {
+                if skins_selected == false {
+                    skins_selected = true
+                    themesSection.alpha = 0.5
+                    skinsSection.alpha = 1.0
                 }
             }
             
+            if themesSection.containsPoint(selectionTouch) {
+                if skins_selected == true {
+                    skins_selected = false
+                    themesSection.alpha = 1.0
+                    skinsSection.alpha = 0.5
+                }
+            }
+            
+            
+            /*
             if restorePurchasesButton.containsPoint(touchLocation) {
                 store?.restorePurchases()
                 
@@ -317,6 +154,7 @@ class ShopScene: SKScene, ChartboostDelegate {
             else {
                 restorePurchasesButton.alpha = 1.0
             }
+    */
         }
     }
     
@@ -330,23 +168,5 @@ class ShopScene: SKScene, ChartboostDelegate {
         }
         
     }
-    
-    func didCompleteRewardedVideo(location: String!, withReward reward: Int32) {
-        if location == CBLocationIAPStore {
-            currency.coins += Int(reward)
-        }
-        backGround.removeAllChildren()
-        backGround.removeFromParent()
-        Chartboost.cacheRewardedVideo(CBLocationIAPStore)
-    }
-    
-    func didCloseRewardedVideo(location: String!) {
-        if location == CBLocationIAPStore {
-            coins.text = "\(currency.coins)"
-        }
-        backGround.removeFromParent()
-        backGround.removeAllChildren()
-    }
-
     
 }

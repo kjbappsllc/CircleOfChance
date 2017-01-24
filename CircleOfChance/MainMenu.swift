@@ -120,11 +120,11 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
         
         let topbuttonExit = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.5)
         topButtonLayer.runAction(topbuttonExit)
-        topbuttonExit.timingMode = .EaseOut
+        topbuttonExit.timingMode = .EaseIn
         
-        let bottomExit = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.5)
+        let bottomExit = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.5)
         bottomButtonLayer.runAction(bottomExit)
-        bottomExit.timingMode = .EaseOut
+        bottomExit.timingMode = .EaseIn
         
         playButton.runAction(SKAction.scaleTo(0.0, duration: 0.5, delay: 0.0, usingSpringWithDamping: 0.0, initialSpringVelocity: 0.0), completion: completion)
     }
@@ -182,10 +182,6 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
         bottomButtonLayer.addChild(achievementsButton)
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        
-    }
-    
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first {
             let touchLocation = touch.locationInNode(playButtonLayer)
@@ -220,6 +216,21 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
             
             else if achievementsButton.containsPoint(touchLocation) {
                 showLeaderOrAchievements(GKGameCenterViewControllerState.Achievements)
+            }
+            
+            else if shopButton.containsPoint(touchLocation) {
+                animateExit({
+                    if let scene = ShopScene(fileNamed:"ShopScene") {
+                        
+                        // Configure the view.
+                        let skView = self.view as SKView!
+                        /* Sprite Kit applies additional optimizations to improve rendering performance */
+                        skView.ignoresSiblingOrder = true
+                        /* Set the scale mode to scale to fit the window */
+                        scene.scaleMode = .AspectFill
+                        skView.presentScene(scene)
+                    }
+                })
             }
         }
     }

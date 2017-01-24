@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		04297CC31E28379F00B9CA2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04297CC21E28379F00B9CA2C /* Assets.xcassets */; };
+		04297CC51E36A67600B9CA2C /* ShopScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04297CC41E36A67600B9CA2C /* ShopScene.sks */; };
 		047A656D1D36CDF7005396D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A656C1D36CDF7005396D9 /* AppDelegate.swift */; };
 		047A656F1D36CDF7005396D9 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 047A656E1D36CDF7005396D9 /* GameScene.sks */; };
 		047A65761D36CDF7005396D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 047A65741D36CDF7005396D9 /* Main.storyboard */; };
@@ -74,6 +75,7 @@
 
 /* Begin PBXFileReference section */
 		04297CC21E28379F00B9CA2C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		04297CC41E36A67600B9CA2C /* ShopScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ShopScene.sks; sourceTree = "<group>"; };
 		047A65691D36CDF7005396D9 /* CircleOfChance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CircleOfChance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		047A656C1D36CDF7005396D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		047A656E1D36CDF7005396D9 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 				047A65841D36CE82005396D9 /* GameScene.swift */,
 				047A65881D36CE96005396D9 /* MainMenu.swift */,
 				047A656E1D36CDF7005396D9 /* GameScene.sks */,
+				04297CC41E36A67600B9CA2C /* ShopScene.sks */,
 				047A65861D36CE95005396D9 /* howToPlayScene.swift */,
 				047A65871D36CE96005396D9 /* SettingsScene.swift */,
 				047A65891D36CE96005396D9 /* GameOver.swift */,
@@ -370,6 +373,7 @@
 				047A65761D36CDF7005396D9 /* Main.storyboard in Resources */,
 				047A65BF1D36CEDE005396D9 /* newCard.wav in Resources */,
 				04FBB8831D414E87007D1A52 /* light_bulb_smash-3.mp3 in Resources */,
+				04297CC51E36A67600B9CA2C /* ShopScene.sks in Resources */,
 				047A65B71D36CEDE005396D9 /* nextLevel.wav in Resources */,
 				04FBB8861D41C7F8007D1A52 /* checkpoint.wav in Resources */,
 			);

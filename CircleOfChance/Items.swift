@@ -45,7 +45,12 @@ class items {
         _skins = [Skins]()
         _themes = [Themes]()
 
-        _skins += loadInitialSkins()
+        if let savedskins = loadSkins() {
+            _skins += savedskins
+        }
+        else{
+            _skins += loadInitialSkins()
+        }
         
         if let savedthemes = loadThemes() {
             _themes += savedthemes
@@ -85,7 +90,6 @@ class items {
     //Initial Skins
     func loadInitialSkins() -> [Skins] {
         let skin0 = Skins(name: "Character", price: 0, locked: false)
-        /*
         let skin1 = Skins(name: "blueCharacter", price: 200, locked: true)
         let skin2 = Skins(name: "blueGreenSkin", price: 400, locked: true)
         let skin3 = Skins(name: "pastureSkin", price: 500, locked: true)
@@ -133,9 +137,8 @@ class items {
         let skin45 = Skins(name: "wolfballSkin", price: 6100, locked: true)
         let skin46 = Skins(name: "goldcoinSkin", price: 6300, locked: true)
         let skin47 = Skins(name: "royalSkin", price: 6500, locked: true)
-        */
         
-        let skinsArray = [skin0
+        let skinsArray = [skin0,skin1,skin2,skin3,skin4,skin5,skin6,skin7,skin8,skin9,skin10,skin11,skin12,skin13,skin14,skin15,skin16,skin17,skin18,skin19,skin20,skin21,skin22,skin23,skin23,skin24,skin25,skin26,skin27,skin28,skin29,skin30,skin31,skin32,skin33,skin34,skin35,skin36,skin37,skin38,skin39,skin40,skin41,skin42,skin43,skin44,skin45,skin46,skin47
         ]
         
         return skinsArray

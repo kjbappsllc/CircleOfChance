@@ -31,7 +31,6 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>DAYPBL__.ttf</string>
 		<string>GrandHotel-Regular.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

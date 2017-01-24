@@ -105,6 +105,7 @@ class ShopScene: SKScene, ChartboostDelegate {
     
     func addItems(nodes: [AnyObject], isSkin: Bool) {
         for i in 0..<nodes.count {
+            //Setup the slot that the item will go in
             let item = itemContainer()
             item.position.x = self.size.width/2 * CGFloat(i)
             if isSkin == true{
@@ -120,6 +121,35 @@ class ShopScene: SKScene, ChartboostDelegate {
                 }
             }
             moveableArea.addChild(item)
+            
+            //position the price
+            let price = SKLabelNode()
+            if isSkin {
+                price.text = "\(shopSkins[i].price)"
+            }
+            else{
+                price.text = "\(shopThemes[i].price)"
+            }
+            price.fontSize = 36.0
+            price.fontName = "Lucida Grande-Bold"
+            price.fontColor = UIColor.blackColor()
+            price.position = CGPoint(x: 0, y: -item.size.height/2 + 70)
+            price.zPosition = 10
+            price.name = "price"
+            item.addChild(price)
+            
+            let name = SKLabelNode()
+            if isSkin {
+                var text = shopSkins[i].name
+                text = text.capitalizedString
+                name.text = text
+            }
+            else{
+                var text = shopThemes[i].name
+                text = text.capitalizedString
+                name.text = text
+            }
+            
         }
     }
     
@@ -262,6 +292,12 @@ class ShopScene: SKScene, ChartboostDelegate {
                     skins_selected = true
                     themesSection.alpha = 0.5
                     skinsSection.alpha = 1.0
+                    moveableArea.removeAllChildren()
+                    moveableArea.position.x = 0
+                    addItems(shopSkins, isSkin: true)
+                    currentItem = 1
+                    current.text = "\(currentItem)"
+                    end.text = "\(shopSkins.count)"
                 }
             }
             
@@ -270,6 +306,12 @@ class ShopScene: SKScene, ChartboostDelegate {
                     skins_selected = false
                     themesSection.alpha = 1.0
                     skinsSection.alpha = 0.5
+                    moveableArea.removeAllChildren()
+                    moveableArea.position.x = 0
+                    addItems(shopThemes, isSkin: false)
+                    currentItem = 1
+                    current.text = "\(currentItem)"
+                    end.text = "\(shopThemes.count)"
                 }
             }
             

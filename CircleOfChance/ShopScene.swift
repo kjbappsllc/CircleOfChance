@@ -130,27 +130,20 @@ class ShopScene: SKScene, ChartboostDelegate {
             else{
                 price.text = "\(shopThemes[i].price)"
             }
-            price.fontSize = 36.0
-            price.fontName = "Lucida Grande-Bold"
-            price.fontColor = UIColor.blackColor()
-            price.position = CGPoint(x: 0, y: -item.size.height/2 + 70)
+            
+            setUpLabel(price, size: 36.0, fontName: "Lucida Grande-Bold", fontColor: SKColor.blackColor())
+            price.position.y = -item.size.height/2 + 70
             price.zPosition = 10
             price.name = "price"
             item.addChild(price)
-            
-            let name = SKLabelNode()
-            if isSkin {
-                var text = shopSkins[i].name
-                text = text.capitalizedString
-                name.text = text
-            }
-            else{
-                var text = shopThemes[i].name
-                text = text.capitalizedString
-                name.text = text
-            }
-            
         }
+    }
+    
+    //This function just reduces a little of the code to set up a label
+    func setUpLabel(label: SKLabelNode, size: CGFloat, fontName: String, fontColor: SKColor){
+        label.fontSize = size
+        label.fontName = fontName
+        label.fontColor = fontColor
     }
     
     func animateEnter(completion: ()->()){
@@ -158,6 +151,8 @@ class ShopScene: SKScene, ChartboostDelegate {
         selectionLayer.position.x = -size.width
         moveableArea.alpha = 0
         itemSelectionBG.alpha = 0
+        counterNode.alpha = 0
+        doubleCoins.alpha = 0
         
         let topBarEnter = SKAction.moveBy(CGVector(dx: 0,dy: -size.height), duration: 0.4)
         topBarEnter.timingMode = .EaseIn
@@ -171,6 +166,8 @@ class ShopScene: SKScene, ChartboostDelegate {
         moveableAreaEnter.timingMode = .EaseIn
         moveableArea.runAction(moveableAreaEnter)
         
+        counterNode.runAction(SKAction.fadeInWithDuration(0.2))
+        doubleCoins.runAction(SKAction.fadeInWithDuration(0.2))
         itemSelectionBG.runAction(SKAction.fadeInWithDuration(0.1), completion:completion)
     }
     
@@ -186,6 +183,7 @@ class ShopScene: SKScene, ChartboostDelegate {
         itemSelectionBG.runAction(SKAction.fadeOutWithDuration(0.1))
         moveableArea.runAction(SKAction.fadeOutWithDuration(0.3))
         
+        counterNode.runAction(SKAction.fadeOutWithDuration(0.3))
         doubleCoins.runAction(SKAction.fadeOutWithDuration(0.3), completion: completion)
         
         

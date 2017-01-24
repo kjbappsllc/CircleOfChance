@@ -144,12 +144,12 @@ class SettingsScene: SKScene {
         buttonLayer.hidden = false
         topBarLayer.hidden = false
         
-        let topMoveIn = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.2)
+        let topMoveIn = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.4)
         topMoveIn.timingMode = .EaseOut
         
         topBarLayer.runAction(topMoveIn)
         
-        let buttonMoveIn = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.3)
+        let buttonMoveIn = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.2)
         buttonMoveIn.timingMode = .EaseOut
         
         buttonLayer.runAction(buttonMoveIn,completion: completion)
@@ -159,12 +159,12 @@ class SettingsScene: SKScene {
     
     //Mark: This animates the screen off the view
     func animateExit(completion: () -> ()) {
-        let TopMoveOut = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.5)
+        let TopMoveOut = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.4)
         TopMoveOut.timingMode = .EaseIn
         
         topBarLayer.runAction(TopMoveOut)
         
-        let moveOut = SKAction.moveBy(CGVector(dx: size.width, dy: 0), duration: 0.5)
+        let moveOut = SKAction.moveBy(CGVector(dx: size.width, dy: 0), duration: 0.2)
         moveOut.timingMode = .EaseIn
         
         buttonLayer.runAction(moveOut, completion: completion)

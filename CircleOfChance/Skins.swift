@@ -7,7 +7,7 @@
 //
 import SpriteKit
 
-class Skins: NSObject, NSCoding {
+class Skins: NSObject, NSCoding{
     //MARK: Properties
     var name: String
     var price: Int
@@ -25,10 +25,15 @@ class Skins: NSObject, NSCoding {
         static let lockedKey = "locked"
     }
     
+    override var description: String{
+        return "\(name)"
+    }
+    
     init(name: String, price: Int, locked: Bool) {
         self.name = name
         self.price = price
         self.locked = locked
+        
     }
     
     //MARK: NSCoding

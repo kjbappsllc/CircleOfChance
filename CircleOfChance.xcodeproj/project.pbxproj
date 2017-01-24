@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		04297CC31E28379F00B9CA2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04297CC21E28379F00B9CA2C /* Assets.xcassets */; };
 		04297CC51E36A67600B9CA2C /* ShopScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04297CC41E36A67600B9CA2C /* ShopScene.sks */; };
+		04297CC71E36E30B00B9CA2C /* Items.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04297CC61E36E30B00B9CA2C /* Items.swift */; };
+		04297CC91E37297300B9CA2C /* itemContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04297CC81E37297300B9CA2C /* itemContainer.swift */; };
 		047A656D1D36CDF7005396D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A656C1D36CDF7005396D9 /* AppDelegate.swift */; };
 		047A656F1D36CDF7005396D9 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 047A656E1D36CDF7005396D9 /* GameScene.sks */; };
 		047A65761D36CDF7005396D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 047A65741D36CDF7005396D9 /* Main.storyboard */; };
@@ -76,6 +78,8 @@
 /* Begin PBXFileReference section */
 		04297CC21E28379F00B9CA2C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		04297CC41E36A67600B9CA2C /* ShopScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ShopScene.sks; sourceTree = "<group>"; };
+		04297CC61E36E30B00B9CA2C /* Items.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Items.swift; sourceTree = "<group>"; };
+		04297CC81E37297300B9CA2C /* itemContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = itemContainer.swift; sourceTree = "<group>"; };
 		047A65691D36CDF7005396D9 /* CircleOfChance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CircleOfChance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		047A656C1D36CDF7005396D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		047A656E1D36CDF7005396D9 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -262,6 +266,8 @@
 				047A659F1D36CEBA005396D9 /* KBCharacter.swift */,
 				047A65A01D36CEBA005396D9 /* KBBarriers.swift */,
 				047A65A11D36CEBA005396D9 /* KBStarIcon.swift */,
+				04297CC61E36E30B00B9CA2C /* Items.swift */,
+				04297CC81E37297300B9CA2C /* itemContainer.swift */,
 			);
 			name = "Helper Classes";
 			sourceTree = "<group>";
@@ -396,12 +402,14 @@
 				047A65EF1D36D092005396D9 /* ThemesScene.swift in Sources */,
 				047A65961D36CEA8005396D9 /* IAPHelper.swift in Sources */,
 				047A65A31D36CEBA005396D9 /* KBCharacter.swift in Sources */,
+				04297CC91E37297300B9CA2C /* itemContainer.swift in Sources */,
 				047A65A21D36CEBA005396D9 /* KBCards.swift in Sources */,
 				047A65A41D36CEBA005396D9 /* KBBarriers.swift in Sources */,
 				047A65A51D36CEBA005396D9 /* KBStarIcon.swift in Sources */,
 				047A65ED1D36D092005396D9 /* ShopScene.swift in Sources */,
 				047A658B1D36CE96005396D9 /* SettingsScene.swift in Sources */,
 				047A659A1D36CEA8005396D9 /* Themes.swift in Sources */,
+				04297CC71E36E30B00B9CA2C /* Items.swift in Sources */,
 				047A659D1D36CEA8005396D9 /* KBExtensions.swift in Sources */,
 				04BC3D3C1E2460CD00905C34 /* AudioManager.swift in Sources */,
 				047A65971D36CEA8005396D9 /* CurrencyManager.swift in Sources */,

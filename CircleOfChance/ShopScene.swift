@@ -29,9 +29,28 @@ class ShopScene: SKScene, ChartboostDelegate {
     var skinsSection = SKSpriteNode()
     var themesSection = SKSpriteNode()
     var skins_selected = Bool()
+    var shopItems = items()
+    var moveableArea = SKNode()
+    var itemSelectionBG = SKSpriteNode()
+    var current = SKLabelNode()
+    var end = SKLabelNode()
+    var counterNode = SKNode()
+    
+    //items
+    var shopSkins = [Skins]()
+    var shopThemes = [Themes]()
+    var startX: CGFloat = 0.0
+    var lastX: CGFloat = 0.0
+    var beginLimit = 1
+    var furthestLimit = Int()
+    var currentItem = 1
+    var moved = false
     
     override func didMoveToView(view: SKView) {
         userInteractionEnabled = false
+        shopSkins = shopItems.skins
+        shopThemes = shopItems.themes
+        
         loadView()
         animateEnter { 
             self.userInteractionEnabled = true
@@ -57,6 +76,11 @@ class ShopScene: SKScene, ChartboostDelegate {
         skinsSection = selectionLayer.childNodeWithName("skinSelection") as! SKSpriteNode
         themesSection = selectionLayer.childNodeWithName("themeSelection") as! SKSpriteNode
         skins_selected = true
+        itemSelectionBG = self.childNodeWithName("itemSelectionBg") as! SKSpriteNode
+        doubleCoins = self.childNodeWithName("doubleCoins") as! SKSpriteNode
+        counterNode = self.childNodeWithName("counterNode")!
+        current = counterNode.childNodeWithName("current") as! SKLabelNode
+        end = counterNode.childNodeWithName("end") as! SKLabelNode
         
         store = IAPHelper(productIds: productID as! Set<ProductIdentifier>)
         
@@ -72,23 +96,129 @@ class ShopScene: SKScene, ChartboostDelegate {
         }
         
         coins.text = "\(currency.coins)"
+        itemSelectionBG.addChild(moveableArea)
+        current.text = "1"
+        end.text = "\(shopSkins.count)"
+
+        addItems(shopSkins, isSkin: true)
+    }
+    
+    func addItems(nodes: [AnyObject], isSkin: Bool) {
+        for i in 0..<nodes.count {
+            let item = itemContainer()
+            item.position.x = self.size.width/2 * CGFloat(i)
+            if isSkin == true{
+                item.name = shopSkins[i].name
+                if let itemskin = nodes[i] as? Skins {
+                    item.skinItem = itemskin
+                }
+            }
+            else{
+                item.name = shopThemes[i].name
+                if let itemTheme = nodes[i] as? Themes{
+                    item.themeItem = itemTheme
+                }
+            }
+            moveableArea.addChild(item)
+        }
     }
     
     func animateEnter(completion: ()->()){
         topBar.position.y = size.height
         selectionLayer.position.x = -size.width
+        moveableArea.alpha = 0
+        itemSelectionBG.alpha = 0
         
         let topBarEnter = SKAction.moveBy(CGVector(dx: 0,dy: -size.height), duration: 0.4)
         topBarEnter.timingMode = .EaseIn
         topBar.runAction(topBarEnter)
         
-        let selectionEnter = SKAction.moveBy(CGVector(dx: size.width,dy: 0), duration: 0.4)
+        let selectionEnter = SKAction.moveBy(CGVector(dx: size.width,dy: 0), duration: 0.3)
         selectionEnter.timingMode = .EaseIn
-        selectionLayer.runAction(selectionEnter)
+        selectionLayer.runAction(selectionEnter,completion: completion)
+        
+        let moveableAreaEnter = SKAction.fadeInWithDuration(0.3)
+        moveableAreaEnter.timingMode = .EaseIn
+        moveableArea.runAction(moveableAreaEnter)
+        
+        itemSelectionBG.runAction(SKAction.fadeInWithDuration(0.1), completion:completion)
+    }
+    
+    func animateExit(completion: () ->()) {
+        let topBarExit = SKAction.moveBy(CGVector(dx: 0,dy: size.height), duration: 0.4)
+        topBarExit.timingMode = .EaseOut
+        topBar.runAction(topBarExit)
+        
+        let selectionExit = SKAction.moveBy(CGVector(dx:size.width,dy:0), duration: 0.2)
+        selectionExit.timingMode = .EaseOut
+        selectionLayer.runAction(selectionExit)
+        
+        itemSelectionBG.runAction(SKAction.fadeOutWithDuration(0.1))
+        moveableArea.runAction(SKAction.fadeOutWithDuration(0.3))
+        
+        doubleCoins.runAction(SKAction.fadeOutWithDuration(0.3), completion: completion)
+        
+        
+    }
+    
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        /* Called when a touch begins */
+        // store the starting position of the touch
+        
+        for touch in touches {
+            let location = touch.locationInNode(itemSelectionBG)
+            startX = location.x
+            lastX = location.x
+        }
+    }
+    
+    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+        for touch in touches {
+            if moved == false {
+                let location = touch.locationInNode(self)
+                let currentX = location.x
+                
+                // Set Top and Bottom scroll distances, measured in screenlengths
+                if skins_selected == true {
+                    furthestLimit = shopSkins.count
+                }
+                else{
+                    furthestLimit = shopThemes.count
+                }
+                
+                // Set scrolling speed - lower number is faster speed
+                let scrollSpeed:Double = 0.3
+                
+                // calculate distance moved since last touch registered and add it to current position
+                let offset =  -self.frame.width/2
+                
+                // perform checks to see if new position will be over the limits, otherwise set as new position
+                if currentX < lastX && currentItem != furthestLimit {
+                    let moveLAction = SKAction.moveBy(CGVector(dx: offset,dy: 0), duration: scrollSpeed)
+                    moveLAction.timingMode = .EaseOut
+                    moveableArea.runAction(moveLAction)
+                    currentItem += 1
+                    current.text = "\(currentItem)"
+                    moved = true
+                }
+                else if currentX > lastX && currentItem != beginLimit{
+                    let moveRAction = SKAction.moveBy(CGVector(dx: -offset,dy: 0), duration: scrollSpeed)
+                    moveRAction.timingMode = .EaseOut
+                    moveableArea.runAction(moveRAction)
+                    currentItem -= 1
+                    current.text = "\(currentItem)"
+                    moved = true
+                }
+                
+                // Set new last location for next time
+                lastX = currentX
+            }
+        }
     }
     
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first{
+            moved = false
             let touchLocation = touch.locationInNode(self)
             let backtoMenuTouch = touch.locationInNode(topBar)
             let selectionTouch = touch.locationInNode(selectionLayer)
@@ -102,7 +232,9 @@ class ShopScene: SKScene, ChartboostDelegate {
                     skView.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
                     scene.scaleMode = .AspectFill
-                    skView.presentScene(scene)
+                    animateExit({ 
+                        skView.presentScene(scene)
+                    })
                 }
             }
             

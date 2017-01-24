@@ -34,6 +34,10 @@ class Themes: NSObject, NSCoding {
         static let lockedKey = "locked"
     }
     
+    override var description: String{
+        return "\(name)"
+    }
+    
     init(name: String, themeColor: SKColor, innerTexture: String, outerTexture: String, dotTexture: String, price: Int, locked: Bool) {
         self.name = name
         self.themeColor = themeColor

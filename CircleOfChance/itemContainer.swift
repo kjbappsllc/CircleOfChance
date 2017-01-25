@@ -10,10 +10,10 @@ import Foundation
 import SpriteKit
 
 class itemContainer: SKSpriteNode{
-    var skinItem: Skins?
-    var themeItem: Themes?
+    var shopItem: item
     
-    init() {
+    init(shopItem: item) {
+        self.shopItem = shopItem
         let texture = SKTexture(imageNamed: "itemContainer")
         super.init(texture: texture,color: UIColor.clearColor(), size: texture.size())
         zPosition = 10

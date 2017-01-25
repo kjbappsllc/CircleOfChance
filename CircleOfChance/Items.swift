@@ -10,31 +10,20 @@ import Foundation
 import SpriteKit
 
 class items {
-    private var _skins: [Skins]
+    private var _unlocked: [item]
     
-    var skins: [Skins] {
+    var unlocked: [item] {
         get {
-            return _skins
+            return _unlocked
         }
         set {
-            _skins = newValue
+            _unlocked = newValue
         }
     }
     
-    private var _themes: [Themes]
-    
-    var themes: [Themes] {
+    var currentSkin: item{
         get {
-            return _themes
-        }
-        set {
-            _themes = newValue
-        }
-    }
-    
-    var currentSkin: SKTexture {
-        get {
-            return NSUserDefaults.standardUserDefaults().objectForKey("currentSkin") as! SKTexture
+            return NSUserDefaults.standardUserDefaults().objectForKey("currentSkin") as! item
         }
         set {
             NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: "currentSkin")
@@ -42,106 +31,37 @@ class items {
     }
     
     init() {
-        _skins = [Skins]()
-        _themes = [Themes]()
+        _unlocked = [item]()
 
-        if let savedskins = loadSkins() {
-            _skins += savedskins
-        }
-        else{
-            _skins += loadInitialSkins()
-        }
-        
-        if let savedthemes = loadThemes() {
-            _themes += savedthemes
+        if let saveditems = loadItems() {
+            _unlocked += saveditems
         }
         else {
-            _themes += loadInitialThemes()
+            _unlocked.append(item(item: .skin, sprite: SKSpriteNode(imageNamed: "ball"), name: "BLUE", price: 0))
         }
-        
-        
     }
     
     //Mark: NSCoding
     
-    func saveSkins() {
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(skins, toFile: Skins.ArchiveURL!.path!)
+    func saveItems() {
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(_unlocked, toFile: unlockedItems.ArchiveURL!.path!)
         if !isSuccessfulSave {
-            print("Failed to save Skins...")
+            print("Failed to save Items...")
         }
     }
     
-    func loadSkins() -> [Skins]? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(Skins.ArchiveURL!.path!) as? [Skins]
-    }
-    
-    
-    func saveThemes() {
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(themes, toFile: Themes.ArchiveURL!.path!)
-        if !isSuccessfulSave {
-            print("Failed to save Themes...")
-        }
-    }
-    
-    func loadThemes() -> [Themes]? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(Themes.ArchiveURL!.path!) as? [Themes]
+    func loadItems() -> [item]? {
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(unlockedItems.ArchiveURL!.path!) as? [item]
     }
     
     //Initial Skins
-    func loadInitialSkins() -> [Skins] {
-        let skin0 = Skins(name: "Character", price: 0, locked: false)
-        let skin1 = Skins(name: "blueCharacter", price: 200, locked: true)
-        let skin2 = Skins(name: "blueGreenSkin", price: 400, locked: true)
-        let skin3 = Skins(name: "pastureSkin", price: 500, locked: true)
-        let skin4 = Skins(name: "squareSkin", price: 700, locked: true)
-        let skin5 = Skins(name: "neonSkin", price: 800, locked: true)
-        let skin6 = Skins(name: "darkMatterSkin", price: 800, locked: true)
-        let skin7 = Skins(name: "scratchedSkin", price: 1000, locked: true)
-        let skin8 = Skins(name: "volleyballSkin", price: 1200, locked: true)
-        let skin9 = Skins(name: "cricketballSkin", price: 1200, locked: true)
-        let skin10 = Skins(name: "tennisballSkin", price: 1200, locked: true)
-        let skin11 = Skins(name: "soccerballSkin", price: 1200, locked: true)
-        let skin12 = Skins(name: "baseballSkin", price: 1200, locked: true)
-        let skin13 = Skins(name: "basketballSkin", price: 1200, locked: true)
-        let skin14 = Skins(name: "americanflagSkin", price: 1400, locked: true)
-        let skin15 = Skins(name: "brazilflagSkin", price: 1400, locked: true)
-        let skin16 = Skins(name: "canadaflagSkin", price: 1400, locked: true)
-        let skin17 = Skins(name: "mexicanflagSkin", price: 1400, locked: true)
-        let skin18 = Skins(name: "russiaflagSkin", price: 1400, locked: true)
-        let skin19 = Skins(name: "southafricaflagSkin", price: 1400, locked: true)
-        let skin20 = Skins(name: "spanishflagSkin", price: 1400, locked: true)
-        let skin21 = Skins(name: "ukflagSkin", price: 1400, locked: true)
-        let skin22 = Skins(name: "eightballSkin", price: 1600, locked: true)
-        let skin23 = Skins(name: "tieDyeSkin", price: 1800, locked: true)
-        let skin24 = Skins(name: "yogaballSkin", price: 1900, locked: true)
-        let skin25 = Skins(name: "flowerballSkin", price: 2100, locked: true)
-        let skin26 = Skins(name: "mandmSkin", price: 2300, locked: true)
-        let skin27 = Skins(name: "pokeballSkin", price: 2500, locked: true)
-        let skin28 = Skins(name: "ultraballSkin", price: 2700, locked: true)
-        let skin29 = Skins(name: "masterballSkin", price: 2900, locked: true)
-        let skin30 = Skins(name: "golfballSkin", price: 3100, locked: true)
-        let skin31 = Skins(name: "smileyfaceSkin", price: 3300, locked: true)
-        let skin32 = Skins(name: "straightfaceSkin",price: 3500, locked: true)
-        let skin33 = Skins(name: "checkersSkin", price: 3700, locked: true)
-        let skin34 = Skins(name: "discoballSkin", price: 3900, locked: true)
-        let skin35 = Skins(name: "beachballSkin", price: 4100, locked: true)
-        let skin36 = Skins(name: "magicballSkin", price: 4300, locked: true)
-        let skin37 = Skins(name: "faceSkin", price: 4500, locked: true)
-        let skin38 = Skins(name: "crosshairSkin", price: 4700, locked: true)
-        let skin39 = Skins(name: "bowlingballSkin", price: 4900, locked: true)
-        let skin40 = Skins(name: "davidstarSkin", price: 5100, locked: true)
-        let skin41 = Skins(name: "dragonballSkin", price: 5300, locked: true)
-        let skin42 = Skins(name: "earthSkin", price: 5500, locked: true)
-        let skin43 = Skins(name: "plutoSkin", price: 5700, locked: true)
-        let skin44 = Skins(name: "galaxyBall", price: 5900, locked: true)
-        let skin45 = Skins(name: "wolfballSkin", price: 6100, locked: true)
-        let skin46 = Skins(name: "goldcoinSkin", price: 6300, locked: true)
-        let skin47 = Skins(name: "royalSkin", price: 6500, locked: true)
-        
-        let skinsArray = [skin0,skin1,skin2,skin3,skin4,skin5,skin6,skin7,skin8,skin9,skin10,skin11,skin12,skin13,skin14,skin15,skin16,skin17,skin18,skin19,skin20,skin21,skin22,skin23,skin23,skin24,skin25,skin26,skin27,skin28,skin29,skin30,skin31,skin32,skin33,skin34,skin35,skin36,skin37,skin38,skin39,skin40,skin41,skin42,skin43,skin44,skin45,skin46,skin47
-        ]
-        
+    func loadInitialSkins() -> [item] {
+        var skinsArray = [item]()
+        let skin1 = item(item: .skin, sprite: SKSpriteNode(imageNamed: "ball"), name: "BLUE", price: 0)
+        let skin2 = item(item: .skin, sprite: SKSpriteNode(imageNamed: "basketballSkin"), name: "BASKETBALL", price: 200)
+        skinsArray.appendContentsOf([skin1,skin2])
         return skinsArray
+        
     }
     
     func loadInitialThemes() -> [Themes] {

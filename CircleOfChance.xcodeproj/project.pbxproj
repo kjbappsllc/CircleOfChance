@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		041D6FCF1E38C07800B06C1B /* unlockedItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041D6FCE1E38C07800B06C1B /* unlockedItems.swift */; };
 		04297CC31E28379F00B9CA2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04297CC21E28379F00B9CA2C /* Assets.xcassets */; };
 		04297CC51E36A67600B9CA2C /* ShopScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04297CC41E36A67600B9CA2C /* ShopScene.sks */; };
 		04297CC71E36E30B00B9CA2C /* Items.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04297CC61E36E30B00B9CA2C /* Items.swift */; };
@@ -23,8 +24,6 @@
 		047A65961D36CEA8005396D9 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A658E1D36CEA8005396D9 /* IAPHelper.swift */; };
 		047A65971D36CEA8005396D9 /* CurrencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A658F1D36CEA8005396D9 /* CurrencyManager.swift */; };
 		047A65981D36CEA8005396D9 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65901D36CEA8005396D9 /* ProgressBar.swift */; };
-		047A65991D36CEA8005396D9 /* Skins.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65911D36CEA8005396D9 /* Skins.swift */; };
-		047A659A1D36CEA8005396D9 /* Themes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65921D36CEA8005396D9 /* Themes.swift */; };
 		047A659C1D36CEA8005396D9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65941D36CEA8005396D9 /* Constants.swift */; };
 		047A659D1D36CEA8005396D9 /* KBExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65951D36CEA8005396D9 /* KBExtensions.swift */; };
 		047A65A21D36CEBA005396D9 /* KBCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A659E1D36CEBA005396D9 /* KBCards.swift */; };
@@ -48,8 +47,6 @@
 		047A65C51D36CF14005396D9 /* CSwift-Bridging-Header.m in Sources */ = {isa = PBXBuildFile; fileRef = 047A65C31D36CF14005396D9 /* CSwift-Bridging-Header.m */; };
 		047A65CB1D36CF81005396D9 /* DAYPBL__.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 047A65CA1D36CF81005396D9 /* DAYPBL__.ttf */; };
 		047A65ED1D36D092005396D9 /* ShopScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65EA1D36D092005396D9 /* ShopScene.swift */; };
-		047A65EE1D36D092005396D9 /* SkinsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65EB1D36D092005396D9 /* SkinsScene.swift */; };
-		047A65EF1D36D092005396D9 /* ThemesScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65EC1D36D092005396D9 /* ThemesScene.swift */; };
 		047A66151D36E4BE005396D9 /* Chartboost.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A66141D36E4BE005396D9 /* Chartboost.framework */; };
 		047A66171D36E4FF005396D9 /* GoogleMobileAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A66161D36E4FF005396D9 /* GoogleMobileAds.framework */; };
 		047A66191D36E54C005396D9 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A66181D36E54C005396D9 /* SystemConfiguration.framework */; };
@@ -65,6 +62,7 @@
 		047A662D1D36E5D7005396D9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A662C1D36E5D7005396D9 /* Foundation.framework */; };
 		047A662F1D36E5DF005396D9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A662E1D36E5DF005396D9 /* CoreGraphics.framework */; };
 		047A66311D36E5F2005396D9 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047A66301D36E5F2005396D9 /* MessageUI.framework */; };
+		0488CAA81E38BE430010444B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0488CAA71E38BE430010444B /* Item.swift */; };
 		04BC3D3C1E2460CD00905C34 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BC3D3B1E2460CD00905C34 /* AudioManager.swift */; };
 		04C18DC41D90CFC7001EC4A7 /* GrandHotel-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 04C18DC31D90CFC7001EC4A7 /* GrandHotel-Regular.otf */; };
 		04F278B41D3D2D5200281F9D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04F278B31D3D2D5200281F9D /* QuartzCore.framework */; };
@@ -76,6 +74,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		041D6FCE1E38C07800B06C1B /* unlockedItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = unlockedItems.swift; sourceTree = "<group>"; };
 		04297CC21E28379F00B9CA2C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		04297CC41E36A67600B9CA2C /* ShopScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ShopScene.sks; sourceTree = "<group>"; };
 		04297CC61E36E30B00B9CA2C /* Items.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Items.swift; sourceTree = "<group>"; };
@@ -93,8 +92,6 @@
 		047A658E1D36CEA8005396D9 /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
 		047A658F1D36CEA8005396D9 /* CurrencyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrencyManager.swift; sourceTree = "<group>"; };
 		047A65901D36CEA8005396D9 /* ProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
-		047A65911D36CEA8005396D9 /* Skins.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Skins.swift; sourceTree = "<group>"; };
-		047A65921D36CEA8005396D9 /* Themes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Themes.swift; sourceTree = "<group>"; };
 		047A65941D36CEA8005396D9 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		047A65951D36CEA8005396D9 /* KBExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KBExtensions.swift; sourceTree = "<group>"; };
 		047A659E1D36CEBA005396D9 /* KBCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KBCards.swift; sourceTree = "<group>"; };
@@ -120,8 +117,6 @@
 		047A65C81D36CF70005396D9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CircleOfChance/Info.plist; sourceTree = SOURCE_ROOT; };
 		047A65CA1D36CF81005396D9 /* DAYPBL__.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DAYPBL__.ttf; sourceTree = "<group>"; };
 		047A65EA1D36D092005396D9 /* ShopScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShopScene.swift; sourceTree = "<group>"; };
-		047A65EB1D36D092005396D9 /* SkinsScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkinsScene.swift; sourceTree = "<group>"; };
-		047A65EC1D36D092005396D9 /* ThemesScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemesScene.swift; sourceTree = "<group>"; };
 		047A66141D36E4BE005396D9 /* Chartboost.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Chartboost.framework; sourceTree = "<group>"; };
 		047A66161D36E4FF005396D9 /* GoogleMobileAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMobileAds.framework; sourceTree = "<group>"; };
 		047A66181D36E54C005396D9 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -137,6 +132,7 @@
 		047A662C1D36E5D7005396D9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		047A662E1D36E5DF005396D9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		047A66301D36E5F2005396D9 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		0488CAA71E38BE430010444B /* Item.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		04BC3D3B1E2460CD00905C34 /* AudioManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		04C18DC31D90CFC7001EC4A7 /* GrandHotel-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GrandHotel-Regular.otf"; sourceTree = "<group>"; };
 		04F278B31D3D2D5200281F9D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -214,7 +210,7 @@
 				047A65CA1D36CF81005396D9 /* DAYPBL__.ttf */,
 				047A65F11D36D2D0005396D9 /* Scenes */,
 				047A65F21D36D2EE005396D9 /* Globals/Constants/Extensions */,
-				047A65F31D36D305005396D9 /* Helper Classes */,
+				047A65F31D36D305005396D9 /* Data/Model */,
 				047A65F41D36D322005396D9 /* Particles/Sounds */,
 				047A65C01D36CEF7005396D9 /* GameViewController.swift */,
 				047A65C31D36CF14005396D9 /* CSwift-Bridging-Header.m */,
@@ -238,8 +234,6 @@
 				047A65871D36CE96005396D9 /* SettingsScene.swift */,
 				047A65891D36CE96005396D9 /* GameOver.swift */,
 				047A65EA1D36D092005396D9 /* ShopScene.swift */,
-				047A65EB1D36D092005396D9 /* SkinsScene.swift */,
-				047A65EC1D36D092005396D9 /* ThemesScene.swift */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -250,16 +244,14 @@
 				047A65901D36CEA8005396D9 /* ProgressBar.swift */,
 				047A658E1D36CEA8005396D9 /* IAPHelper.swift */,
 				047A658F1D36CEA8005396D9 /* CurrencyManager.swift */,
-				047A65911D36CEA8005396D9 /* Skins.swift */,
 				04BC3D3B1E2460CD00905C34 /* AudioManager.swift */,
-				047A65921D36CEA8005396D9 /* Themes.swift */,
 				047A65941D36CEA8005396D9 /* Constants.swift */,
 				047A65951D36CEA8005396D9 /* KBExtensions.swift */,
 			);
 			name = Globals/Constants/Extensions;
 			sourceTree = "<group>";
 		};
-		047A65F31D36D305005396D9 /* Helper Classes */ = {
+		047A65F31D36D305005396D9 /* Data/Model */ = {
 			isa = PBXGroup;
 			children = (
 				047A659E1D36CEBA005396D9 /* KBCards.swift */,
@@ -268,8 +260,10 @@
 				047A65A11D36CEBA005396D9 /* KBStarIcon.swift */,
 				04297CC61E36E30B00B9CA2C /* Items.swift */,
 				04297CC81E37297300B9CA2C /* itemContainer.swift */,
+				0488CAA71E38BE430010444B /* Item.swift */,
+				041D6FCE1E38C07800B06C1B /* unlockedItems.swift */,
 			);
-			name = "Helper Classes";
+			name = Data/Model;
 			sourceTree = "<group>";
 		};
 		047A65F41D36D322005396D9 /* Particles/Sounds */ = {
@@ -393,13 +387,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				047A65C11D36CEF7005396D9 /* GameViewController.swift in Sources */,
-				047A65EE1D36D092005396D9 /* SkinsScene.swift in Sources */,
 				047A658A1D36CE96005396D9 /* howToPlayScene.swift in Sources */,
 				047A65981D36CEA8005396D9 /* ProgressBar.swift in Sources */,
-				047A65991D36CEA8005396D9 /* Skins.swift in Sources */,
 				047A658C1D36CE96005396D9 /* MainMenu.swift in Sources */,
 				047A659C1D36CEA8005396D9 /* Constants.swift in Sources */,
-				047A65EF1D36D092005396D9 /* ThemesScene.swift in Sources */,
 				047A65961D36CEA8005396D9 /* IAPHelper.swift in Sources */,
 				047A65A31D36CEBA005396D9 /* KBCharacter.swift in Sources */,
 				04297CC91E37297300B9CA2C /* itemContainer.swift in Sources */,
@@ -408,10 +399,11 @@
 				047A65A51D36CEBA005396D9 /* KBStarIcon.swift in Sources */,
 				047A65ED1D36D092005396D9 /* ShopScene.swift in Sources */,
 				047A658B1D36CE96005396D9 /* SettingsScene.swift in Sources */,
-				047A659A1D36CEA8005396D9 /* Themes.swift in Sources */,
 				04297CC71E36E30B00B9CA2C /* Items.swift in Sources */,
+				041D6FCF1E38C07800B06C1B /* unlockedItems.swift in Sources */,
 				047A659D1D36CEA8005396D9 /* KBExtensions.swift in Sources */,
 				04BC3D3C1E2460CD00905C34 /* AudioManager.swift in Sources */,
+				0488CAA81E38BE430010444B /* Item.swift in Sources */,
 				047A65971D36CEA8005396D9 /* CurrencyManager.swift in Sources */,
 				047A65C51D36CF14005396D9 /* CSwift-Bridging-Header.m in Sources */,
 				047A65851D36CE82005396D9 /* GameScene.swift in Sources */,

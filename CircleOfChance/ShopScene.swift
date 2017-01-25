@@ -37,8 +37,9 @@ class ShopScene: SKScene, ChartboostDelegate {
     var counterNode = SKNode()
     
     //items
-    var shopSkins = [Skins]()
-    var shopThemes = [Themes]()
+    var shopSkins = [item]()
+    var shopThemes = [item]()
+    var unlockedItems = [item]()
     var startX: CGFloat = 0.0
     var lastX: CGFloat = 0.0
     var beginLimit = 1
@@ -48,9 +49,9 @@ class ShopScene: SKScene, ChartboostDelegate {
     
     override func didMoveToView(view: SKView) {
         userInteractionEnabled = false
-        shopSkins = shopItems.skins
-        shopThemes = shopItems.themes
-        
+        shopSkins = shopItems.loadInitialSkins()
+        unlockedItems = shopItems.unlocked
+
         loadView()
         animateEnter { 
             self.userInteractionEnabled = true
@@ -103,39 +104,43 @@ class ShopScene: SKScene, ChartboostDelegate {
         addItems(shopSkins, isSkin: true)
     }
     
-    func addItems(nodes: [AnyObject], isSkin: Bool) {
+    func addItems(nodes: [item], isSkin: Bool) {
         for i in 0..<nodes.count {
             //Setup the slot that the item will go in
-            let item = itemContainer()
+            let item = itemContainer(shopItem: nodes[i])
             item.position.x = self.size.width/2 * CGFloat(i)
-            if isSkin == true{
-                item.name = shopSkins[i].name
-                if let itemskin = nodes[i] as? Skins {
-                    item.skinItem = itemskin
-                }
-            }
-            else{
-                item.name = shopThemes[i].name
-                if let itemTheme = nodes[i] as? Themes{
-                    item.themeItem = itemTheme
-                }
-            }
+            item.name = nodes[i].name
             moveableArea.addChild(item)
             
-            //position the price
-            let price = SKLabelNode()
-            if isSkin {
-                price.text = "\(shopSkins[i].price)"
-            }
-            else{
-                price.text = "\(shopThemes[i].price)"
-            }
+            //position the sprite
+            let skin = item.shopItem.sprite
+            skin.size = CGSize(width: 80, height: 80)
+            skin.name = "skin"
+            skin.zPosition = 5
+            skin.position.y = 55
+            item.addChild(skin)
             
-            setUpLabel(price, size: 36.0, fontName: "Lucida Grande-Bold", fontColor: SKColor.blackColor())
-            price.position.y = -item.size.height/2 + 70
-            price.zPosition = 10
-            price.name = "price"
-            item.addChild(price)
+            //position the name
+            let name = SKLabelNode()
+            name.text = item.shopItem.name
+            setUpLabel(name, size: 26, fontName: "Lucida Grande", fontColor: SKColor.init(colorLiteralRed: 176/255, green: 83/255, blue: 245/255, alpha: 1.0))
+            name.position.y = -20
+            name.zPosition = 10
+            item.addChild(name)
+            
+            
+            //position the price
+            if !unlockedItems.contains({$0.name == nodes[i].name}){
+                let price = SKLabelNode()
+                price.text = "\(nodes[i].price)"
+                setUpLabel(price, size: 36.0, fontName: "Lucida Grande-Bold", fontColor: SKColor.blackColor())
+                price.position.y = -item.size.height/2 + 70
+                price.zPosition = 10
+                price.name = "price"
+                item.addChild(price)
+                
+                item.alpha = 0.66
+            }
         }
     }
     

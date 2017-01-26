@@ -21,15 +21,33 @@ class items {
         }
     }
     
+    private var _current: currentSkin
+    
+    var current: currentSkin {
+        get {
+            return _current
+        }
+        set {
+            _current = newValue
+            NSKeyedArchiver.archiveRootObject(_current, toFile: currentSkin.ArchiveURL!.path!)
+        }
+    }
+    
     init() {
+        let defaultItem = item(item: .skin, sprite: SKSpriteNode(imageNamed: "ball"), name: "BLUE", price: 0)
+        
         _unlocked = [unlockedItem]()
+        _current = currentSkin(items: defaultItem)
         
         if let saveditems = loadItems() {
             _unlocked += saveditems
         }
         else {
-            let defaultItem = item(item: .skin, sprite: SKSpriteNode(imageNamed: "ball"), name: "BLUE", price: 0)
             _unlocked.append(unlockedItem(items: defaultItem))
+        }
+        
+        if let currentitem = loadCurrentSkin() {
+            _current = currentitem
         }
         
     }
@@ -45,6 +63,10 @@ class items {
     
     func loadItems() -> [unlockedItem]? {
         return NSKeyedUnarchiver.unarchiveObjectWithFile(unlockedItem.ArchiveURL!.path!) as? [unlockedItem]
+    }
+    
+    func loadCurrentSkin() -> currentSkin? {
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(currentSkin.ArchiveURL!.path!) as? currentSkin
     }
     
     //Initial Skins

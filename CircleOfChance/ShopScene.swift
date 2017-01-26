@@ -40,6 +40,7 @@ class ShopScene: SKScene, ChartboostDelegate {
     //items
     var shopSkins = [item]()
     var shopThemes = [item]()
+    var loadedUnlockedItems = [unlockedItem]()
     var unlockedItems = [item]()
     var startX: CGFloat = 0.0
     var lastX: CGFloat = 0.0
@@ -51,8 +52,13 @@ class ShopScene: SKScene, ChartboostDelegate {
     override func didMoveToView(view: SKView) {
         userInteractionEnabled = false
         shopSkins = shopItems.loadInitialSkins()
-        unlockedItems = shopItems.unlocked
-
+        loadedUnlockedItems = shopItems.unlocked
+        
+        for i in loadedUnlockedItems {
+            let unlocked = i.uItem
+            unlockedItems.append(unlocked)
+        }
+        
         loadView()
         animateEnter { 
             self.userInteractionEnabled = true
@@ -144,13 +150,11 @@ class ShopScene: SKScene, ChartboostDelegate {
                 item.alpha = 0.66
             }
             
-            /*
-            if shopItems.currentSkin.name == item.shopItem.name{
+            if shopItems.current.currentItem.name == item.shopItem.name{
                 selectionIndicator = SKSpriteNode(imageNamed: "selectedItemIndicator")
                 selectionIndicator.position.x = item.position.x
                 moveableArea.addChild(selectionIndicator)
             }
-            */
         }
     }
     

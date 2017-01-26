@@ -1,40 +1,39 @@
 //
-//  unlockedItems.swift
+//  currentSkin.swift
 //  CircleOfChance
 //
-//  Created by Mac on 1/25/17.
+//  Created by Mac on 1/26/17.
 //  Copyright © 2017 KJB Apps LLC. All rights reserved.
 //
 
 import UIKit
 
-class unlockedItem: NSObject, NSCoding {
-    //MARK: Properties
-    var uItem: item
+class currentSkin: NSObject, NSCoding {
+    var currentItem: item
     
     //MARK: Archiving Paths
     static let DocumentsDirectory = NSFileManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-    static let ArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("unlockedItem")
+    static let ArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("currentSkin")
     
     // MARK: Types
     
     struct PropertyKey {
-        static let itemKey = "item"
+        static let currentKey = "currentItem"
     }
     
     init(items: item) {
-        self.uItem = items
+        self.currentItem = items
     }
     
     //MARK: NSCoding
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let items = aDecoder.decodeObjectForKey(PropertyKey.itemKey) as! item
+        let items = aDecoder.decodeObjectForKey(PropertyKey.currentKey) as! item
         self.init(items: items)
         
     }
     
     func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(uItem, forKey: PropertyKey.itemKey)
+        aCoder.encodeObject(currentItem, forKey: PropertyKey.currentKey)
     }
 }

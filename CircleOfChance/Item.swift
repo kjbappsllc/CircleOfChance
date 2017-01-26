@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-enum itemType {
+enum itemType: Int {
     case skin, theme
 }
 

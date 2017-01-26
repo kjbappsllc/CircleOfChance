@@ -35,6 +35,7 @@ class ShopScene: SKScene, ChartboostDelegate {
     var current = SKLabelNode()
     var end = SKLabelNode()
     var counterNode = SKNode()
+    var selectionIndicator = SKSpriteNode()
     
     //items
     var shopSkins = [item]()
@@ -110,6 +111,7 @@ class ShopScene: SKScene, ChartboostDelegate {
             let item = itemContainer(shopItem: nodes[i])
             item.position.x = self.size.width/2 * CGFloat(i)
             item.name = nodes[i].name
+            item.zPosition = 2
             moveableArea.addChild(item)
             
             //position the sprite
@@ -141,6 +143,14 @@ class ShopScene: SKScene, ChartboostDelegate {
                 
                 item.alpha = 0.66
             }
+            
+            /*
+            if shopItems.currentSkin.name == item.shopItem.name{
+                selectionIndicator = SKSpriteNode(imageNamed: "selectedItemIndicator")
+                selectionIndicator.position.x = item.position.x
+                moveableArea.addChild(selectionIndicator)
+            }
+            */
         }
     }
     
@@ -317,24 +327,14 @@ class ShopScene: SKScene, ChartboostDelegate {
                     end.text = "\(shopThemes.count)"
                 }
             }
-            
-            
-            /*
-            if restorePurchasesButton.containsPoint(touchLocation) {
-                store?.restorePurchases()
-                
-                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ShopScene.handlePurchaseNotification(_:)),
-                                                                 name: IAPHelper.IAPHelperPurchaseNotification,
-                                                                 object: nil)
-                restorePurchasesButton.alpha = 1.0
-            }
-            else {
-                restorePurchasesButton.alpha = 1.0
-            }
-    */
         }
     }
     
+    func handleItemTap(touches: Set<UITouch>){
+        if let touch = touches.first{
+            
+        }
+    }
     
     func handlePurchaseNotification(notification: NSNotification) {
         guard let productID = notification.object as? String else { return }

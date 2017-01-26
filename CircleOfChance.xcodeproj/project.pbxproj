@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		041D6FCF1E38C07800B06C1B /* unlockedItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041D6FCE1E38C07800B06C1B /* unlockedItems.swift */; };
+		041D6FCF1E38C07800B06C1B /* unlockedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041D6FCE1E38C07800B06C1B /* unlockedItem.swift */; };
 		04297CC31E28379F00B9CA2C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 04297CC21E28379F00B9CA2C /* Assets.xcassets */; };
 		04297CC51E36A67600B9CA2C /* ShopScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 04297CC41E36A67600B9CA2C /* ShopScene.sks */; };
 		04297CC71E36E30B00B9CA2C /* Items.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04297CC61E36E30B00B9CA2C /* Items.swift */; };
@@ -23,7 +23,6 @@
 		047A658D1D36CE96005396D9 /* GameOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65891D36CE96005396D9 /* GameOver.swift */; };
 		047A65961D36CEA8005396D9 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A658E1D36CEA8005396D9 /* IAPHelper.swift */; };
 		047A65971D36CEA8005396D9 /* CurrencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A658F1D36CEA8005396D9 /* CurrencyManager.swift */; };
-		047A65981D36CEA8005396D9 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65901D36CEA8005396D9 /* ProgressBar.swift */; };
 		047A659C1D36CEA8005396D9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65941D36CEA8005396D9 /* Constants.swift */; };
 		047A659D1D36CEA8005396D9 /* KBExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A65951D36CEA8005396D9 /* KBExtensions.swift */; };
 		047A65A21D36CEBA005396D9 /* KBCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A659E1D36CEBA005396D9 /* KBCards.swift */; };
@@ -74,7 +73,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		041D6FCE1E38C07800B06C1B /* unlockedItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = unlockedItems.swift; sourceTree = "<group>"; };
+		041D6FCE1E38C07800B06C1B /* unlockedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = unlockedItem.swift; sourceTree = "<group>"; };
 		04297CC21E28379F00B9CA2C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		04297CC41E36A67600B9CA2C /* ShopScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ShopScene.sks; sourceTree = "<group>"; };
 		04297CC61E36E30B00B9CA2C /* Items.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Items.swift; sourceTree = "<group>"; };
@@ -91,7 +90,6 @@
 		047A65891D36CE96005396D9 /* GameOver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOver.swift; sourceTree = "<group>"; };
 		047A658E1D36CEA8005396D9 /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
 		047A658F1D36CEA8005396D9 /* CurrencyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrencyManager.swift; sourceTree = "<group>"; };
-		047A65901D36CEA8005396D9 /* ProgressBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		047A65941D36CEA8005396D9 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		047A65951D36CEA8005396D9 /* KBExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KBExtensions.swift; sourceTree = "<group>"; };
 		047A659E1D36CEBA005396D9 /* KBCards.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KBCards.swift; sourceTree = "<group>"; };
@@ -241,9 +239,7 @@
 		047A65F21D36D2EE005396D9 /* Globals/Constants/Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				047A65901D36CEA8005396D9 /* ProgressBar.swift */,
 				047A658E1D36CEA8005396D9 /* IAPHelper.swift */,
-				047A658F1D36CEA8005396D9 /* CurrencyManager.swift */,
 				04BC3D3B1E2460CD00905C34 /* AudioManager.swift */,
 				047A65941D36CEA8005396D9 /* Constants.swift */,
 				047A65951D36CEA8005396D9 /* KBExtensions.swift */,
@@ -257,11 +253,12 @@
 				047A659E1D36CEBA005396D9 /* KBCards.swift */,
 				047A659F1D36CEBA005396D9 /* KBCharacter.swift */,
 				047A65A01D36CEBA005396D9 /* KBBarriers.swift */,
+				047A658F1D36CEA8005396D9 /* CurrencyManager.swift */,
 				047A65A11D36CEBA005396D9 /* KBStarIcon.swift */,
 				04297CC61E36E30B00B9CA2C /* Items.swift */,
 				04297CC81E37297300B9CA2C /* itemContainer.swift */,
 				0488CAA71E38BE430010444B /* Item.swift */,
-				041D6FCE1E38C07800B06C1B /* unlockedItems.swift */,
+				041D6FCE1E38C07800B06C1B /* unlockedItem.swift */,
 			);
 			name = Data/Model;
 			sourceTree = "<group>";
@@ -388,7 +385,6 @@
 			files = (
 				047A65C11D36CEF7005396D9 /* GameViewController.swift in Sources */,
 				047A658A1D36CE96005396D9 /* howToPlayScene.swift in Sources */,
-				047A65981D36CEA8005396D9 /* ProgressBar.swift in Sources */,
 				047A658C1D36CE96005396D9 /* MainMenu.swift in Sources */,
 				047A659C1D36CEA8005396D9 /* Constants.swift in Sources */,
 				047A65961D36CEA8005396D9 /* IAPHelper.swift in Sources */,
@@ -400,7 +396,7 @@
 				047A65ED1D36D092005396D9 /* ShopScene.swift in Sources */,
 				047A658B1D36CE96005396D9 /* SettingsScene.swift in Sources */,
 				04297CC71E36E30B00B9CA2C /* Items.swift in Sources */,
-				041D6FCF1E38C07800B06C1B /* unlockedItems.swift in Sources */,
+				041D6FCF1E38C07800B06C1B /* unlockedItem.swift in Sources */,
 				047A659D1D36CEA8005396D9 /* KBExtensions.swift in Sources */,
 				04BC3D3C1E2460CD00905C34 /* AudioManager.swift in Sources */,
 				0488CAA81E38BE430010444B /* Item.swift in Sources */,

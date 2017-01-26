@@ -125,23 +125,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //Loads the Achievements from gameCenter
         loadAchievementPercentages()
-        
-        //This Detects from NSUserDefauls whether or not if you have a skin before the data is viewed.
-        if (NSUserDefaults.standardUserDefaults().stringForKey("currentSkin") != nil){
-            SkinsScene.currentSkin = NSUserDefaults.standardUserDefaults().stringForKey("currentSkin")!
-        }
-        else{
-            SkinsScene.currentSkin = "Character"
-        }
-        
-        if (NSUserDefaults.standardUserDefaults().objectForKey("currentTheme") != nil){
-            let data = NSUserDefaults.standardUserDefaults().objectForKey("currentTheme") as! NSData
-            ThemesScene.currentTheme = NSKeyedUnarchiver.unarchiveObjectWithData(data) as! [String:AnyObject]
-        }
-        else{
-            ThemesScene.currentTheme = ["name": "defaultTheme", "OuterTexture": "Default", "InnerTexture": "Default", "dotTexture": "Default", "themeColor": UIColor(red: 133/255, green: 0, blue: 241/255, alpha: 1.0)]
-        }
-        
         loadView()
         
         // add physics world
@@ -369,16 +352,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 circle.alpha = 0
                 circle.physicsBody = nil
                 
-                if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-                    if levelInt % 2 == 0 {
-                        circle.texture = SKTexture(imageNamed: "scoreDotYellow")
-                    }
-                    else {
-                        circle.texture = SKTexture(imageNamed: "scoreDotWhite")
-                    }
+                if levelInt % 2 == 0 {
+                    circle.texture = SKTexture(imageNamed: "scoreDotYellow")
                 }
                 else {
-                    circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
+                    circle.texture = SKTexture(imageNamed: "scoreDotWhite")
                 }
                 
                 // You can get every single circle by name:
@@ -437,17 +415,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     let circle = SKSpriteNode(imageNamed: "scoreDotYellow")
                     circle.alpha = 0
                     circle.physicsBody = nil
-                    
-                    if "defaultTheme" == ThemesScene.currentTheme["name"] as! String {
-                        if levelInt % 2 == 0 {
-                            circle.texture = SKTexture(imageNamed: "scoreDotYellow")
-                        }
-                        else {
-                            circle.texture = SKTexture(imageNamed: "scoreDotWhite")
-                        }
+                
+                    if levelInt % 2 == 0 {
+                        circle.texture = SKTexture(imageNamed: "scoreDotYellow")
                     }
                     else {
-                        circle.texture = SKTexture(imageNamed: ThemesScene.currentTheme["dotTexture"] as! String)
+                        circle.texture = SKTexture(imageNamed: "scoreDotWhite")
                     }
                     
                     // You can get every single circle by name:

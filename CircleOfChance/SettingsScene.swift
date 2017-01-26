@@ -30,6 +30,10 @@ class SettingsScene: SKScene {
     //TopBar
     var settingsBar = SKSpriteNode()
     
+    //store
+    let productID: NSSet = NSSet(objects:"com.KJBApps.CircleOfChance.doublecoins")
+    var store: IAPHelper?
+    
     override func didMoveToView(view: SKView) {
         addChild(buttonLayer)
         addChild(topBarLayer)
@@ -66,6 +70,8 @@ class SettingsScene: SKScene {
     func loadview() {
         addBackground()
         addButtons()
+        store = IAPHelper(productIds: productID as! Set<ProductIdentifier>)
+
         userInteractionEnabled = false
         
         settingsBar = SKSpriteNode(imageNamed: "SettingsBar")
@@ -227,6 +233,14 @@ class SettingsScene: SKScene {
                     musicIcon.alpha = 1.0
                     musicContainer.alpha = 1.0
                 }
+            }
+            
+            if restorePurchases.containsPoint(touchLocation) {
+                store?.restorePurchases()
+                
+                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ShopScene.handlePurchaseNotification(_:)),
+                                                                 name: IAPHelper.IAPHelperPurchaseNotification,
+                                                                 object: nil)
             }
         }
     }

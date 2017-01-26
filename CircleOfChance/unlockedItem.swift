@@ -8,13 +8,13 @@
 
 import UIKit
 
-class unlockedItems: NSObject, NSCoding {
+class unlockedItem: NSObject, NSCoding {
     //MARK: Properties
     var items: item
     
     //MARK: Archiving Paths
     static let DocumentsDirectory = NSFileManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-    static let ArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("unlockedItems")
+    static let ArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("unlockedItem")
     
     // MARK: Types
     

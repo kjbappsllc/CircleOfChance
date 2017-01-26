@@ -145,7 +145,7 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
         topBar.zPosition = layerPositions.topLayer.rawValue
         titleLayer.addChild(topBar)
         
-        title = SKSpriteNode(imageNamed: "Title")
+        title = SKSpriteNode(imageNamed: "title")
         title.zPosition = layerPositions.textLayer.rawValue
         topBar.addChild(title)
     }

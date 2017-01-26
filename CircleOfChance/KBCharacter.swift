@@ -9,16 +9,23 @@
 import Foundation
 import SpriteKit
 
-class Character: SKSpriteNode {
+class Character {
     var ballSpeedClockWise = CGFloat()
     var ballSpeedCounterClockWise = CGFloat()
+    private var _size: CGSize
+    var size: CGSize {
+        get{
+            return _size
+        }
+        set{
+            _size = newValue
+        }
+    }
+    
     init(){
         ballSpeedClockWise = 195.0
         ballSpeedCounterClockWise = 195.0
-        let texture = SKTexture(imageNamed: "ball")
-        super.init(texture: texture,color: UIColor.clearColor(), size: CGSize(width: 50, height: 55))
-        
-        loadPhysics()
+        _size = CGSize(width: 55, height: 55)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -53,13 +60,14 @@ class Character: SKSpriteNode {
         return ballSpeedClockWise
     }
     
-    func loadPhysics() {
+    func loadPhysics() -> SKPhysicsBody{
         
-        self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.height/2 - 15)
-        self.physicsBody?.categoryBitMask = ballCategory
-        self.physicsBody?.contactTestBitMask = redBarrierCategory | dotCategory
-        self.physicsBody?.collisionBitMask = redBarrierCategory
-        self.physicsBody?.affectedByGravity = false
+        let physicsBody = SKPhysicsBody(circleOfRadius: self.size.height/2 - 15)
+        physicsBody.categoryBitMask = ballCategory
+        physicsBody.contactTestBitMask = redBarrierCategory | dotCategory
+        physicsBody.collisionBitMask = redBarrierCategory
+        physicsBody.affectedByGravity = false
+        return physicsBody
     }
     
 }

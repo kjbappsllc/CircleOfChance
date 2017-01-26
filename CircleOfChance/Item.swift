@@ -13,7 +13,11 @@ enum itemType: Int {
     case skin, theme
 }
 
-class item: CustomStringConvertible{
+class item: NSObject, NSCoding{
+    static let DocumentsDirectory = NSFileManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
+    static let UnlockedArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("unlockedItem")
+    static let CurrentArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("currentSkin")
+    
     private var _itemtype: itemType
     
     var itemtype: itemType {
@@ -57,14 +61,30 @@ class item: CustomStringConvertible{
         }
     }
     
-    var description: String{
+    override var description: String{
         return "\(name)"
     }
     
     init(item: itemType, sprite: SKSpriteNode, name: String, price: Int) {
-        _itemtype = item
-        _sprite = sprite
-        _name = name
-        _price = price
+        self._itemtype = item
+        self._sprite = sprite
+        self._name = name
+        self._price = price
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        let price = aDecoder.decodeObjectForKey("price") as! Int
+        let sprite = aDecoder.decodeObjectForKey("sprite") as! SKSpriteNode
+        let name = aDecoder.decodeObjectForKey("name") as! String
+        let itemtype = aDecoder.decodeIntegerForKey("item")
+        self.init(item: itemType.init(rawValue: itemtype)!, sprite: sprite, name: name, price: price)
+        
+    }
+    
+    func encodeWithCoder(aCoder: NSCoder) {
+        aCoder.encodeObject(_name, forKey: "name")
+        aCoder.encodeObject(_price, forKey: "price")
+        aCoder.encodeObject(_sprite, forKey: "sprite")
+        aCoder.encodeInteger(_itemtype.rawValue, forKey: "item")
     }
 }

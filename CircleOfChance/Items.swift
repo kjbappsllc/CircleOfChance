@@ -10,9 +10,9 @@ import Foundation
 import SpriteKit
 
 class items {
-    private var _unlocked: [unlockedItem]
+    private var _unlocked: [item]
     
-    var unlocked: [unlockedItem] {
+    var unlocked: [item] {
         get {
             return _unlocked
         }
@@ -21,29 +21,29 @@ class items {
         }
     }
     
-    private var _current: currentSkin
+    private var _current: item
     
-    var current: currentSkin {
+    var current: item {
         get {
             return _current
         }
         set {
             _current = newValue
-            NSKeyedArchiver.archiveRootObject(_current, toFile: currentSkin.ArchiveURL!.path!)
+            NSKeyedArchiver.archiveRootObject(_current, toFile: item.CurrentArchiveURL!.path!)
         }
     }
     
     init() {
         let defaultItem = item(item: .skin, sprite: SKSpriteNode(imageNamed: "ball"), name: "BLUE", price: 0)
         
-        _unlocked = [unlockedItem]()
-        _current = currentSkin(items: defaultItem)
+        _unlocked = [item]()
+        _current = defaultItem
         
         if let saveditems = loadItems() {
             _unlocked += saveditems
         }
         else {
-            _unlocked.append(unlockedItem(items: defaultItem))
+            _unlocked.append(defaultItem)
         }
         
         if let currentitem = loadCurrentSkin() {
@@ -55,18 +55,18 @@ class items {
     //Mark: NSCoding
     
     func saveItems() {
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(_unlocked, toFile: unlockedItem.ArchiveURL!.path!)
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(_unlocked, toFile: item.UnlockedArchiveURL!.path!)
         if !isSuccessfulSave {
             print("Failed to save Items...")
         }
     }
     
-    func loadItems() -> [unlockedItem]? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(unlockedItem.ArchiveURL!.path!) as? [unlockedItem]
+    func loadItems() -> [item]? {
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(item.UnlockedArchiveURL!.path!) as? [item]
     }
     
-    func loadCurrentSkin() -> currentSkin? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(currentSkin.ArchiveURL!.path!) as? currentSkin
+    func loadCurrentSkin() -> item? {
+        return NSKeyedUnarchiver.unarchiveObjectWithFile(item.CurrentArchiveURL!.path!) as? item
     }
     
     //Initial Skins

@@ -40,7 +40,6 @@ class ShopScene: SKScene, ChartboostDelegate {
     //items
     var shopSkins = [item]()
     var shopThemes = [item]()
-    var loadedUnlockedItems = [unlockedItem]()
     var unlockedItems = [item]()
     var startX: CGFloat = 0.0
     var lastX: CGFloat = 0.0
@@ -52,12 +51,7 @@ class ShopScene: SKScene, ChartboostDelegate {
     override func didMoveToView(view: SKView) {
         userInteractionEnabled = false
         shopSkins = shopItems.loadInitialSkins()
-        loadedUnlockedItems = shopItems.unlocked
-        
-        for i in loadedUnlockedItems {
-            let unlocked = i.uItem
-            unlockedItems.append(unlocked)
-        }
+        unlockedItems = shopItems.unlocked
         
         loadView()
         animateEnter { 
@@ -150,9 +144,10 @@ class ShopScene: SKScene, ChartboostDelegate {
                 item.alpha = 0.66
             }
             
-            if shopItems.current.currentItem.name == item.shopItem.name{
+            if shopItems.current.name == item.shopItem.name{
                 selectionIndicator = SKSpriteNode(imageNamed: "selectedItemIndicator")
                 selectionIndicator.position.x = item.position.x
+                selectionIndicator.zPosition = 1
                 moveableArea.addChild(selectionIndicator)
             }
         }
@@ -213,7 +208,7 @@ class ShopScene: SKScene, ChartboostDelegate {
         // store the starting position of the touch
         
         for touch in touches {
-            let location = touch.locationInNode(itemSelectionBG)
+            let location = touch.locationInNode(self)
             startX = location.x
             lastX = location.x
         }
@@ -224,7 +219,6 @@ class ShopScene: SKScene, ChartboostDelegate {
             if moved == false {
                 let location = touch.locationInNode(self)
                 let currentX = location.x
-                
                 // Set Top and Bottom scroll distances, measured in screenlengths
                 if skins_selected == true {
                     furthestLimit = shopSkins.count
@@ -331,12 +325,56 @@ class ShopScene: SKScene, ChartboostDelegate {
                     end.text = "\(shopThemes.count)"
                 }
             }
+            
+            if lastX == startX {
+                handleItemTap(touch)
+            }
         }
     }
     
-    func handleItemTap(touches: Set<UITouch>){
-        if let touch = touches.first{
+    func handleItemTap(touch: UITouch){
+        let location = touch.locationInNode(self)
+        let touchedNode = nodeAtPoint(location)
             
+        if let touchedItem = touchedNode as? itemContainer {
+            if unlockedItems.contains({$0.name == touchedItem.shopItem.name}) {
+                print(touchedItem.shopItem.name)
+                selectionIndicator.position.x = touchedItem.position.x
+                shopItems.current = touchedItem.shopItem
+            }
+            else {
+                if touchedItem.shopItem.price < currency.coins {
+                    unlockedItems.append(touchedItem.shopItem)
+                    shopItems.unlocked = unlockedItems
+                    shopItems.saveItems()
+                    
+                    currency.coins -= touchedItem.shopItem.price
+                    coins.text = "\(currency.coins)"
+                    touchedItem.alpha = 1
+                    selectionIndicator.position.x = touchedItem.position.x
+                    
+                    if touchedItem.shopItem.itemtype == .skin {
+                        shopItems.current = touchedItem.shopItem
+                    }
+                }
+                else {
+                    let errortext = childNodeWithName("errortext")
+                    let fade = SKAction.fadeInWithDuration(0.3)
+                    let wait = SKAction.waitForDuration(0.6)
+                    let fadout = SKAction.fadeOutWithDuration(0.9)
+                    
+                    errortext?.runAction(SKAction.sequence([fade,wait,fadout]))
+                    
+                    let shakeAction = SKAction.moveBy(CGVector(dx: 9, dy:0), duration: 0.1)
+                    let shake = SKAction.sequence([shakeAction, shakeAction.reversedAction()])
+                    let shaker = SKAction.repeatAction(shake, count: 3)
+                    
+                    let colorizer = SKAction.colorizeWithColor(UIColor.redColor(), colorBlendFactor: 1.0, duration: 0.0)
+                    
+                    let colorback = SKAction.colorizeWithColor(UIColor.whiteColor(), colorBlendFactor: 0.0, duration: 0.2)
+                    coins.runAction(SKAction.sequence([SKAction.group([shaker,colorizer]), colorback]))
+                }
+            }
         }
     }
     

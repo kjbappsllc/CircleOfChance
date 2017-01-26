@@ -25,7 +25,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //Gameplay
     private var gamePlayArea = SKSpriteNode()
-    private var ball = Character()
+    private var ballChar = Character()
+    private var ball = SKSpriteNode()
+    var shopSkin = items()
     private var star = StarIcon()
     private var pauseScreen = SKSpriteNode()
     private var multiplier = SKSpriteNode()
@@ -78,7 +80,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var barriersReversed = Bool()
     var highScoreAchieved = Bool()
     var checkpoint = Bool()
-    static var soundOn = Bool()
     var currency = CurrencyManager()
     var starHit = SKSpriteNode()
     
@@ -88,7 +89,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameCenterAchievements = [String:GKAchievement]()
     
     override func didMoveToView(view: SKView) {
-        
         
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         addChild(gameLayer)
@@ -461,6 +461,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //Mark: This Function adds the ball onto the area
     func addBall(completion: () -> ()) {
+        ball = shopSkin.current.sprite
+        ball.physicsBody = ballChar.loadPhysics()
+        ball.size = ballChar.size
         ball.position = CGPoint(x: -40, y: 45)
         ball.zPosition = layerPositions.character.rawValue
         ball.hidden = false
@@ -485,7 +488,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let rad = atan2(dy,dx)
         Path = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
         
-        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: false, speed: ball.getballSpeedCounterClockWise())
+        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: false, speed: ballChar.getballSpeedCounterClockWise())
         ball.runAction(SKAction.repeatActionForever(follow))
         
     }
@@ -498,7 +501,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let rad = atan2(dy,dx)
         Path = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
         
-        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: false, speed: ball.getballSpeedClockWise())
+        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: false, speed: ballChar.getballSpeedClockWise())
         ball.runAction(SKAction.repeatActionForever(follow).reversedAction())
     }
     
@@ -569,9 +572,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             
             //Checks to see whether or not to add more speed to the ball based on whether the effect "Motion" is up
-            if ball.getballSpeedClockWise() < 350 && motionEffect.isActive == false{
-                ball.AddBallSpeedClockWise(3)
-                ball.AddBallSpeedCounterClockWise(3)
+            if ballChar.getballSpeedClockWise() < 350 && motionEffect.isActive == false{
+                ballChar.AddBallSpeedClockWise(3)
+                ballChar.AddBallSpeedCounterClockWise(3)
             }
             
             //Adds the new level in the beginning of every other level the level
@@ -925,8 +928,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //An effect that changes the motion of the ball
     func IrregularMotion() {
-        ball.SetBallSpeedClockWise(350)
-        ball.SetBallSpeedCounterClockWise(130)
+        ballChar.SetBallSpeedClockWise(350)
+        ballChar.SetBallSpeedCounterClockWise(130)
     }
     
     //An effect that changes the size of the ball

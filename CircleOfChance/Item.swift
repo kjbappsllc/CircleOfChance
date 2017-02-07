@@ -14,11 +14,11 @@ enum itemType: Int {
 }
 
 class item: NSObject, NSCoding{
-    static let DocumentsDirectory = NSFileManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).first!
-    static let UnlockedArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("unlockedItem")
-    static let CurrentArchiveURL = DocumentsDirectory.URLByAppendingPathComponent("currentSkin")
+    static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+    static let UnlockedArchiveURL = DocumentsDirectory.appendingPathComponent("unlockedItem")
+    static let CurrentArchiveURL = DocumentsDirectory.appendingPathComponent("currentSkin")
     
-    private var _itemtype: itemType
+    fileprivate var _itemtype: itemType
     
     var itemtype: itemType {
         get{
@@ -29,7 +29,7 @@ class item: NSObject, NSCoding{
         }
     }
     
-    private var _sprite: SKSpriteNode
+    fileprivate var _sprite: SKSpriteNode
     
     var sprite: SKSpriteNode{
         get{
@@ -40,7 +40,7 @@ class item: NSObject, NSCoding{
         }
     }
     
-    private var _name: String
+    fileprivate var _name: String
     
     var name: String{
         get{
@@ -50,7 +50,7 @@ class item: NSObject, NSCoding{
             _name = newValue
         }
     }
-    private var _price: Int
+    fileprivate var _price: Int
     
     var price:Int {
         get{
@@ -73,18 +73,18 @@ class item: NSObject, NSCoding{
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let price = aDecoder.decodeObjectForKey("price") as! Int
-        let sprite = aDecoder.decodeObjectForKey("sprite") as! SKSpriteNode
-        let name = aDecoder.decodeObjectForKey("name") as! String
-        let itemtype = aDecoder.decodeIntegerForKey("item")
+        let price = aDecoder.decodeObject(forKey: "price") as! Int
+        let sprite = aDecoder.decodeObject(forKey: "sprite") as! SKSpriteNode
+        let name = aDecoder.decodeObject(forKey: "name") as! String
+        let itemtype = aDecoder.decodeInteger(forKey: "item")
         self.init(item: itemType.init(rawValue: itemtype)!, sprite: sprite, name: name, price: price)
         
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
-        aCoder.encodeObject(_name, forKey: "name")
-        aCoder.encodeObject(_price, forKey: "price")
-        aCoder.encodeObject(_sprite, forKey: "sprite")
-        aCoder.encodeInteger(_itemtype.rawValue, forKey: "item")
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(_name, forKey: "name")
+        aCoder.encode(_price, forKey: "price")
+        aCoder.encode(_sprite, forKey: "sprite")
+        aCoder.encode(_itemtype.rawValue, forKey: "item")
     }
 }

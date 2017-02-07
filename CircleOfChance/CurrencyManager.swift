@@ -12,30 +12,30 @@ class CurrencyManager: NSObject {
     var coins: Int {
         
         set(value) {
-            NSUserDefaults.standardUserDefaults().setInteger(value, forKey: "coins")
+            UserDefaults.standard.set(value, forKey: "coins")
         }
         get {
-            return NSUserDefaults.standardUserDefaults().integerForKey("coins")
+            return UserDefaults.standard.integer(forKey: "coins")
         }
     }
     
     var totalCoins: Int {
         set(value) {
-            NSUserDefaults.standardUserDefaults().setInteger(value, forKey: "totalcoins")
+            UserDefaults.standard.set(value, forKey: "totalcoins")
         }
         
         get {
-            return NSUserDefaults.standardUserDefaults().integerForKey("totalcoins")
+            return UserDefaults.standard.integer(forKey: "totalcoins")
         }
     }
     
     var games: Int {
         set(value) {
-            NSUserDefaults.standardUserDefaults().setInteger(value, forKey: "games")
+            UserDefaults.standard.set(value, forKey: "games")
         }
         
         get {
-            return NSUserDefaults.standardUserDefaults().integerForKey("games")
+            return UserDefaults.standard.integer(forKey: "games")
         }
     }
 }

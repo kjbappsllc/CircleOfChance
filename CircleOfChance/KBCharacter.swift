@@ -12,7 +12,7 @@ import SpriteKit
 class Character {
     var ballSpeedClockWise = CGFloat()
     var ballSpeedCounterClockWise = CGFloat()
-    private var _size: CGSize
+    fileprivate var _size: CGSize
     var size: CGSize {
         get{
             return _size
@@ -22,7 +22,7 @@ class Character {
         }
     }
     
-    init(){
+    init() {
         ballSpeedClockWise = 195.0
         ballSpeedCounterClockWise = 195.0
         _size = CGSize(width: 55, height: 55)
@@ -40,24 +40,20 @@ class Character {
         return ballSpeedCounterClockWise
     }
     
-    func AddBallSpeedClockWise(add: CGFloat) -> CGFloat {
+    func AddBallSpeedClockWise(_ add: CGFloat){
         ballSpeedClockWise += add
-        return ballSpeedClockWise
     }
     
-    func AddBallSpeedCounterClockWise(add:CGFloat) -> CGFloat {
+    func AddBallSpeedCounterClockWise(_ add:CGFloat) {
         ballSpeedCounterClockWise += add
-        return ballSpeedCounterClockWise
     }
     
-    func SetBallSpeedCounterClockWise(new:CGFloat) -> CGFloat {
+    func SetBallSpeedCounterClockWise(_ new:CGFloat) {
         ballSpeedCounterClockWise = new
-        return ballSpeedCounterClockWise
     }
     
-    func SetBallSpeedClockWise(new:CGFloat) -> CGFloat {
+    func SetBallSpeedClockWise(_ new:CGFloat) {
         ballSpeedClockWise = new
-        return ballSpeedClockWise
     }
     
     func loadPhysics() -> SKPhysicsBody{

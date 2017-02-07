@@ -17,7 +17,7 @@ class howToPlayScene: SKScene {
     var counter = Int()
     var cycle = [SKTexture(imageNamed: "howToPlay1"), SKTexture(imageNamed: "howToPlay2"), SKTexture(imageNamed: "howToPlay3"), SKTexture(imageNamed: "howToPlay4"), SKTexture(imageNamed: "howToPlay5"), SKTexture(imageNamed: "howToPlay6"), SKTexture(imageNamed:"howToPlay7")]
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         loadview()
         addTip()
     }
@@ -37,9 +37,9 @@ class howToPlayScene: SKScene {
         goBack.size = CGSize(width:50, height: 50)
         goBack.zPosition = 15
         self.addChild(goBack)
-        let scaleup = SKAction.scaleTo(1.1, duration: 0.25)
-        let scaleDown = SKAction.scaleTo(1.0, duration: 0.25)
-        goBack.runAction(SKAction.repeatActionForever(SKAction.sequence([scaleup,scaleDown])))
+        let scaleup = SKAction.scale(to: 1.1, duration: 0.25)
+        let scaleDown = SKAction.scale(to: 1.0, duration: 0.25)
+        goBack.run(SKAction.repeatForever(SKAction.sequence([scaleup,scaleDown])))
     }
     
     func addTip() {
@@ -47,18 +47,18 @@ class howToPlayScene: SKScene {
         backGround.fillColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.65)
         backGround.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
         backGround.zPosition = 10
-        backGround.strokeColor = UIColor.clearColor()
+        backGround.strokeColor = UIColor.clear
         self.addChild(backGround)
         
         tip = SKSpriteNode(imageNamed: "tipButton")
         backGround.addChild(tip)
         
     }
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first{
-            let touchLocation = touch.locationInNode(self)
+            let touchLocation = touch.location(in: self)
             
-            if goBack.containsPoint(touchLocation) && tipActive == false {
+            if goBack.contains(touchLocation) && tipActive == false {
                 goBack.alpha = 0.5
             }
             else {
@@ -67,34 +67,34 @@ class howToPlayScene: SKScene {
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first{
-            let tiplocation = touch.locationInNode(backGround)
-            let touchLocation = touch.locationInNode(self)
-            if goBack.containsPoint(touchLocation){
+            let tiplocation = touch.location(in: backGround)
+            let touchLocation = touch.location(in: self)
+            if goBack.contains(touchLocation){
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
                     // Configure the view.
                     let skView = self.view as SKView!
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
+                    skView?.showsFPS = true
+                    skView?.showsNodeCount = true
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
+                    skView?.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
-                    let transition = SKTransition.fadeWithDuration(0.8)
-                    skView.presentScene(scene, transition: transition)
+                    scene.scaleMode = .aspectFill
+                    let transition = SKTransition.fade(withDuration: 0.8)
+                    skView?.presentScene(scene, transition: transition)
                 }
             }
             else {
                 goBack.alpha = 1.0
             }
             
-            if tipActive == false && goBack.containsPoint(touchLocation) == false {
+            if tipActive == false && goBack.contains(touchLocation) == false {
                 changeImage(touches)
             }
             
-            if tip.containsPoint(tiplocation) {
+            if tip.contains(tiplocation) {
                 backGround.removeAllChildren()
                 backGround.removeFromParent()
                 tipActive = false
@@ -105,12 +105,12 @@ class howToPlayScene: SKScene {
 
     }
     
-    func changeImage(touches: Set<UITouch>) {
+    func changeImage(_ touches: Set<UITouch>) {
         let upperLimit = cycle.count-1
         let lowerLimit = 0
         
         if let touch = touches.first {
-            let touchLocation = touch.locationInNode(self)
+            let touchLocation = touch.location(in: self)
             if (touchLocation.x > self.frame.size.width/2) {
                 if counter == upperLimit {
                     counter = 0

@@ -46,43 +46,45 @@ class ShopScene: SKScene, ChartboostDelegate {
     var beginLimit = 1
     var furthestLimit = Int()
     var currentItem = 1
+    var currentItemSkin = 0
+    var currentItemTheme = 0
     var moved = false
     
-    override func didMoveToView(view: SKView) {
-        userInteractionEnabled = false
+    override func didMove(to view: SKView) {
+        isUserInteractionEnabled = false
         shopSkins = shopItems.loadInitialSkins()
         unlockedItems = shopItems.unlocked
         
         loadView()
         animateEnter { 
-            self.userInteractionEnabled = true
+            self.isUserInteractionEnabled = true
         }
     }
     
     deinit {
-        SKPaymentQueue.defaultQueue().removeTransactionObserver(store!)
+        SKPaymentQueue.default().remove(store!)
     }
     
     //Mark: Loads the View
     func loadView() {
         // Top Bar
-        topBar = self.childNodeWithName("topBar")!
-        backButton = topBar.childNodeWithName("backButton") as! SKSpriteNode
-        coins = topBar.childNodeWithName("coins") as! SKLabelNode
+        topBar = self.childNode(withName: "topBar")!
+        backButton = topBar.childNode(withName: "backButton") as! SKSpriteNode
+        coins = topBar.childNode(withName: "coins") as! SKLabelNode
         
         //Shop
-        doubleCoinsBool = NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins")
+        doubleCoinsBool = UserDefaults.standard.bool(forKey: "com.KJBApps.CircleOfChance.doublecoins")
         
         //Selection
-        selectionLayer = self.childNodeWithName("selection")!
-        skinsSection = selectionLayer.childNodeWithName("skinSelection") as! SKSpriteNode
-        themesSection = selectionLayer.childNodeWithName("themeSelection") as! SKSpriteNode
+        selectionLayer = self.childNode(withName: "selection")!
+        skinsSection = selectionLayer.childNode(withName: "skinSelection") as! SKSpriteNode
+        themesSection = selectionLayer.childNode(withName: "themeSelection") as! SKSpriteNode
         skins_selected = true
-        itemSelectionBG = self.childNodeWithName("itemSelectionBg") as! SKSpriteNode
-        doubleCoins = self.childNodeWithName("doubleCoins") as! SKSpriteNode
-        counterNode = self.childNodeWithName("counterNode")!
-        current = counterNode.childNodeWithName("current") as! SKLabelNode
-        end = counterNode.childNodeWithName("end") as! SKLabelNode
+        itemSelectionBG = self.childNode(withName: "itemSelectionBg") as! SKSpriteNode
+        doubleCoins = self.childNode(withName: "doubleCoins") as! SKSpriteNode
+        counterNode = self.childNode(withName: "counterNode")!
+        current = counterNode.childNode(withName: "current") as! SKLabelNode
+        end = counterNode.childNode(withName: "end") as! SKLabelNode
         
         store = IAPHelper(productIds: productID as! Set<ProductIdentifier>)
         
@@ -105,7 +107,7 @@ class ShopScene: SKScene, ChartboostDelegate {
         addItems(shopSkins, isSkin: true)
     }
     
-    func addItems(nodes: [item], isSkin: Bool) {
+    func addItems(_ nodes: [item], isSkin: Bool) {
         for i in 0..<nodes.count {
             //Setup the slot that the item will go in
             let item = itemContainer(shopItem: nodes[i])
@@ -132,10 +134,10 @@ class ShopScene: SKScene, ChartboostDelegate {
             
             
             //position the price
-            if !unlockedItems.contains({$0.name == nodes[i].name}){
+            if !unlockedItems.contains(where: {$0.name == nodes[i].name}){
                 let price = SKLabelNode()
                 price.text = "\(nodes[i].price)"
-                setUpLabel(price, size: 36.0, fontName: "Lucida Grande-Bold", fontColor: SKColor.blackColor())
+                setUpLabel(price, size: 36.0, fontName: "Lucida Grande-Bold", fontColor: SKColor.black)
                 price.position.y = -item.size.height/2 + 70
                 price.zPosition = 10
                 price.name = "price"
@@ -149,18 +151,22 @@ class ShopScene: SKScene, ChartboostDelegate {
                 selectionIndicator.position.x = item.position.x
                 selectionIndicator.zPosition = 1
                 moveableArea.addChild(selectionIndicator)
+                currentItemSkin = i
+                currentItem = i+1
+                moveableArea.position.x = -self.frame.width/2 * CGFloat(currentItemSkin)
+                current.text = "\(currentItem)"
             }
         }
     }
     
     //This function just reduces a little of the code to set up a label
-    func setUpLabel(label: SKLabelNode, size: CGFloat, fontName: String, fontColor: SKColor){
+    func setUpLabel(_ label: SKLabelNode, size: CGFloat, fontName: String, fontColor: SKColor){
         label.fontSize = size
         label.fontName = fontName
         label.fontColor = fontColor
     }
     
-    func animateEnter(completion: ()->()){
+    func animateEnter(_ completion: @escaping ()->()){
         topBar.position.y = size.height
         selectionLayer.position.x = -size.width
         moveableArea.alpha = 0
@@ -168,56 +174,56 @@ class ShopScene: SKScene, ChartboostDelegate {
         counterNode.alpha = 0
         doubleCoins.alpha = 0
         
-        let topBarEnter = SKAction.moveBy(CGVector(dx: 0,dy: -size.height), duration: 0.4)
-        topBarEnter.timingMode = .EaseIn
-        topBar.runAction(topBarEnter)
+        let topBarEnter = SKAction.move(by: CGVector(dx: 0,dy: -size.height), duration: 0.4)
+        topBarEnter.timingMode = .easeIn
+        topBar.run(topBarEnter)
         
-        let selectionEnter = SKAction.moveBy(CGVector(dx: size.width,dy: 0), duration: 0.3)
-        selectionEnter.timingMode = .EaseIn
-        selectionLayer.runAction(selectionEnter,completion: completion)
+        let selectionEnter = SKAction.move(by: CGVector(dx: size.width,dy: 0), duration: 0.3)
+        selectionEnter.timingMode = .easeIn
+        selectionLayer.run(selectionEnter,completion: completion)
         
-        let moveableAreaEnter = SKAction.fadeInWithDuration(0.3)
-        moveableAreaEnter.timingMode = .EaseIn
-        moveableArea.runAction(moveableAreaEnter)
+        let moveableAreaEnter = SKAction.fadeIn(withDuration: 0.3)
+        moveableAreaEnter.timingMode = .easeIn
+        moveableArea.run(moveableAreaEnter)
         
-        counterNode.runAction(SKAction.fadeInWithDuration(0.2))
-        doubleCoins.runAction(SKAction.fadeInWithDuration(0.2))
-        itemSelectionBG.runAction(SKAction.fadeInWithDuration(0.1), completion:completion)
+        counterNode.run(SKAction.fadeIn(withDuration: 0.2))
+        doubleCoins.run(SKAction.fadeIn(withDuration: 0.2))
+        itemSelectionBG.run(SKAction.fadeIn(withDuration: 0.1), completion:completion)
     }
     
-    func animateExit(completion: () ->()) {
-        let topBarExit = SKAction.moveBy(CGVector(dx: 0,dy: size.height), duration: 0.4)
-        topBarExit.timingMode = .EaseOut
-        topBar.runAction(topBarExit)
+    func animateExit(_ completion: @escaping () ->()) {
+        let topBarExit = SKAction.move(by: CGVector(dx: 0,dy: size.height), duration: 0.4)
+        topBarExit.timingMode = .easeOut
+        topBar.run(topBarExit)
         
-        let selectionExit = SKAction.moveBy(CGVector(dx:size.width,dy:0), duration: 0.2)
-        selectionExit.timingMode = .EaseOut
-        selectionLayer.runAction(selectionExit)
+        let selectionExit = SKAction.move(by: CGVector(dx:size.width,dy:0), duration: 0.2)
+        selectionExit.timingMode = .easeOut
+        selectionLayer.run(selectionExit)
         
-        itemSelectionBG.runAction(SKAction.fadeOutWithDuration(0.1))
-        moveableArea.runAction(SKAction.fadeOutWithDuration(0.3))
+        itemSelectionBG.run(SKAction.fadeOut(withDuration: 0.1))
+        moveableArea.run(SKAction.fadeOut(withDuration: 0.3))
         
-        counterNode.runAction(SKAction.fadeOutWithDuration(0.3))
-        doubleCoins.runAction(SKAction.fadeOutWithDuration(0.3), completion: completion)
+        counterNode.run(SKAction.fadeOut(withDuration: 0.3))
+        doubleCoins.run(SKAction.fadeOut(withDuration: 0.3), completion: completion)
         
         
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Called when a touch begins */
         // store the starting position of the touch
         
         for touch in touches {
-            let location = touch.locationInNode(self)
+            let location = touch.location(in: self)
             startX = location.x
             lastX = location.x
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
             if moved == false {
-                let location = touch.locationInNode(self)
+                let location = touch.location(in: self)
                 let currentX = location.x
                 // Set Top and Bottom scroll distances, measured in screenlengths
                 if skins_selected == true {
@@ -235,17 +241,17 @@ class ShopScene: SKScene, ChartboostDelegate {
                 
                 // perform checks to see if new position will be over the limits, otherwise set as new position
                 if currentX < lastX && currentItem != furthestLimit {
-                    let moveLAction = SKAction.moveBy(CGVector(dx: offset,dy: 0), duration: scrollSpeed)
-                    moveLAction.timingMode = .EaseOut
-                    moveableArea.runAction(moveLAction)
+                    let moveLAction = SKAction.move(by: CGVector(dx: offset,dy: 0), duration: scrollSpeed)
+                    moveLAction.timingMode = .easeOut
+                    moveableArea.run(moveLAction)
                     currentItem += 1
                     current.text = "\(currentItem)"
                     moved = true
                 }
                 else if currentX > lastX && currentItem != beginLimit{
-                    let moveRAction = SKAction.moveBy(CGVector(dx: -offset,dy: 0), duration: scrollSpeed)
-                    moveRAction.timingMode = .EaseOut
-                    moveableArea.runAction(moveRAction)
+                    let moveRAction = SKAction.move(by: CGVector(dx: -offset,dy: 0), duration: scrollSpeed)
+                    moveRAction.timingMode = .easeOut
+                    moveableArea.run(moveRAction)
                     currentItem -= 1
                     current.text = "\(currentItem)"
                     moved = true
@@ -257,29 +263,29 @@ class ShopScene: SKScene, ChartboostDelegate {
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first{
             moved = false
-            let touchLocation = touch.locationInNode(self)
-            let backtoMenuTouch = touch.locationInNode(topBar)
-            let selectionTouch = touch.locationInNode(selectionLayer)
-            if backButton.containsPoint(backtoMenuTouch){
+            let touchLocation = touch.location(in: self)
+            let backtoMenuTouch = touch.location(in: topBar)
+            let selectionTouch = touch.location(in: selectionLayer)
+            if backButton.contains(backtoMenuTouch){
                 
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
                     // Configure the view.
                     let skView = self.view as SKView!
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
+                    skView?.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
+                    scene.scaleMode = .aspectFill
                     animateExit({ 
-                        skView.presentScene(scene)
+                        skView?.presentScene(scene)
                     })
                 }
             }
             
-            if doubleCoins.containsPoint(touchLocation){
+            if doubleCoins.contains(touchLocation){
                 for product in list {
                     if product.productIdentifier == "com.KJBApps.CircleOfChance.doublecoins" {
                         if let isTrue = store?.isProductPurchased("com.KJBApps.CircleOfChance.doublecoins") {
@@ -293,26 +299,26 @@ class ShopScene: SKScene, ChartboostDelegate {
                     doubleCoins.alpha = 1.0
                 }
                 
-                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ShopScene.handlePurchaseNotification(_:)),
-                                                                 name: IAPHelper.IAPHelperPurchaseNotification,
+                NotificationCenter.default.addObserver(self, selector: #selector(ShopScene.handlePurchaseNotification(_:)),
+                                                                 name: NSNotification.Name(rawValue: IAPHelper.IAPHelperPurchaseNotification),
                                                                  object: nil)
             }
             
-            if skinsSection.containsPoint(selectionTouch) {
+            if skinsSection.contains(selectionTouch) {
                 if skins_selected == false {
                     skins_selected = true
                     themesSection.alpha = 0.5
                     skinsSection.alpha = 1.0
                     moveableArea.removeAllChildren()
-                    moveableArea.position.x = 0
+                    moveableArea.position.x = CGFloat(currentItemSkin) * self.frame.width/2
                     addItems(shopSkins, isSkin: true)
-                    currentItem = 1
+                    currentItem = currentItemSkin + 1
                     current.text = "\(currentItem)"
                     end.text = "\(shopSkins.count)"
                 }
             }
             
-            if themesSection.containsPoint(selectionTouch) {
+            if themesSection.contains(selectionTouch) {
                 if skins_selected == true {
                     skins_selected = false
                     themesSection.alpha = 1.0
@@ -332,12 +338,12 @@ class ShopScene: SKScene, ChartboostDelegate {
         }
     }
     
-    func handleItemTap(touch: UITouch){
-        let location = touch.locationInNode(self)
-        let touchedNode = nodeAtPoint(location)
+    func handleItemTap(_ touch: UITouch){
+        let location = touch.location(in: self)
+        let touchedNode = atPoint(location)
             
         if let touchedItem = touchedNode as? itemContainer {
-            if unlockedItems.contains({$0.name == touchedItem.shopItem.name}) {
+            if unlockedItems.contains(where: {$0.name == touchedItem.shopItem.name}) {
                 print(touchedItem.shopItem.name)
                 selectionIndicator.position.x = touchedItem.position.x
                 shopItems.current = touchedItem.shopItem
@@ -353,32 +359,34 @@ class ShopScene: SKScene, ChartboostDelegate {
                     touchedItem.alpha = 1
                     selectionIndicator.position.x = touchedItem.position.x
                     
+                    touchedItem.childNode(withName: "price")?.removeFromParent()
+                    
                     if touchedItem.shopItem.itemtype == .skin {
                         shopItems.current = touchedItem.shopItem
                     }
                 }
                 else {
-                    let errortext = childNodeWithName("errortext")
-                    let fade = SKAction.fadeInWithDuration(0.3)
-                    let wait = SKAction.waitForDuration(0.6)
-                    let fadout = SKAction.fadeOutWithDuration(0.9)
+                    let errortext = childNode(withName: "errortext")
+                    let fade = SKAction.fadeIn(withDuration: 0.1)
+                    let wait = SKAction.wait(forDuration: 0.6)
+                    let fadout = SKAction.fadeOut(withDuration: 0.9)
                     
-                    errortext?.runAction(SKAction.sequence([fade,wait,fadout]))
+                    errortext?.run(SKAction.sequence([fade,wait,fadout]))
                     
-                    let shakeAction = SKAction.moveBy(CGVector(dx: 9, dy:0), duration: 0.1)
-                    let shake = SKAction.sequence([shakeAction, shakeAction.reversedAction()])
-                    let shaker = SKAction.repeatAction(shake, count: 3)
+                    let shakeAction = SKAction.move(by: CGVector(dx: 9, dy:0), duration: 0.1)
+                    let shake = SKAction.sequence([shakeAction, shakeAction.reversed()])
+                    let shaker = SKAction.repeat(shake, count: 3)
                     
-                    let colorizer = SKAction.colorizeWithColor(UIColor.redColor(), colorBlendFactor: 1.0, duration: 0.0)
+                    let colorizer = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.0)
                     
-                    let colorback = SKAction.colorizeWithColor(UIColor.whiteColor(), colorBlendFactor: 0.0, duration: 0.2)
-                    coins.runAction(SKAction.sequence([SKAction.group([shaker,colorizer]), colorback]))
+                    let colorback = SKAction.colorize(with: UIColor.white, colorBlendFactor: 0.0, duration: 0.2)
+                    coins.run(SKAction.sequence([SKAction.group([shaker,colorizer]), colorback]))
                 }
             }
         }
     }
     
-    func handlePurchaseNotification(notification: NSNotification) {
+    func handlePurchaseNotification(_ notification: Notification) {
         guard let productID = notification.object as? String else { return }
         
         if productID == "com.KJBApps.CircleOfChance.doublecoins" {

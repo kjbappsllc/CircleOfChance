@@ -14,7 +14,7 @@ class StarIcon: SKSpriteNode {
 
         let texture = SKTexture(imageNamed: "Star")
         
-        super.init(texture: texture ,color: UIColor.clearColor(), size: texture.size())
+        super.init(texture: texture ,color: UIColor.clear, size: texture.size())
         
         zPosition = layerPositions.dots.rawValue
         physicsBody = nil
@@ -25,11 +25,11 @@ class StarIcon: SKSpriteNode {
     }
     
     func animateStar() {
-        let scaled = SKAction.scaleTo(1.2, duration: 0.4)
-        let scaleDown = SKAction.scaleTo(1.0, duration: 0.4)
-        scaled.timingMode = .EaseOut
+        let scaled = SKAction.scale(to: 1.2, duration: 0.4)
+        let scaleDown = SKAction.scale(to: 1.0, duration: 0.4)
+        scaled.timingMode = .easeOut
         
-        self.runAction(SKAction.repeatActionForever(SKAction.sequence([scaled,scaleDown])))
+        self.run(SKAction.repeatForever(SKAction.sequence([scaled,scaleDown])))
     }
     
     func LoadPhysics() {
@@ -38,7 +38,7 @@ class StarIcon: SKSpriteNode {
         physicsBody?.contactTestBitMask = ballCategory
         physicsBody?.collisionBitMask = ballCategory
         physicsBody?.affectedByGravity = false
-        physicsBody?.dynamic = false
+        physicsBody?.isDynamic = false
     }
     
 }

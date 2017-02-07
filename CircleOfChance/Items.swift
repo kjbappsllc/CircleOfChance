@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 class items {
-    private var _unlocked: [item]
+    fileprivate var _unlocked: [item]
     
     var unlocked: [item] {
         get {
@@ -21,7 +21,7 @@ class items {
         }
     }
     
-    private var _current: item
+    fileprivate var _current: item
     
     var current: item {
         get {
@@ -29,7 +29,7 @@ class items {
         }
         set {
             _current = newValue
-            NSKeyedArchiver.archiveRootObject(_current, toFile: item.CurrentArchiveURL!.path!)
+            NSKeyedArchiver.archiveRootObject(_current, toFile: item.CurrentArchiveURL.path)
         }
     }
     
@@ -55,18 +55,18 @@ class items {
     //Mark: NSCoding
     
     func saveItems() {
-        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(_unlocked, toFile: item.UnlockedArchiveURL!.path!)
+        let isSuccessfulSave = NSKeyedArchiver.archiveRootObject(_unlocked, toFile: item.UnlockedArchiveURL.path)
         if !isSuccessfulSave {
             print("Failed to save Items...")
         }
     }
     
     func loadItems() -> [item]? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(item.UnlockedArchiveURL!.path!) as? [item]
+        return NSKeyedUnarchiver.unarchiveObject(withFile: item.UnlockedArchiveURL.path) as? [item]
     }
     
     func loadCurrentSkin() -> item? {
-        return NSKeyedUnarchiver.unarchiveObjectWithFile(item.CurrentArchiveURL!.path!) as? item
+        return NSKeyedUnarchiver.unarchiveObject(withFile: item.CurrentArchiveURL.path) as? item
     }
     
     //Initial Skins
@@ -74,7 +74,7 @@ class items {
         var skinsArray = [item]()
         let skin1 = item(item: .skin, sprite: SKSpriteNode(imageNamed: "ball"), name: "BLUE", price: 0)
         let skin2 = item(item: .skin, sprite: SKSpriteNode(imageNamed: "basketballSkin"), name: "BASKETBALL", price: 200)
-        skinsArray.appendContentsOf([skin1,skin2])
+        skinsArray.append(contentsOf: [skin1,skin2])
         return skinsArray
         
     }

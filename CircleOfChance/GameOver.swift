@@ -37,7 +37,7 @@ class GameOver: SKScene, ChartboostDelegate {
     //GameCenter
     var gameCenterAchievements = [String:GKAchievement]()
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         addChild(gameOverLayer)
         Chartboost.setDelegate(self)
@@ -46,16 +46,16 @@ class GameOver: SKScene, ChartboostDelegate {
         
         if Chartboost.hasRewardedVideo(CBLocationGameOver) == false {
             Chartboost.cacheRewardedVideo(CBLocationGameOver)
-            let scale = SKAction.scaleTo(1.05, duration: 1.0)
-            let scaleback = SKAction.scaleTo(1.0, duration: 1.0)
+            let scale = SKAction.scale(to: 1.05, duration: 1.0)
+            let scaleback = SKAction.scale(to: 1.0, duration: 1.0)
             let pulsing = SKAction.sequence([scale,scaleback])
-            movieButton.runAction(SKAction.repeatActionForever(pulsing))
+            movieButton.run(SKAction.repeatForever(pulsing))
         }
         else {
-            let scale = SKAction.scaleTo(1.05, duration: 1.0)
-            let scaleback = SKAction.scaleTo(1.0, duration: 1.0)
+            let scale = SKAction.scale(to: 1.05, duration: 1.0)
+            let scaleback = SKAction.scale(to: 1.0, duration: 1.0)
             let pulsing = SKAction.sequence([scale,scaleback])
-            movieButton.runAction(SKAction.repeatActionForever(pulsing))
+            movieButton.run(SKAction.repeatForever(pulsing))
         }
 
     }
@@ -113,7 +113,7 @@ class GameOver: SKScene, ChartboostDelegate {
         highscoreBox.zPosition = layerPositions.textLayer.rawValue
         gameOverSign.addChild(highscoreBox)
         
-        let highestScore = NSUserDefaults.standardUserDefaults().integerForKey("highscore")
+        let highestScore = UserDefaults.standard.integer(forKey: "highscore")
         highscore.text = "\(highestScore)"
         highscore.fontSize = 45.0
         highscore.fontName = "Grand Hotel"
@@ -130,7 +130,7 @@ class GameOver: SKScene, ChartboostDelegate {
         scoreBox.zPosition = layerPositions.textLayer.rawValue
         gameOverSign.addChild(scoreBox)
         
-        scoring = self.userData?.objectForKey("score") as! Int
+        scoring = self.userData?.object(forKey: "score") as! Int
         score.text = "\(scoring)"
         score.fontSize = 45.0
         score.fontName = "Grand Hotel"
@@ -146,7 +146,7 @@ class GameOver: SKScene, ChartboostDelegate {
         coinsBox.zPosition = layerPositions.textLayer.rawValue
         gameOverSign.addChild(coinsBox)
         
-        if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == false {
+        if UserDefaults.standard.bool(forKey: "com.KJBApps.CircleOfChance.doublecoins") == false {
             coinsMade = scoring + (scoring/2)
             coinsMadeNotifier.fontName = "Grand Hotel"
             coinsMadeNotifier.fontSize = 45.0
@@ -155,17 +155,17 @@ class GameOver: SKScene, ChartboostDelegate {
             coinsMadeNotifier.zPosition = layerPositions.topLayer.rawValue
             coinsBox.addChild(coinsMadeNotifier)
             
-            let pusleOut = SKAction.scaleTo(1.05, duration: 0.5)
-            pusleOut.timingMode = .EaseOut
-            let pulseIn = SKAction.scaleTo(1.0, duration: 0.5)
-            pulseIn.timingMode = .EaseOut
+            let pusleOut = SKAction.scale(to: 1.05, duration: 0.5)
+            pusleOut.timingMode = .easeOut
+            let pulseIn = SKAction.scale(to: 1.0, duration: 0.5)
+            pulseIn.timingMode = .easeOut
             let loop = SKAction.sequence([pusleOut,pulseIn])
-            loop.timingMode = .EaseOut
+            loop.timingMode = .easeOut
             
-            coinsMadeNotifier.runAction(SKAction.repeatActionForever(loop))
+            coinsMadeNotifier.run(SKAction.repeatForever(loop))
         }
             
-        else if NSUserDefaults.standardUserDefaults().boolForKey("com.KJBApps.CircleOfChance.doublecoins") == true {
+        else if UserDefaults.standard.bool(forKey: "com.KJBApps.CircleOfChance.doublecoins") == true {
             coinsMade = (scoring + (scoring/2)) * 2
             coinsMadeNotifier.fontName = "Grand Hotel"
             coinsMadeNotifier.fontSize = 45.0
@@ -204,53 +204,53 @@ class GameOver: SKScene, ChartboostDelegate {
     }
     
     //This function removes the gameover
-    func removeGameOver(type: String, completion: () -> ()) {
+    func removeGameOver(_ type: String, completion: @escaping () -> ()) {
         shadowBG.removeFromParent()
         if type == "replay" {
-            let moveAction = SKAction.moveBy(CGVector(dx: -size.width, dy:0) , duration: 0.3)
-            let wait = SKAction.waitForDuration(0.35)
-            moveAction.timingMode = .EaseOut
-            gameOverLayer.runAction(SKAction.sequence([moveAction,wait]), completion: completion)
+            let moveAction = SKAction.move(by: CGVector(dx: -size.width, dy:0) , duration: 0.3)
+            let wait = SKAction.wait(forDuration: 0.35)
+            moveAction.timingMode = .easeOut
+            gameOverLayer.run(SKAction.sequence([moveAction,wait]), completion: completion)
         }
         else{
-            let moveAction = SKAction.moveBy(CGVector(dx: size.width, dy:0) , duration: 0.3)
-            let wait = SKAction.waitForDuration(0.35)
-            moveAction.timingMode = .EaseOut
-            gameOverLayer.runAction(SKAction.sequence([moveAction,wait]), completion: completion)
+            let moveAction = SKAction.move(by: CGVector(dx: size.width, dy:0) , duration: 0.3)
+            let wait = SKAction.wait(forDuration: 0.35)
+            moveAction.timingMode = .easeOut
+            gameOverLayer.run(SKAction.sequence([moveAction,wait]), completion: completion)
         }
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first{
-            let touchLocation = touch.locationInNode(self)
-            if replay.containsPoint(touchLocation) {
+            let touchLocation = touch.location(in: self)
+            if replay.contains(touchLocation) {
                replay.alpha = 0.99
 
             }
-            else if homeButton.containsPoint(touchLocation) {
+            else if homeButton.contains(touchLocation) {
                 homeButton.alpha = 0.99
             }
             
-            else if movieButton.containsPoint(touchLocation) {
+            else if movieButton.contains(touchLocation) {
                 movieButton.alpha = 0.99
             }
             
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first{
-            let touchLocation = touch.locationInNode(self)
-            if replay.containsPoint(touchLocation) && replay.alpha != 1 {
+            let touchLocation = touch.location(in: self)
+            if replay.contains(touchLocation) && replay.alpha != 1 {
                 if let scene = GameScene(fileNamed:"GameScene") {
                     // Configure the view.
                     let skView = self.view as SKView!
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
+                    skView?.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
+                    scene.scaleMode = .aspectFill
                     removeGameOver("replay") {
-                        skView.presentScene(scene)
+                        skView?.presentScene(scene)
                     }
                 }
                 
@@ -259,17 +259,17 @@ class GameOver: SKScene, ChartboostDelegate {
                 replay.alpha = 1
             }
             
-            if homeButton.containsPoint(touchLocation) && homeButton.alpha != 1 {
+            if homeButton.contains(touchLocation) && homeButton.alpha != 1 {
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
                     // Configure the view.
                     let skView = self.view as SKView!
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
+                    skView?.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
+                    scene.scaleMode = .aspectFill
                     removeGameOver("Home") {
-                        skView.presentScene(scene)
+                        skView?.presentScene(scene)
                     }
                 }
             }
@@ -277,7 +277,7 @@ class GameOver: SKScene, ChartboostDelegate {
                 homeButton.alpha = 1
             }
             
-            if movieButton.containsPoint(touchLocation) && movieButton.alpha != 1 {
+            if movieButton.contains(touchLocation) && movieButton.alpha != 1 {
                 if Chartboost.hasRewardedVideo(CBLocationGameOver) {
                     Chartboost.showRewardedVideo(CBLocationGameOver)
                 }
@@ -291,7 +291,7 @@ class GameOver: SKScene, ChartboostDelegate {
         }
     }
 
-    func didCompleteRewardedVideo(location: String!, withReward reward: Int32) {
+    func didCompleteRewardedVideo(_ location: String!, withReward reward: Int32) {
         if location == CBLocationGameOver {
             currency.coins += Int(reward)
             coinsMade += Int(reward)
@@ -299,26 +299,26 @@ class GameOver: SKScene, ChartboostDelegate {
         }
     }
     
-    func didCloseRewardedVideo(location: String!) {
+    func didCloseRewardedVideo(_ location: String!) {
         if location == CBLocationGameOver {
-            let scaleUp = SKAction.scaleTo(1.3, duration: 0.1)
-            let scaleback = SKAction.scaleTo(1.0, duration: 0.1)
+            let scaleUp = SKAction.scale(to: 1.3, duration: 0.1)
+            let scaleback = SKAction.scale(to: 1.0, duration: 0.1)
 
             
-            coinsMadeNotifier.runAction(SKAction.sequence([scaleUp,changeFontAction(coinsMadeNotifier, color: UIColor.purpleColor()), scaleback, changeFontAction(coinsMadeNotifier, color: UIColor.whiteColor())]))
+            coinsMadeNotifier.run(SKAction.sequence([scaleUp,changeFontAction(coinsMadeNotifier, color: UIColor.purple), scaleback, changeFontAction(coinsMadeNotifier, color: UIColor.white)]))
             
             coinsMadeNotifier.text = "\(coinsMade)"
             
-            movieButton.runAction(SKAction.sequence([SKAction.scaleTo(0.0, duration: 0.3),SKAction.removeFromParent()]))
-            let moveAction = SKAction.moveBy(CGVector(dx: 100, dy: 0), duration: 0.3)
-            moveAction.timingMode = .EaseOut
-            replay.runAction(moveAction)
+            movieButton.run(SKAction.sequence([SKAction.scale(to: 0.0, duration: 0.3),SKAction.removeFromParent()]))
+            let moveAction = SKAction.move(by: CGVector(dx: 100, dy: 0), duration: 0.3)
+            moveAction.timingMode = .easeOut
+            replay.run(moveAction)
         }
     }
     
     func loadAchievementPercentages() {
         
-        GKAchievement.loadAchievementsWithCompletionHandler { (allAchievements, error) -> Void in
+        GKAchievement.loadAchievements { (allAchievements, error) -> Void in
             
             if error != nil {
                 print("GC could not load ach, error:\(error)")
@@ -328,11 +328,8 @@ class GameOver: SKScene, ChartboostDelegate {
                 //nil if no progress on any achiement
                 if(allAchievements != nil) {
                     for theAchiement in allAchievements! {
-                        
-                        if let singleAchievement:GKAchievement = theAchiement {
                             
-                            self.gameCenterAchievements[singleAchievement.identifier!] = singleAchievement
-                        }
+                        self.gameCenterAchievements[theAchiement.identifier!] = theAchiement
                     }
                 }
                 
@@ -343,9 +340,9 @@ class GameOver: SKScene, ChartboostDelegate {
             }
         }
     }
-    func incrementCurrentPercentageOfAchievement (identifier:String, amount:Double) {
+    func incrementCurrentPercentageOfAchievement (_ identifier:String, amount:Double) {
         
-        if GKLocalPlayer.localPlayer().authenticated {
+        if GKLocalPlayer.localPlayer().isAuthenticated {
             
             var currentPercentFound:Bool = false
             
@@ -377,7 +374,7 @@ class GameOver: SKScene, ChartboostDelegate {
         }
     }
     
-    func reportAchievement (identifier:String, percentComplete:Double) {
+    func reportAchievement (_ identifier:String, percentComplete:Double) {
         
         let achievement = GKAchievement(identifier: identifier)
         
@@ -386,12 +383,12 @@ class GameOver: SKScene, ChartboostDelegate {
         
         let achievementArray: [GKAchievement] = [achievement]
         
-        GKAchievement.reportAchievements(achievementArray, withCompletionHandler: {
+        GKAchievement.report(achievementArray, withCompletionHandler: {
             
             error -> Void in
             
             if ( error != nil) {
-                print(error)
+                print(error!)
             }
                 
             else {
@@ -404,8 +401,8 @@ class GameOver: SKScene, ChartboostDelegate {
         })
     }
     
-    func changeFontAction(label: SKLabelNode, color: UIColor) -> SKAction {
-        return SKAction.runBlock({ 
+    func changeFontAction(_ label: SKLabelNode, color: UIColor) -> SKAction {
+        return SKAction.run({ 
             label.fontColor = color
         })
     }

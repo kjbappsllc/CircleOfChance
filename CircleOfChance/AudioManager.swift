@@ -9,40 +9,40 @@
 import Foundation
 import AVFoundation
 
-public class AudioManager {
-    public var backgroundMusicPlayer: AVAudioPlayer?
-    public var soundEffectPlayer: AVAudioPlayer?
+open class AudioManager {
+    open var backgroundMusicPlayer: AVAudioPlayer?
+    open var soundEffectPlayer: AVAudioPlayer?
     
-    public var SoundisPlaying: Bool {
+    open var SoundisPlaying: Bool {
         get {
-            return NSUserDefaults.standardUserDefaults().boolForKey("sound")
+            return UserDefaults.standard.bool(forKey: "sound")
         }
         set(value){
-            NSUserDefaults.standardUserDefaults().setBool(value, forKey: "sound")
+            UserDefaults.standard.set(value, forKey: "sound")
         }
     }
     
-    public var BackgroundisPlaying: Bool {
+    open var BackgroundisPlaying: Bool {
         get {
-            return NSUserDefaults.standardUserDefaults().boolForKey("music")
+            return UserDefaults.standard.bool(forKey: "music")
         }
         set(value){
-            NSUserDefaults.standardUserDefaults().setBool(value, forKey: "music")
+            UserDefaults.standard.set(value, forKey: "music")
         }
     }
     
-    public class func sharedInstance() -> AudioManager {
+    open class func sharedInstance() -> AudioManager {
         return AudioManagerInstance
     }
     
     init() {
         let sess = AVAudioSession.sharedInstance()
-        if sess.otherAudioPlaying {
-            _ = try? sess.setCategory(AVAudioSessionCategoryAmbient, withOptions: [])
-            _ = try? sess.setActive(true, withOptions: [])
+        if sess.isOtherAudioPlaying {
+            _ = try? sess.setCategory(AVAudioSessionCategoryAmbient, with: [])
+            _ = try? sess.setActive(true, with: [])
         }
         
-        if let boolexist = NSUserDefaults.standardUserDefaults().objectForKey("sound")   where
+        if let boolexist = UserDefaults.standard.object(forKey: "sound"),
             boolexist is Bool {
                 print("EXIST")
             }
@@ -50,7 +50,7 @@ public class AudioManager {
             SoundisPlaying = true
         }
         
-        if let boolexist = NSUserDefaults.standardUserDefaults().objectForKey("music")  where
+        if let boolexist = UserDefaults.standard.object(forKey: "music"),
             boolexist is Bool {
                 print("Exist")
             }
@@ -60,9 +60,9 @@ public class AudioManager {
         }
     }
     
-    public func playSoundEffect(filename: String) {
+    open func playSoundEffect(_ filename: String) {
         if SoundisPlaying != false {
-            let url = NSBundle.mainBundle().URLForResource(filename, withExtension: nil)
+            let url = Bundle.main.url(forResource: filename, withExtension: nil)
             if (url == nil) {
                 print("Could not find file: \(filename)")
                 return
@@ -70,7 +70,7 @@ public class AudioManager {
             
             var error: NSError? = nil
             do {
-                soundEffectPlayer = try AVAudioPlayer(contentsOfURL: url!)
+                soundEffectPlayer = try AVAudioPlayer(contentsOf: url!)
             } catch let error1 as NSError {
                 error = error1
                 soundEffectPlayer = nil
@@ -86,9 +86,9 @@ public class AudioManager {
     }
     
     
-    public func playBackgroundMusic(filename: String) {
+    open func playBackgroundMusic(_ filename: String) {
         if BackgroundisPlaying != false{
-            let url = NSBundle.mainBundle().URLForResource(filename, withExtension: nil)
+            let url = Bundle.main.url(forResource: filename, withExtension: nil)
             if (url == nil) {
                 print("Could not find file: \(filename)")
                 return
@@ -96,7 +96,7 @@ public class AudioManager {
             
             var error: NSError? = nil
             do {
-                backgroundMusicPlayer = try AVAudioPlayer(contentsOfURL: url!)
+                backgroundMusicPlayer = try AVAudioPlayer(contentsOf: url!)
             } catch let error1 as NSError {
                 error = error1
                 backgroundMusicPlayer = nil
@@ -111,22 +111,22 @@ public class AudioManager {
         }
     }
     
-    public func pauseBackgroundMusic() {
+    open func pauseBackgroundMusic() {
         if let player = backgroundMusicPlayer {
-            if player.playing {
+            if player.isPlaying {
                 player.pause()
             }
         }
     }
     
-    public func resumeBackgroundMusic() {
+    open func resumeBackgroundMusic() {
         if let player = backgroundMusicPlayer {
-            if !player.playing {
+            if !player.isPlaying {
                 player.play()
             }
         }
     }
-    public func playerExist() -> Bool {
+    open func playerExist() -> Bool {
         return backgroundMusicPlayer != nil
     }
 }

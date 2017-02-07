@@ -34,13 +34,13 @@ class SettingsScene: SKScene {
     let productID: NSSet = NSSet(objects:"com.KJBApps.CircleOfChance.doublecoins")
     var store: IAPHelper?
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         addChild(buttonLayer)
         addChild(topBarLayer)
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
-        topBarLayer.hidden = true
-        buttonLayer.hidden = true
+        topBarLayer.isHidden = true
+        buttonLayer.isHidden = true
         
         loadview()
         
@@ -72,7 +72,7 @@ class SettingsScene: SKScene {
         addButtons()
         store = IAPHelper(productIds: productID as! Set<ProductIdentifier>)
 
-        userInteractionEnabled = false
+        isUserInteractionEnabled = false
         
         settingsBar = SKSpriteNode(imageNamed: "SettingsBar")
         settingsBar.position = CGPoint(x: 0, y: self.frame.height/2 - settingsBar.frame.height/2)
@@ -81,7 +81,7 @@ class SettingsScene: SKScene {
         
         settingsText.fontName = "Arial Hebrew-Bold"
         settingsText.fontSize = 80.0
-        settingsText.fontColor = UIColor.whiteColor()
+        settingsText.fontColor = UIColor.white
         settingsText.text = "Settings"
         settingsText.position.y = -15
         settingsText.zPosition = layerPositions.textLayer.rawValue
@@ -89,12 +89,12 @@ class SettingsScene: SKScene {
         
         backButton = SKSpriteNode(imageNamed: "backButton")
         backButton.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        backButton.position = CGPoint(x: -settingsBar.width/2 + 100, y: 10)
+        backButton.position = CGPoint(x: -settingsBar.frame.width/2 + 100, y: 10)
         backButton.zPosition = layerPositions.textLayer.rawValue
         settingsBar.addChild(backButton)
         
         animateEnter { 
-            self.userInteractionEnabled = true
+            self.isUserInteractionEnabled = true
         }
         
     }
@@ -144,62 +144,62 @@ class SettingsScene: SKScene {
     }
     
     //Mark: This animates the screen into view
-    func animateEnter(completion: () -> ()){
+    func animateEnter(_ completion: @escaping () -> ()){
         topBarLayer.position = CGPoint(x: 0, y: size.height)
         buttonLayer.position = CGPoint(x: size.width, y: 0)
-        buttonLayer.hidden = false
-        topBarLayer.hidden = false
+        buttonLayer.isHidden = false
+        topBarLayer.isHidden = false
         
-        let topMoveIn = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.4)
-        topMoveIn.timingMode = .EaseOut
+        let topMoveIn = SKAction.move(by: CGVector(dx: 0, dy: -size.height), duration: 0.4)
+        topMoveIn.timingMode = .easeOut
         
-        topBarLayer.runAction(topMoveIn)
+        topBarLayer.run(topMoveIn)
         
-        let buttonMoveIn = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.2)
-        buttonMoveIn.timingMode = .EaseOut
+        let buttonMoveIn = SKAction.move(by: CGVector(dx: -size.width, dy: 0), duration: 0.2)
+        buttonMoveIn.timingMode = .easeOut
         
-        buttonLayer.runAction(buttonMoveIn,completion: completion)
+        buttonLayer.run(buttonMoveIn,completion: completion)
     }
     
     
     
     //Mark: This animates the screen off the view
-    func animateExit(completion: () -> ()) {
-        let TopMoveOut = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.4)
-        TopMoveOut.timingMode = .EaseIn
+    func animateExit(_ completion: @escaping () -> ()) {
+        let TopMoveOut = SKAction.move(by: CGVector(dx: 0, dy: size.height), duration: 0.4)
+        TopMoveOut.timingMode = .easeIn
         
-        topBarLayer.runAction(TopMoveOut)
+        topBarLayer.run(TopMoveOut)
         
-        let moveOut = SKAction.moveBy(CGVector(dx: size.width, dy: 0), duration: 0.2)
-        moveOut.timingMode = .EaseIn
+        let moveOut = SKAction.move(by: CGVector(dx: size.width, dy: 0), duration: 0.2)
+        moveOut.timingMode = .easeIn
         
-        buttonLayer.runAction(moveOut, completion: completion)
+        buttonLayer.run(moveOut, completion: completion)
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first{
-            let touchLocation = touch.locationInNode(self)
-            let topbarLocation = touch.locationInNode(settingsBar)
-            if backButton.containsPoint(topbarLocation) {
+            let touchLocation = touch.location(in: self)
+            let topbarLocation = touch.location(in: settingsBar)
+            if backButton.contains(topbarLocation) {
                 AudioManager.sharedInstance().playSoundEffect("buttonTouched.wav")
                 
                 if let scene = MainMenu(fileNamed:"GameScene") {
                     
                     // Configure the view.
                     let skView = self.view as SKView!
-                    skView.showsFPS = true
-                    skView.showsNodeCount = true
+                    skView?.showsFPS = true
+                    skView?.showsNodeCount = true
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
+                    skView?.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
+                    scene.scaleMode = .aspectFill
                     animateExit({ 
-                        skView.presentScene(scene)
+                        skView?.presentScene(scene)
                     })
                 }
             }
             
-            if soundContainer.containsPoint(touchLocation) {
+            if soundContainer.contains(touchLocation) {
                 if AudioManager.sharedInstance().SoundisPlaying == true {
                     AudioManager.sharedInstance().SoundisPlaying = false
                     volumeIcon.texture = SKTexture(imageNamed: "NoSoundIcon")
@@ -215,7 +215,7 @@ class SettingsScene: SKScene {
                 }
             }
             
-            if musicContainer.containsPoint(touchLocation){
+            if musicContainer.contains(touchLocation){
                 if AudioManager.sharedInstance().BackgroundisPlaying == true{
                     AudioManager.sharedInstance().BackgroundisPlaying = false
                     AudioManager.sharedInstance().pauseBackgroundMusic()
@@ -235,11 +235,11 @@ class SettingsScene: SKScene {
                 }
             }
             
-            if restorePurchases.containsPoint(touchLocation) {
+            if restorePurchases.contains(touchLocation) {
                 store?.restorePurchases()
                 
-                NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ShopScene.handlePurchaseNotification(_:)),
-                                                                 name: IAPHelper.IAPHelperPurchaseNotification,
+                NotificationCenter.default.addObserver(self, selector: #selector(ShopScene.handlePurchaseNotification(_:)),
+                                                                 name: NSNotification.Name(rawValue: IAPHelper.IAPHelperPurchaseNotification),
                                                                  object: nil)
             }
         }

@@ -31,8 +31,8 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
             /* Sprite Kit applies additional optimizations to improve rendering performance */
             skView.ignoresSiblingOrder = true
             /* Set the scale mode to scale to fit the window */
-            scene.scaleMode = .AspectFill
-            let transition = SKTransition.fadeWithDuration(0.8)
+            scene.scaleMode = .aspectFill
+            let transition = SKTransition.fade(withDuration: 0.8)
             skView.presentScene(scene, transition: transition)
         }
         
@@ -40,7 +40,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
 
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         authenticateLocalPlayer()
     }
@@ -52,9 +52,9 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
         
         let request:GADRequest = GADRequest()
         request.testDevices = [kGADSimulatorID, "ada15951f72c9f6e621f23e6dc7118d6"]
-        googleBannerView.loadRequest(request)
+        googleBannerView.load(request)
         
-        googleBannerView.frame = CGRectMake(0, view.bounds.height - googleBannerView.frame.size.height, googleBannerView.frame.size.width, googleBannerView.frame.size.height)
+        googleBannerView.frame = CGRect(x: 0, y: view.bounds.height - googleBannerView.frame.size.height, width: googleBannerView.frame.size.width, height: googleBannerView.frame.size.height)
         
         self.view.addSubview(googleBannerView!)
         
@@ -63,33 +63,33 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
     
     func authenticateLocalPlayer() {
         let localPlayer = GKLocalPlayer.localPlayer()
-        localPlayer.authenticateHandler = {(viewController : UIViewController?, error : NSError?) -> Void in
+        localPlayer.authenticateHandler = {(viewController : UIViewController?, error : Error?) -> Void in
             
             if viewController != nil {
                 
-                self.presentViewController(viewController!, animated: true, completion: nil)
+                self.present(viewController!, animated: true, completion: nil)
                 
             }
         }
     }
     
-    func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController)
+    func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController)
     {
         
-        gameCenterViewController.dismissViewControllerAnimated(true, completion: nil)
+        gameCenterViewController.dismiss(animated: true, completion: nil)
         
     }
     
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return true
     }
     
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return .Portrait
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return .portrait
         }
         else {
-            return .Portrait
+            return .portrait
         }
     }
 
@@ -98,7 +98,7 @@ class GameViewController: UIViewController, GKGameCenterControllerDelegate{
         // Release any cached data, images, etc that aren't in use.
     }
 
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
 }

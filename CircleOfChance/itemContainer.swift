@@ -15,7 +15,7 @@ class itemContainer: SKSpriteNode{
     init(shopItem: item) {
         self.shopItem = shopItem
         let texture = SKTexture(imageNamed: "itemContainer")
-        super.init(texture: texture,color: UIColor.clearColor(), size: texture.size())
+        super.init(texture: texture,color: UIColor.clear, size: texture.size())
         zPosition = 10
     }
     

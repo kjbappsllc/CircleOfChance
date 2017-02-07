@@ -18,7 +18,7 @@ class barrier: SKSpriteNode {
         barrierSpeed = 125.0
         passable = true
         let texture = SKTexture(imageNamed: "RedBarrier")
-        super.init(texture: texture,color: UIColor.clearColor(), size: texture.size())
+        super.init(texture: texture,color: UIColor.clear, size: texture.size())
         alpha = 0
         zPosition = layerPositions.barriers.rawValue
     }
@@ -40,8 +40,8 @@ class barrier: SKSpriteNode {
     }
     
     func removeBarrier(){
-        let fadeOut = SKAction.fadeAlphaTo(0.0, duration: 0.0)
-        self.runAction(fadeOut)
+        let fadeOut = SKAction.fadeAlpha(to: 0.0, duration: 0.0)
+        self.run(fadeOut)
         self.canPass()
         self.physicsBody = nil
         isActive = false
@@ -51,32 +51,32 @@ class barrier: SKSpriteNode {
         isActive = true
         self.texture = SKTexture(imageNamed: "RedBarrierIndicator")
         self.physicsBody = nil
-        let fadeIn = SKAction.fadeInWithDuration(0.2)
-        let fadeOut = SKAction.fadeAlphaTo(0.0, duration: 0.2)
+        let fadeIn = SKAction.fadeIn(withDuration: 0.2)
+        let fadeOut = SKAction.fadeAlpha(to: 0.0, duration: 0.2)
         
         let pulse = SKAction.sequence([fadeIn,fadeOut])
-        let cycle = SKAction.repeatAction(pulse, count: 3)
+        let cycle = SKAction.repeat(pulse, count: 3)
         
-        self.runAction(cycle) { 
+        self.run(cycle, completion: { 
             self.notPassable()
             self.alpha = 1
-        }
+        }) 
     }
     
-    func loadPhysicsBodySize(size: CGSize){
-        physicsBody = SKPhysicsBody(rectangleOfSize: size)
+    func loadPhysicsBodySize(_ size: CGSize){
+        physicsBody = SKPhysicsBody(rectangleOf: size)
         physicsBody?.categoryBitMask = redBarrierCategory
         physicsBody?.contactTestBitMask = ballCategory
         physicsBody?.collisionBitMask = ballCategory
         physicsBody?.affectedByGravity = false
-        physicsBody?.dynamic = false
+        physicsBody?.isDynamic = false
     }
     
     func GetBarrierSpeed() -> CGFloat {
         return barrierSpeed
     }
     
-    func SetBarrierSpeed(newValue: CGFloat) -> CGFloat {
+    func SetBarrierSpeed(_ newValue: CGFloat) -> CGFloat {
         barrierSpeed = newValue
         return barrierSpeed
     }

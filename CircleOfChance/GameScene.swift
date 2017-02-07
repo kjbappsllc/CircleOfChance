@@ -12,27 +12,27 @@ import GameKit
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //Layers
-    private var gameLayer = SKNode()
-    private var hudLayer = SKNode()
-    private var pauseLayer = SKNode()
-    private var cropLayer = SKCropNode()
-    private var maskLayer = SKNode()
+    fileprivate var gameLayer = SKNode()
+    fileprivate var hudLayer = SKNode()
+    fileprivate var pauseLayer = SKNode()
+    fileprivate var cropLayer = SKCropNode()
+    fileprivate var maskLayer = SKNode()
     
     //groupings
-    private var dotsArray = [String]()
-    private var effectsArray = [Effect]()
-    private var barrierArray = [barrier]()
+    fileprivate var dotsArray = [String]()
+    fileprivate var effectsArray = [Effect]()
+    fileprivate var barrierArray = [barrier]()
     
     //Gameplay
-    private var gamePlayArea = SKSpriteNode()
-    private var ballChar = Character()
-    private var ball = SKSpriteNode()
+    fileprivate var gamePlayArea = SKSpriteNode()
+    fileprivate var ballChar = Character()
+    fileprivate var ball = SKSpriteNode()
     var shopSkin = items()
-    private var star = StarIcon()
-    private var pauseScreen = SKSpriteNode()
-    private var multiplier = SKSpriteNode()
-    private var multiplyText = SKLabelNode()
-    private var mulitplyCounter = 1
+    fileprivate var star = StarIcon()
+    fileprivate var pauseScreen = SKSpriteNode()
+    fileprivate var multiplier = SKSpriteNode()
+    fileprivate var multiplyText = SKLabelNode()
+    fileprivate var mulitplyCounter = 1
     
     //barriers
     var barrier1 = barrier()
@@ -43,13 +43,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var barrier6 = barrier()
     
     //effects
-    private let motionEffect = Effect(active: false, effecttype: EffectType.motion)
-    private let fluctuateEffect = Effect(active: false, effecttype: EffectType.fluctuate)
-    private let ghostEffect = Effect(active: false, effecttype: EffectType.ghost)
-    private let hasteEffect = Effect(active: false, effecttype: EffectType.haste)
-    private let unstableEffect = Effect(active: false, effecttype: EffectType.unstable)
-    private let shakeEffect = Effect(active: false, effecttype: EffectType.shake)
-    private var effectSprite = SKSpriteNode()
+    fileprivate let motionEffect = Effect(active: false, effecttype: EffectType.motion)
+    fileprivate let fluctuateEffect = Effect(active: false, effecttype: EffectType.fluctuate)
+    fileprivate let ghostEffect = Effect(active: false, effecttype: EffectType.ghost)
+    fileprivate let hasteEffect = Effect(active: false, effecttype: EffectType.haste)
+    fileprivate let unstableEffect = Effect(active: false, effecttype: EffectType.unstable)
+    fileprivate let shakeEffect = Effect(active: false, effecttype: EffectType.shake)
+    fileprivate var effectSprite = SKSpriteNode()
     
     //HUD
     var topBar = SKSpriteNode()
@@ -88,7 +88,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //GameCenter
     var gameCenterAchievements = [String:GKAchievement]()
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         addChild(gameLayer)
@@ -108,10 +108,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         effectSprite.position = CGPoint(x: 120, y: -50)
         
         //Pre set properties
-        gameLayer.hidden = true
-        hudLayer.hidden = true
-        ball.hidden = true
-        effectSprite.hidden = true
+        gameLayer.isHidden = true
+        hudLayer.isHidden = true
+        ball.isHidden = true
+        effectSprite.isHidden = true
         barriersReversed = false
         checkpoint = false
         highScoreAchieved = false
@@ -136,7 +136,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func loadView() {
         //Sets Up the Scene
         
-        userInteractionEnabled = false
+        isUserInteractionEnabled = false
         
         //Adds all the necessary stuff
         addBackground()
@@ -149,7 +149,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.addBarriers()
             self.MoveBarriers()
             self.addBall({
-                self.userInteractionEnabled = true
+                self.isUserInteractionEnabled = true
             })
         }
         
@@ -235,45 +235,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     //Mark: This animates the beginning of the game
-    func animateBeginGame(completion_: () -> ()) {
+    func animateBeginGame(_ completion_: @escaping () -> ()) {
         
         //Animates the gameLayer
-        gameLayer.hidden = false
+        gameLayer.isHidden = false
         gameLayer.position = CGPoint(x: size.width, y: 0)
-        let gameLayerMove = SKAction.moveBy(CGVector(dx: -size.width, dy: 0), duration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0.7)
-        gameLayerMove.timingMode = .EaseOut
-        gameLayer.runAction(gameLayerMove)
+        let gameLayerMove = SKAction.move(by: CGVector(dx: -size.width, dy: 0), duration: 0.3)
+        gameLayerMove.timingMode = .easeOut
+        gameLayer.run(gameLayerMove)
         
         //Animates the hudlayer
-        hudLayer.hidden = false
+        hudLayer.isHidden = false
         hudLayer.position = CGPoint(x: 0, y: size.height)
-        let hudAction = SKAction.moveBy(CGVector(dx: 0, dy: -size.height), duration: 0.5, delay: 0.2, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.9)
-        hudAction.timingMode = .EaseOut
+        let hudAction = SKAction.move(by: CGVector(dx: 0, dy: -size.height), duration: 0.5)
+        hudAction.timingMode = .easeOut
         
         //Animates the multiplier on screen
         multiplier.position = CGPoint(x: multiplier.position.x - 400, y: multiplier.position.y)
-        let multiplierAction = SKAction.moveBy(CGVector(dx: 400, dy: 0), duration: 0.3, delay: 0.2, usingSpringWithDamping: 0.9, initialSpringVelocity: 0.9)
+        let multiplierAction = SKAction.move(by: CGVector(dx: 400, dy: 0), duration: 0.3)
         
-        multiplier.runAction(multiplierAction)
-        hudLayer.runAction(hudAction, completion: completion_)
+        multiplier.run(multiplierAction)
+        hudLayer.run(hudAction, completion: completion_)
     }
     
     //Mark: This function animates the end of the game when the character hits the barrier or when the home button is pressed during the pause screen.
-    func animateEndGame(completion: () -> ()) {
+    func animateEndGame(_ completion: @escaping () -> ()) {
 
-        let gameLayerMove = SKAction.moveBy(CGVector(dx: size.width, dy:0), duration: 0.3)
+        let gameLayerMove = SKAction.move(by: CGVector(dx: size.width, dy:0), duration: 0.3)
         
-        gameLayerMove.timingMode = .EaseIn
+        gameLayerMove.timingMode = .easeIn
         
-        let hudAction = SKAction.moveBy(CGVector(dx: 0, dy: size.height), duration: 0.5)
+        let hudAction = SKAction.move(by: CGVector(dx: 0, dy: size.height), duration: 0.5)
         
-        hudAction.timingMode = .EaseIn
+        hudAction.timingMode = .easeIn
         
-        let multiplierAction = SKAction.moveBy(CGVector(dx: -400, dy: 0), duration: 0.3)
+        let multiplierAction = SKAction.move(by: CGVector(dx: -400, dy: 0), duration: 0.3)
         
-        gameLayer.runAction(gameLayerMove)
-        multiplier.runAction(multiplierAction)
-        hudLayer.runAction(hudAction, completion: completion)
+        gameLayer.run(gameLayerMove)
+        multiplier.run(multiplierAction)
+        hudLayer.run(hudAction, completion: completion)
     }
     
     //MARK: THIS function adds the barriers to the gameplay area
@@ -319,8 +319,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let rad = atan2(dy, dx)
             let Path3 = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
             
-            let follow = SKAction.followPath(Path3.CGPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
-            barrier.runAction(SKAction.repeatActionForever(follow), withKey: "Moving")
+            let follow = SKAction.follow(Path3.cgPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
+            barrier.run(SKAction.repeatForever(follow), withKey: "Moving")
         }
     }
     
@@ -332,8 +332,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let rad = atan2(dy,dx)
             let Path3 = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
             
-            let follow = SKAction.followPath(Path3.CGPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
-            barrier.runAction(SKAction.repeatActionForever(follow).reversedAction(), withKey: "Moving")
+            let follow = SKAction.follow(Path3.cgPath, asOffset: false, orientToPath: true, speed: barrier.GetBarrierSpeed())
+            barrier.run(SKAction.repeatForever(follow).reversed(), withKey: "Moving")
         }
     }
     
@@ -379,7 +379,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     circle.physicsBody?.categoryBitMask = dotCategory
                     circle.physicsBody?.contactTestBitMask = ballCategory
                     circle.physicsBody?.affectedByGravity = false
-                    circle.physicsBody?.dynamic = false
+                    circle.physicsBody?.isDynamic = false
                     
                 }
             }
@@ -443,7 +443,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         circle.physicsBody?.categoryBitMask = dotCategory
                         circle.physicsBody?.contactTestBitMask = ballCategory
                         circle.physicsBody?.affectedByGravity = false
-                        circle.physicsBody?.dynamic = false
+                        circle.physicsBody?.isDynamic = false
                         
                     }
                 }
@@ -452,31 +452,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     //MARK: This is to animate the dots into view
-    func animateDot(circle: SKSpriteNode, location: CGPoint, completion: () -> ()) {
-        let moveAction = SKAction.moveTo(location, duration: 0.7)
-        let fadeIn = SKAction.fadeInWithDuration(0.5)
-        moveAction.timingMode = .EaseOut
-        circle.runAction(SKAction.group([moveAction,fadeIn]), completion: completion)
+    func animateDot(_ circle: SKSpriteNode, location: CGPoint, completion: @escaping () -> ()) {
+        let moveAction = SKAction.move(to: location, duration: 0.7)
+        let fadeIn = SKAction.fadeIn(withDuration: 0.5)
+        moveAction.timingMode = .easeOut
+        circle.run(SKAction.group([moveAction,fadeIn]), completion: completion)
     }
     
     //Mark: This Function adds the ball onto the area
-    func addBall(completion: () -> ()) {
+    func addBall(_ completion: @escaping () -> ()) {
         ball = shopSkin.current.sprite
         ball.physicsBody = ballChar.loadPhysics()
         ball.size = ballChar.size
         ball.position = CGPoint(x: -40, y: 45)
         ball.zPosition = layerPositions.character.rawValue
-        ball.hidden = false
+        ball.isHidden = false
         gamePlayArea.addChild(ball)
         
-        let moveAction = SKAction.moveBy(CGVector(dx: 80, dy: 0), duration: 0.7)
-        let wait = SKAction.waitForDuration(0.1)
+        let moveAction = SKAction.move(by: CGVector(dx: 80, dy: 0), duration: 0.7)
+        let wait = SKAction.wait(forDuration: 0.1)
         
-        moveAction.timingMode = .EaseOut
+        moveAction.timingMode = .easeOut
         
-        ball.runAction(SKAction.repeatActionForever(SKAction.sequence([moveAction, wait, moveAction.reversedAction(), wait])), withKey: "moveAction")
+        ball.run(SKAction.repeatForever(SKAction.sequence([moveAction, wait, moveAction.reversed(), wait])), withKey: "moveAction")
         
-        ball.runAction(SKAction.waitForDuration(0.0), completion: completion)
+        ball.run(SKAction.wait(forDuration: 0.0), completion: completion)
         
     }
     
@@ -488,8 +488,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let rad = atan2(dy,dx)
         Path = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
         
-        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: false, speed: ballChar.getballSpeedCounterClockWise())
-        ball.runAction(SKAction.repeatActionForever(follow))
+        let follow = SKAction.follow(Path.cgPath, asOffset: false, orientToPath: false, speed: ballChar.getballSpeedCounterClockWise())
+        ball.run(SKAction.repeatForever(follow))
         
     }
     
@@ -501,8 +501,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let rad = atan2(dy,dx)
         Path = UIBezierPath(arcCenter: CGPoint(x: 0, y: 45), radius: 165, startAngle: rad, endAngle: rad+CGFloat(M_PI*4), clockwise: true)
         
-        let follow = SKAction.followPath(Path.CGPath, asOffset: false, orientToPath: false, speed: ballChar.getballSpeedClockWise())
-        ball.runAction(SKAction.repeatActionForever(follow).reversedAction())
+        let follow = SKAction.follow(Path.cgPath, asOffset: false, orientToPath: false, speed: ballChar.getballSpeedClockWise())
+        ball.run(SKAction.repeatForever(follow).reversed())
     }
     
     
@@ -556,9 +556,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             levelInt += 1
             levelText.text = "\(levelInt)"
             
-            let scale = SKAction.scaleTo(1.4, duration: 0.3, delay: 0.0, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.0)
-            let scaleBack = SKAction.scaleTo(1.0, duration: 0.3, delay: 0.1, usingSpringWithDamping: 0.2, initialSpringVelocity: 0.9)
-            levelText.runAction(SKAction.sequence([scale, scaleBack]))
+            let scale = SKAction.scale(to: 1.4, duration: 0.3)
+            let scaleBack = SKAction.scale(to: 1.0, duration: 0.3)
+            levelText.run(SKAction.sequence([scale, scaleBack]))
             
             if levelInt % 5 == 0 {
                 checkpoint = true
@@ -594,13 +594,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         switch effect.effectType {
                             
                         case .motion:
-                            effectSprite.hidden = false
-                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
-                            move.timingMode = .EaseOut
+                            effectSprite.isHidden = false
+                            let move = SKAction.move(by: CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .easeOut
                             
-                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
-                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
-                            let wait = SKAction.waitForDuration(1.0)
+                            let resizing = SKAction.scale(to: 1.2, duration: 0.5)
+                            let scaleback = SKAction.scale(to: 1.0, duration: 0.5)
+                            let wait = SKAction.wait(forDuration: 1.0)
                             
                             let resizeAction = SKAction.sequence([resizing,scaleback,wait])
                             
@@ -609,37 +609,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             IrregularMotion()
                             effect.isActive = true
                             
-                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
-                                self.effectSprite.hidden = true
-                            }
+                            effectSprite.run(SKAction.sequence([move,resizeAction,move.reversed()]), completion: {
+                                self.effectSprite.isHidden = true
+                            })
                             
                         case .fluctuate:
                             
-                            effectSprite.hidden = false
-                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
-                            move.timingMode = .EaseOut
+                            effectSprite.isHidden = false
+                            let move = SKAction.move(by: CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .easeOut
                             
-                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
-                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
-                            let wait = SKAction.waitForDuration(1.0)
+                            let resizing = SKAction.scale(to: 1.2, duration: 0.5)
+                            let scaleback = SKAction.scale(to: 1.0, duration: 0.5)
+                            let wait = SKAction.wait(forDuration: 1.0)
                             
                             let resizeAction = SKAction.sequence([resizing,scaleback,wait])
                             effectSprite.texture = SKTexture(imageNamed: "fluctuate")
                             fluctuateBall()
                             effect.isActive = true
                             
-                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
-                                self.effectSprite.hidden = true
-                            }
+                            effectSprite.run(SKAction.sequence([move,resizeAction,move.reversed()]), completion: {
+                                self.effectSprite.isHidden = true
+                            })
                             
                         case .haste:
-                            effectSprite.hidden = false
-                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
-                            move.timingMode = .EaseOut
+                            effectSprite.isHidden = false
+                            let move = SKAction.move(by: CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .easeOut
                             
-                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
-                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
-                            let wait = SKAction.waitForDuration(1.0)
+                            let resizing = SKAction.scale(to: 1.2, duration: 0.5)
+                            let scaleback = SKAction.scale(to: 1.0, duration: 0.5)
+                            let wait = SKAction.wait(forDuration: 1.0)
                             
                             let resizeAction = SKAction.sequence([resizing,scaleback,wait])
                             
@@ -647,19 +647,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             Haste()
                             effect.isActive = true
                             
-                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
-                                self.effectSprite.hidden = true
-                            }
+                            effectSprite.run(SKAction.sequence([move,resizeAction,move.reversed()]), completion: {
+                                self.effectSprite.isHidden = true
+                            })
                             
  
                         case .unstable:
-                            effectSprite.hidden = false
-                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
-                            move.timingMode = .EaseOut
+                            effectSprite.isHidden = false
+                            let move = SKAction.move(by: CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .easeOut
                             
-                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
-                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
-                            let wait = SKAction.waitForDuration(1.0)
+                            let resizing = SKAction.scale(to: 1.2, duration: 0.5)
+                            let scaleback = SKAction.scale(to: 1.0, duration: 0.5)
+                            let wait = SKAction.wait(forDuration: 1.0)
 
                             
                             let resizeAction = SKAction.sequence([resizing,scaleback,wait])
@@ -669,45 +669,45 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             effect.isActive = true
                             
 
-                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
-                                self.effectSprite.hidden = true
-                            }
+                            effectSprite.run(SKAction.sequence([move,resizeAction,move.reversed()]), completion: {
+                                self.effectSprite.isHidden = true
+                            })
                             
  
                         case .ghost:
-                            effectSprite.hidden = false
-                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
-                            move.timingMode = .EaseOut
-                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
-                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
-                            let wait = SKAction.waitForDuration(1.0)
+                            effectSprite.isHidden = false
+                            let move = SKAction.move(by: CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .easeOut
+                            let resizing = SKAction.scale(to: 1.2, duration: 0.5)
+                            let scaleback = SKAction.scale(to: 1.0, duration: 0.5)
+                            let wait = SKAction.wait(forDuration: 1.0)
                             
                             let resizeAction = SKAction.sequence([resizing,scaleback,wait])
                             effectSprite.texture = SKTexture(imageNamed: "ghost")
                             Ghost()
                             effect.isActive = true
                             
-                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
-                                self.effectSprite.hidden = true
-                            }
+                            effectSprite.run(SKAction.sequence([move,resizeAction,move.reversed()]), completion: {
+                                self.effectSprite.isHidden = true
+                            })
                             
                         case .shake:
                             
-                            effectSprite.hidden = false
-                            let move = SKAction.moveBy(CGVector(dx: -120, dy: 0), duration: 0.2)
-                            move.timingMode = .EaseOut
-                            let resizing = SKAction.scaleTo(1.2, duration: 0.5)
-                            let scaleback = SKAction.scaleTo(1.0, duration: 0.5)
-                            let wait = SKAction.waitForDuration(1.0)
+                            effectSprite.isHidden = false
+                            let move = SKAction.move(by: CGVector(dx: -120, dy: 0), duration: 0.2)
+                            move.timingMode = .easeOut
+                            let resizing = SKAction.scale(to: 1.2, duration: 0.5)
+                            let scaleback = SKAction.scale(to: 1.0, duration: 0.5)
+                            let wait = SKAction.wait(forDuration: 1.0)
                             
                             let resizeAction = SKAction.sequence([resizing,scaleback,wait])
                             effectSprite.texture = SKTexture(imageNamed: "shake")
                             Shake()
                             effect.isActive = true
                             
-                            effectSprite.runAction(SKAction.sequence([move,resizeAction,move.reversedAction()])){
-                                self.effectSprite.hidden = true
-                            }
+                            effectSprite.run(SKAction.sequence([move,resizeAction,move.reversed()]), completion: {
+                                self.effectSprite.isHidden = true
+                            })
  
                         }
                         break
@@ -719,27 +719,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
 
     //Mark: Adds the particles when the barrier breaks
-    func addBarrierBreakParticles(bar: barrier) {
+    func addBarrierBreakParticles(_ bar: barrier) {
         let particles = SKEmitterNode(fileNamed: "BarrierBreak")!
         particles.position = bar.position
         particles.zPosition = bar.zPosition + 1
         self.addChild(particles)
         bar.removeBarrier()
         
-        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()]))
+        particles.run(SKAction.sequence([SKAction.wait(forDuration: 1.0), SKAction.removeFromParent()]))
     }
     
     //Mark: This function handles the logic for when the star is hit
-    func handleStarPickup(node:SKNode) {
+    func handleStarPickup(_ node:SKNode) {
         if node.name == "Star" {
             
-            let moveR = SKAction.moveBy(CGVector(dx: 10, dy:0), duration: 0.15)
-            let moveL = SKAction.moveBy(CGVector(dx: -20, dy:0), duration: 0.3)
+            let moveR = SKAction.move(by: CGVector(dx: 10, dy:0), duration: 0.15)
+            let moveL = SKAction.move(by: CGVector(dx: -20, dy:0), duration: 0.3)
             
             mulitplyCounter += 1
             multiplyText.text = "\(mulitplyCounter)"
             
-            multiplyText.runAction(SKAction.sequence([moveR,moveL,moveL.reversedAction(),moveR.reversedAction()]))
+            multiplyText.run(SKAction.sequence([moveR,moveL,moveL.reversed(),moveR.reversed()]))
             
             let randomNum = self.randomPercent()
             
@@ -808,20 +808,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     //Mark: This is an auxiliary function that does action when the ball hits the dots or the star
-    func handleScoreUnitContact(node: SKNode) {
+    func handleScoreUnitContact(_ node: SKNode) {
         node.physicsBody = nil
-        node.runAction(SKAction.removeFromParent())
+        node.run(SKAction.removeFromParent())
         
-        for (index,value) in self.dotsArray.enumerate() {
+        for (index,value) in self.dotsArray.enumerated() {
             if node.name == value {
                 
-                self.dotsArray.removeAtIndex(index)
+                self.dotsArray.remove(at: index)
                 scoreInt += 1 * mulitplyCounter
                 self.score.text = "\(scoreInt)"
                 self.updatePointAchievements()
-                let highscore = NSUserDefaults.standardUserDefaults().integerForKey("highscore")
+                let highscore = UserDefaults.standard.integer(forKey: "highscore")
                 if scoreInt > highscore {
-                    NSUserDefaults.standardUserDefaults().setInteger(scoreInt, forKey: "highscore")
+                    UserDefaults.standard.set(scoreInt, forKey: "highscore")
                 }
                 
                 self.handleStarPickup(node)
@@ -833,7 +833,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     // Mark: Lets me know when there is contact
-    func didBeginContact(contact: SKPhysicsContact) {
+    func didBegin(_ contact: SKPhysicsContact) {
         var firstBody: SKPhysicsBody
         var secondBody: SKPhysicsBody
         
@@ -859,7 +859,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     //Mark: This function is called when the player hits the barrier and the game is over
-    func gameOver(node: SKNode) {
+    func gameOver(_ node: SKNode) {
         
         currency.games += 1
         
@@ -897,9 +897,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         ball.removeAllActions()
         
-        let action1 = SKAction.colorizeWithColor(UIColor.redColor(), colorBlendFactor: 1.0, duration: 0.1)
-        let action2 = SKAction.colorizeWithColor(scene!.backgroundColor, colorBlendFactor: 1.0, duration: 0.1)
-        self.scene?.runAction(SKAction.sequence([action1,action2]))
+        let action1 = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.1)
+        let action2 = SKAction.colorize(with: scene!.backgroundColor, colorBlendFactor: 1.0, duration: 0.1)
+        self.scene?.run(SKAction.sequence([action1,action2]))
         
         let particles = SKEmitterNode(fileNamed: "GameOver")!
         particles.particlePosition = ball.position
@@ -908,22 +908,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         ball.removeFromParent()
 
-        particles.runAction(SKAction.sequence([SKAction.waitForDuration(1.0), SKAction.removeFromParent()])) {
+        particles.run(SKAction.sequence([SKAction.wait(forDuration: 1.0), SKAction.removeFromParent()]), completion: {
             self.animateEndGame({
                 if let scene = GameOver(fileNamed:"GameScene") {
                     
                     // Configure the view.
                     let skView = self.view as SKView!
                     /* Sprite Kit applies additional optimizations to improve rendering performance */
-                    skView.ignoresSiblingOrder = true
+                    skView?.ignoresSiblingOrder = true
                     /* Set the scale mode to scale to fit the window */
-                    scene.scaleMode = .AspectFill
+                    scene.scaleMode = .aspectFill
                     scene.userData = NSMutableDictionary()
-                    scene.userData?.setObject(self.scoreInt, forKey: "score")
-                    skView.presentScene(scene)
+                    scene.userData?.setObject(self.scoreInt, forKey: "score" as NSCopying)
+                    skView?.presentScene(scene)
                 }
             })
-        }
+        }) 
     }
     
     //An effect that changes the motion of the ball
@@ -934,91 +934,91 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //An effect that changes the size of the ball
     func fluctuateBall(){
-        let scale = SKAction.scaleTo(1.0, duration: 0.3)
-        let scaleUp = SKAction.scaleTo(1.35, duration: 0.3)
+        let scale = SKAction.scale(to: 1.0, duration: 0.3)
+        let scaleUp = SKAction.scale(to: 1.35, duration: 0.3)
         let scaling = SKAction.sequence([scaleUp,scale])
-        let scalingCycle = SKAction.repeatActionForever(scaling)
-        ball.runAction(scalingCycle, withKey: "fluctuate")
+        let scalingCycle = SKAction.repeatForever(scaling)
+        ball.run(scalingCycle, withKey: "fluctuate")
     }
     
     //An effect that changes the visibility of the ball
     func Ghost() {
-        let fade = SKAction.fadeAlphaTo(0.5, duration: 0.0)
-        let fadeBack = SKAction.fadeAlphaTo(1.0, duration: 0.0)
-        let cycle = SKAction.sequence([fade,SKAction.waitForDuration(0.5),fadeBack,SKAction.waitForDuration(2.0)])
+        let fade = SKAction.fadeAlpha(to: 0.5, duration: 0.0)
+        let fadeBack = SKAction.fadeAlpha(to: 1.0, duration: 0.0)
+        let cycle = SKAction.sequence([fade,SKAction.wait(forDuration: 0.5),fadeBack,SKAction.wait(forDuration: 2.0)])
         
-        ball.runAction(SKAction.repeatActionForever(cycle))
+        ball.run(SKAction.repeatForever(cycle))
     }
     
     //An effect that changes the speed of the barriers
     func Haste() {
         for bar in barrierArray {
-            let speed = SKAction.speedTo(1.45, duration: 0.1)
-            let slow = SKAction.speedBy(0.3, duration: 0.1)
-            let wait = SKAction.waitForDuration(1.3)
-            bar.runAction(SKAction.repeatActionForever(SKAction.sequence([slow,wait,speed,wait])))
+            let speed = SKAction.speed(to: 1.45, duration: 0.1)
+            let slow = SKAction.speed(by: 0.3, duration: 0.1)
+            let wait = SKAction.wait(forDuration: 1.3)
+            bar.run(SKAction.repeatForever(SKAction.sequence([slow,wait,speed,wait])))
         }
     }
     
     //An effect that changes the size of the barriers
     func FluctuateBarriers(){
-        let scaler = SKAction.scaleYTo(1.5, duration: 0.5)
-        let scaleback = SKAction.scaleYTo(1.0, duration: 0.5)
-        let cycle = SKAction.sequence([scaler,SKAction.waitForDuration(0.5),scaleback,SKAction.waitForDuration(1.0)])
+        let scaler = SKAction.scaleY(to: 1.5, duration: 0.5)
+        let scaleback = SKAction.scaleY(to: 1.0, duration: 0.5)
+        let cycle = SKAction.sequence([scaler,SKAction.wait(forDuration: 0.5),scaleback,SKAction.wait(forDuration: 1.0)])
         for barrier in barrierArray{
-            barrier.runAction(SKAction.repeatActionForever(cycle), withKey: "barrierfluctuation")
+            barrier.run(SKAction.repeatForever(cycle), withKey: "barrierfluctuation")
         }
     }
     
     //An effect that shakes the area
     func Shake() {
-        let moveR = SKAction.moveBy(CGVector(dx: -25, dy: 0), duration: 0.2)
-        let moveU = SKAction.moveBy(CGVector(dx: 0, dy: 25), duration: 0.2)
-        let wait = SKAction.waitForDuration(0.1)
+        let moveR = SKAction.move(by: CGVector(dx: -25, dy: 0), duration: 0.2)
+        let moveU = SKAction.move(by: CGVector(dx: 0, dy: 25), duration: 0.2)
+        let wait = SKAction.wait(forDuration: 0.1)
         
-        moveR.timingMode = .EaseOut
-        moveU.timingMode = .EaseOut
+        moveR.timingMode = .easeOut
+        moveU.timingMode = .easeOut
         
-        let moveHorizonalActionL = SKAction.sequence([moveR,wait,moveR.reversedAction(),wait])
-        let moveVerticalActionU = SKAction.sequence([moveU,wait,moveU.reversedAction(),wait])
+        let moveHorizonalActionL = SKAction.sequence([moveR,wait,moveR.reversed(),wait])
+        let moveVerticalActionU = SKAction.sequence([moveU,wait,moveU.reversed(),wait])
         
-        let moveHorizonalActionR = SKAction.sequence([moveR.reversedAction(),wait,moveR,wait])
-        let moveVerticalActionD = SKAction.sequence([moveU.reversedAction(),wait,moveU,wait])
+        let moveHorizonalActionR = SKAction.sequence([moveR.reversed(),wait,moveR,wait])
+        let moveVerticalActionD = SKAction.sequence([moveU.reversed(),wait,moveU,wait])
         
         let shakeAction = SKAction.sequence([moveHorizonalActionL, moveVerticalActionU, moveHorizonalActionR,moveVerticalActionD])
         
-        gameLayer.runAction(SKAction.repeatActionForever(shakeAction))
+        gameLayer.run(SKAction.repeatForever(shakeAction))
     }
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
        /* Called when a touch begins */
         var node = SKNode()
         if let touch = touches.first {
-            let pos = touch.locationInNode(topBar)
-            node = topBar.nodeAtPoint(pos)
+            let pos = touch.location(in: topBar)
+            node = topBar.atPoint(pos)
         }
         if gameStarted == false && IsPaused == false && node != pause{
-            self.scene?.userInteractionEnabled = false
+            self.scene?.isUserInteractionEnabled = false
             
             if ball.position.x > gamePlayArea.position.x {
                 ball.removeAllActions()
-                let move = SKAction.moveBy(CGVector(dx: CONSTANTRADIUS - ball.position.x, dy: 0), duration: 0.4)
-                move.timingMode = .EaseIn
-                ball.runAction(move, completion: {
-                    SKAction.waitForDuration(0.3)
+                let move = SKAction.move(by: CGVector(dx: CONSTANTRADIUS - ball.position.x, dy: 0), duration: 0.4)
+                move.timingMode = .easeIn
+                ball.run(move, completion: {
+                    SKAction.wait(forDuration: 0.3)
                     self.moveCounterClockWise()
                     self.gameStarted = true
-                    self.scene?.userInteractionEnabled = true
+                    self.scene?.isUserInteractionEnabled = true
                 })
             }
             else {
                 ball.removeAllActions()
-                let move = SKAction.moveBy(CGVector(dx: -CONSTANTRADIUS - ball.position.x, dy: 0), duration: 0.4)
-                move.timingMode = .EaseIn
-                ball.runAction(move, completion: {
-                    SKAction.waitForDuration(0.3)
+                let move = SKAction.move(by: CGVector(dx: -CONSTANTRADIUS - ball.position.x, dy: 0), duration: 0.4)
+                move.timingMode = .easeIn
+                ball.run(move, completion: {
+                    SKAction.wait(forDuration: 0.3)
                     self.moveClockWise()
                     self.gameStarted = true
-                    self.scene?.userInteractionEnabled = true
+                    self.scene?.isUserInteractionEnabled = true
                 })
             }
             
@@ -1039,13 +1039,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     //Mark: This function is called when the pause button is pressed
-    func pause(touches: Set<UITouch>) {
+    func pause(_ touches: Set<UITouch>) {
         
         if let touch = touches.first as UITouch! {
-            let pos = touch.locationInNode(topBar)
-            let node = topBar.nodeAtPoint(pos)
+            let pos = touch.location(in: topBar)
+            let node = topBar.atPoint(pos)
             
-            let loc = touch.locationInNode(pauseLayer)
+            let loc = touch.location(in: pauseLayer)
             
             if node == pause && IsPaused == false {
                 self.addChild(pauseLayer)
@@ -1081,21 +1081,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 pauseLayer.addChild(homeButton)
                 pauseLayer.addChild(pauseMusic)
                 pauseLayer.addChild(pauseSound)
-                self.scene?.paused = true
+                self.scene?.isPaused = true
                 IsPaused = true
             }
             
-            if IsPaused == true && pausePlayButton.containsPoint(loc) {
+            if IsPaused == true && pausePlayButton.contains(loc) {
                 for children in pauseLayer.children {
                     children.removeFromParent()
                 }
                 pauseLayer.removeFromParent()
-                self.scene?.paused = false
+                self.scene?.isPaused = false
                 IsPaused = false
                 
             }
             
-            if IsPaused == true && pauseMusic.containsPoint(loc) {
+            if IsPaused == true && pauseMusic.contains(loc) {
                 if AudioManager.sharedInstance().BackgroundisPlaying == false {
                     AudioManager.sharedInstance().BackgroundisPlaying = true
                     if AudioManager.sharedInstance().playerExist() {
@@ -1113,7 +1113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
             
-            if IsPaused == true && pauseSound.containsPoint(loc) {
+            if IsPaused == true && pauseSound.contains(loc) {
                 if AudioManager.sharedInstance().SoundisPlaying == true {
                     AudioManager.sharedInstance().SoundisPlaying = false
                     pauseSound.alpha = 0.66
@@ -1125,23 +1125,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
             
-            if IsPaused == true && homeButton.containsPoint(loc) {
-                scene?.userInteractionEnabled = false
+            if IsPaused == true && homeButton.contains(loc) {
+                scene?.isUserInteractionEnabled = false
                 for children in pauseLayer.children {
                     children.removeFromParent()
                 }
                 pauseLayer.removeFromParent()
-                self.scene!.paused = false
+                self.scene!.isPaused = false
                 self.animateEndGame({
                     if let scene = MainMenu(fileNamed:"GameScene") {
                         
                         // Configure the view.
                         let skView = self.view as SKView!
                         /* Sprite Kit applies additional optimizations to improve rendering performance */
-                        skView.ignoresSiblingOrder = true
+                        skView?.ignoresSiblingOrder = true
                         /* Set the scale mode to scale to fit the window */
-                        scene.scaleMode = .AspectFill
-                        skView.presentScene(scene)
+                        scene.scaleMode = .aspectFill
+                        skView?.presentScene(scene)
                     }
                 })
             }
@@ -1150,15 +1150,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     //MARK: GAMECENTER
-    func saveHighscore(gameScore: Int) {
+    func saveHighscore(_ gameScore: Int) {
         
-        if GKLocalPlayer.localPlayer().authenticated {
+        if GKLocalPlayer.localPlayer().isAuthenticated {
             
             let scoreReporter = GKScore(leaderboardIdentifier: "Highest_Scores")
             scoreReporter.value = Int64(gameScore)
             let scoreArray: [GKScore] = [scoreReporter]
             
-            GKScore.reportScores(scoreArray, withCompletionHandler: {error -> Void in
+            GKScore.report(scoreArray, withCompletionHandler: {error -> Void in
                 if error != nil {
                     print("An error has occured: \(error)")
                 }
@@ -1168,7 +1168,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func loadAchievementPercentages() {
         
-        GKAchievement.loadAchievementsWithCompletionHandler { (allAchievements, error) -> Void in
+        GKAchievement.loadAchievements { (allAchievements, error) -> Void in
             
             if error != nil {
                 print("GC could not load ach, error:\(error)")
@@ -1178,11 +1178,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 //nil if no progress on any achiement
                 if(allAchievements != nil) {
                     for theAchiement in allAchievements! {
-                        
-                        if let singleAchievement:GKAchievement = theAchiement {
-                            
-                            self.gameCenterAchievements[singleAchievement.identifier!] = singleAchievement
-                        }
+                        self.gameCenterAchievements[theAchiement.identifier!] = theAchiement
                     }
                 }
                 
@@ -1193,9 +1189,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-    func incrementCurrentPercentageOfAchievement (identifier:String, amount:Double) {
+    func incrementCurrentPercentageOfAchievement (_ identifier:String, amount:Double) {
         
-        if GKLocalPlayer.localPlayer().authenticated {
+        if GKLocalPlayer.localPlayer().isAuthenticated {
             
             var currentPercentFound:Bool = false
             
@@ -1227,7 +1223,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func reportAchievement (identifier:String, percentComplete:Double) {
+    func reportAchievement (_ identifier:String, percentComplete:Double) {
         
         let achievement = GKAchievement(identifier: identifier)
         
@@ -1236,12 +1232,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let achievementArray: [GKAchievement] = [achievement]
         
-        GKAchievement.reportAchievements(achievementArray, withCompletionHandler: {
+        GKAchievement.report(achievementArray, withCompletionHandler: {
             
             error -> Void in
             
             if ( error != nil) {
-                print(error)
+                print(error!)
             }
                 
             else {
@@ -1255,14 +1251,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func resetAchievements() {
-        GKAchievement.resetAchievementsWithCompletionHandler { (error) in
+        GKAchievement.resetAchievements { (error) in
             if error != nil {
                 print("why?")
             }
         }
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         if ball.alpha != 1 {
             

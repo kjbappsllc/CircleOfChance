@@ -106,7 +106,8 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
         bottomButtonLayer.run(bottomButtonAction)
         
         playButton.setScale(0)
-        let playAction = SKAction.scale(to: 1.0, duration: 1.0)
+        let playAction = SKAction.scale(to: 1.0, duration: 0.2)
+        playAction.timingMode = .easeIn
         playButton.run(playAction, completion: completion)
     }
     
@@ -126,7 +127,7 @@ class MainMenu: SKScene, GKGameCenterControllerDelegate {
         bottomButtonLayer.run(bottomExit)
         bottomExit.timingMode = .easeIn
         
-        playButton.run(SKAction.scale(to: 0.0, duration: 0.5), completion: completion)
+        playButton.run(SKAction.scale(to: 0.0, duration: 0.2), completion: completion)
     }
     
     //Mark: This adds the colorful background

@@ -73,8 +73,7 @@ class items {
     func loadInitialSkins() -> [item] {
         var skinsArray = [item]()
         let skin1 = item(item: .skin, sprite: SKSpriteNode(imageNamed: "ball"), name: "BLUE", price: 0)
-        let skin2 = item(item: .skin, sprite: SKSpriteNode(imageNamed: "basketballSkin"), name: "BASKETBALL", price: 200)
-        skinsArray.append(contentsOf: [skin1,skin2])
+        skinsArray.append(contentsOf: [skin1])
         return skinsArray
         
     }
